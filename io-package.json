@@ -1,0 +1,96 @@
+{
+    "common": {
+        "name": "nebenkosten-monitor",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
+        },
+        "titleLang": {
+            "en": "Nebenkosten Monitor",
+            "de": "Nebenkosten-Monitor",
+            "ru": "Небенкостен Монитор",
+            "pt": "Monitor Nebenkosten",
+            "nl": "Nebenkosten Monitor",
+            "fr": "Moniteur Nebenkosten",
+            "it": "Monitor Nebenkosten",
+            "es": "Monitor Nebenkosten",
+            "pl": "Monitor Nebenkostena",
+            "uk": "Небенкостен монітор",
+            "zh-cn": "内本科斯坦监视器"
+        },
+        "desc": {
+            "en": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "de": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "ru": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "pt": "Superwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "nl": "Überwachung von Gas, Wasser en Strom met kostenrechnung",
+            "fr": "Surveillance du gaz, de l'eau et du courant avec des frais de maintenance",
+            "it": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "es": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "pl": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "uk": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
+            "zh-cn": "天然气、水和水流与科斯滕雷赫农的超用水"
+        },
+        "authors": ["fischi87 <axel.fischer@hotmail.com>"],
+        "keywords": ["Nebenkosten", "Strom", "Gas", "Abschlag"],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "nebenkosten-monitor.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/fischi87/ioBroker.nebenkosten-monitor/main/admin/nebenkosten-monitor.png",
+        "readme": "https://github.com/fischi87/ioBroker.nebenkosten-monitor/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 3,
+        "mode": "daemon",
+        "type": "metering",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=6.0.11"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=7.0.23"
+            }
+        ]
+    },
+    "native": {
+        "gasAktiv": false,
+        "gasSensorDP": "",
+        "gasZaehlerstandEcht": 0,
+        "gasBrennwert": 11.5,
+        "gasZahl": 0.95,
+        "gasPreise": [],
+        "wasserAktiv": false,
+        "wasserSensorDP": "",
+        "wasserZaehlerstandEcht": 0,
+        "wasserPreise": [],
+        "stromAktiv": false,
+        "stromSensorDP": "",
+        "stromZaehlerstandEcht": 0,
+        "stromPreise": []
+    },
+    "objects": [],
+    "instanceObjects": []
+}
