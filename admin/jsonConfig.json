@@ -3,8 +3,8 @@
     "type": "tabs",
     "items": {
         "tabGas": {
-            "title": "Gas",
             "type": "panel",
+            "label": "Gas",
             "items": {
                 "gasAktiv": {
                     "type": "checkbox",
@@ -26,8 +26,8 @@
             }
         },
         "tabWasser": {
-            "title": "Wasser",
             "type": "panel",
+            "label": "Wasser",
             "items": {
                 "wasserAktiv": {
                     "type": "checkbox",
