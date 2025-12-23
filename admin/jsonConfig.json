@@ -4,8 +4,13 @@
     "items": {
         "tabGas": {
             "title": "Gas",
+            "type": "panel",
             "items": {
-                "gasAktiv": { "type": "checkbox", "label": "Gas-Überwachung aktivieren", "sm": 12 },
+                "gasAktiv": {
+                    "type": "checkbox",
+                    "label": "Gas-Überwachung aktivieren",
+                    "sm": 12
+                },
                 "gasSensorDP": {
                     "type": "selectID",
                     "label": "Datenpunkt Gaszähler (m³)",
@@ -17,77 +22,23 @@
                     "label": "Aktueller Zählerstand am Gerät (m³)",
                     "hidden": "!data.gasAktiv",
                     "sm": 6
-                },
-                "gasBrennwert": { "type": "number", "label": "Brennwert", "hidden": "!data.gasAktiv", "sm": 3 },
-                "gasZahl": { "type": "number", "label": "Zustandszahl", "hidden": "!data.gasAktiv", "sm": 3 },
-                "gasPreise": {
-                    "type": "table",
-                    "label": "Preis- & Abschlags-Historie",
-                    "hidden": "!data.gasAktiv",
-                    "items": {
-                        "datum": { "type": "date", "label": "Gültig ab" },
-                        "arbeitspreis": { "type": "number", "label": "Cent/kWh" },
-                        "grundpreis": { "type": "number", "label": "Grundpreis €/Monat" },
-                        "abschlag": { "type": "number", "label": "Abschlag €/Monat" }
-                    }
                 }
             }
         },
         "tabWasser": {
             "title": "Wasser",
+            "type": "panel",
             "items": {
-                "wasserAktiv": { "type": "checkbox", "label": "Wasser-Überwachung aktivieren", "sm": 12 },
+                "wasserAktiv": {
+                    "type": "checkbox",
+                    "label": "Wasser-Überwachung aktivieren",
+                    "sm": 12
+                },
                 "wasserSensorDP": {
                     "type": "selectID",
                     "label": "Datenpunkt Wasserzähler (m³)",
                     "hidden": "!data.wasserAktiv",
                     "sm": 6
-                },
-                "wasserZaehlerstandEcht": {
-                    "type": "number",
-                    "label": "Zählerstand am Gerät (m³)",
-                    "hidden": "!data.wasserAktiv",
-                    "sm": 6
-                },
-                "wasserPreise": {
-                    "type": "table",
-                    "label": "Wasserpreise & Abschlag",
-                    "hidden": "!data.wasserAktiv",
-                    "items": {
-                        "datum": { "type": "date", "label": "Gültig ab" },
-                        "frischwasser": { "type": "number", "label": "Frischwasser €/m³" },
-                        "abwasser": { "type": "number", "label": "Abwasser €/m³" },
-                        "abschlag": { "type": "number", "label": "Abschlag €/Monat" }
-                    }
-                }
-            }
-        },
-        "tabStrom": {
-            "title": "Strom",
-            "items": {
-                "stromAktiv": { "type": "checkbox", "label": "Strom-Überwachung aktivieren", "sm": 12 },
-                "stromSensorDP": {
-                    "type": "selectID",
-                    "label": "Datenpunkt Stromzähler (kWh)",
-                    "hidden": "!data.stromAktiv",
-                    "sm": 6
-                },
-                "stromZaehlerstandEcht": {
-                    "type": "number",
-                    "label": "Zählerstand am Gerät (kWh)",
-                    "hidden": "!data.stromAktiv",
-                    "sm": 6
-                },
-                "stromPreise": {
-                    "type": "table",
-                    "label": "Strompreise & Abschlag",
-                    "hidden": "!data.stromAktiv",
-                    "items": {
-                        "datum": { "type": "date", "label": "Gültig ab" },
-                        "arbeitspreis": { "type": "number", "label": "Cent/kWh" },
-                        "grundpreis": { "type": "number", "label": "Grundpreis €/Monat" },
-                        "abschlag": { "type": "number", "label": "Abschlag €/Monat" }
-                    }
                 }
             }
         }
