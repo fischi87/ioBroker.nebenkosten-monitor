@@ -15,13 +15,67 @@
                     "type": "selectID",
                     "label": "Datenpunkt Gaszähler (m³)",
                     "hidden": "!data.gasAktiv",
-                    "sm": 6
+                    "sm": 12
                 },
                 "gasZaehlerstandEcht": {
                     "type": "number",
                     "label": "Aktueller Zählerstand am Gerät (m³)",
                     "hidden": "!data.gasAktiv",
                     "sm": 6
+                },
+                "gasBrennwert": {
+                    "type": "number",
+                    "label": "Brennwert (kWh/m³)",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 3,
+                    "min": 8,
+                    "max": 14,
+                    "step": 0.1
+                },
+                "gasZahl": {
+                    "type": "number",
+                    "label": "Z-Zahl (Zustandszahl)",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 3,
+                    "min": 0.8,
+                    "max": 1.0,
+                    "step": 0.01
+                },
+                "_gasPreisHeader": {
+                    "type": "header",
+                    "text": "Preisinformationen",
+                    "size": 5,
+                    "hidden": "!data.gasAktiv"
+                },
+                "gasPreise": {
+                    "type": "table",
+                    "hidden": "!data.gasAktiv",
+                    "label": "Gaspreise",
+                    "sm": 12,
+                    "items": [
+                        {
+                            "type": "date",
+                            "attr": "validFrom",
+                            "title": "Gültig ab",
+                            "width": "30%"
+                        },
+                        {
+                            "type": "number",
+                            "attr": "price",
+                            "title": "Preis (€/kWh)",
+                            "width": "35%",
+                            "min": 0,
+                            "step": 0.001
+                        },
+                        {
+                            "type": "number",
+                            "attr": "basicCharge",
+                            "title": "Grundgebühr (€/Monat)",
+                            "width": "35%",
+                            "min": 0,
+                            "step": 0.01
+                        }
+                    ]
                 }
             }
         },
@@ -38,7 +92,134 @@
                     "type": "selectID",
                     "label": "Datenpunkt Wasserzähler (m³)",
                     "hidden": "!data.wasserAktiv",
+                    "sm": 12
+                },
+                "wasserZaehlerstandEcht": {
+                    "type": "number",
+                    "label": "Aktueller Zählerstand am Gerät (m³)",
+                    "hidden": "!data.wasserAktiv",
                     "sm": 6
+                },
+                "_wasserPreisHeader": {
+                    "type": "header",
+                    "text": "Preisinformationen",
+                    "size": 5,
+                    "hidden": "!data.wasserAktiv"
+                },
+                "wasserPreise": {
+                    "type": "table",
+                    "hidden": "!data.wasserAktiv",
+                    "label": "Wasserpreise",
+                    "sm": 12,
+                    "items": [
+                        {
+                            "type": "date",
+                            "attr": "validFrom",
+                            "title": "Gültig ab",
+                            "width": "30%"
+                        },
+                        {
+                            "type": "number",
+                            "attr": "price",
+                            "title": "Preis (€/m³)",
+                            "width": "35%",
+                            "min": 0,
+                            "step": 0.001
+                        },
+                        {
+                            "type": "number",
+                            "attr": "basicCharge",
+                            "title": "Grundgebühr (€/Monat)",
+                            "width": "35%",
+                            "min": 0,
+                            "step": 0.01
+                        }
+                    ]
+                }
+            }
+        },
+        "tabStrom": {
+            "type": "panel",
+            "label": "Strom",
+            "items": {
+                "stromAktiv": {
+                    "type": "checkbox",
+                    "label": "Strom-Überwachung aktivieren",
+                    "sm": 12
+                },
+                "stromSensorDP": {
+                    "type": "selectID",
+                    "label": "Datenpunkt Stromzähler (kWh)",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12
+                },
+                "stromZaehlerstandEcht": {
+                    "type": "number",
+                    "label": "Aktueller Zählerstand am Gerät (kWh)",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 6
+                },
+                "_stromPreisHeader": {
+                    "type": "header",
+                    "text": "Preisinformationen",
+                    "size": 5,
+                    "hidden": "!data.stromAktiv"
+                },
+                "stromPreise": {
+                    "type": "table",
+                    "hidden": "!data.stromAktiv",
+                    "label": "Strompreise",
+                    "sm": 12,
+                    "items": [
+                        {
+                            "type": "date",
+                            "attr": "validFrom",
+                            "title": "Gültig ab",
+                            "width": "30%"
+                        },
+                        {
+                            "type": "number",
+                            "attr": "price",
+                            "title": "Preis (€/kWh)",
+                            "width": "35%",
+                            "min": 0,
+                            "step": 0.001
+                        },
+                        {
+                            "type": "number",
+                            "attr": "basicCharge",
+                            "title": "Grundgebühr (€/Monat)",
+                            "width": "35%",
+                            "min": 0,
+                            "step": 0.01
+                        }
+                    ]
+                }
+            }
+        },
+        "tabInfo": {
+            "type": "panel",
+            "label": "Info",
+            "items": {
+                "_infoHeader": {
+                    "type": "header",
+                    "text": "Nebenkosten-Monitor",
+                    "size": 3
+                },
+                "_infoText": {
+                    "type": "staticText",
+                    "text": "Dieser Adapter überwacht Gas-, Wasser- und Stromverbrauch und berechnet automatisch die Kosten basierend auf konfigurierten Preisen.",
+                    "sm": 12
+                },
+                "_usage": {
+                    "type": "staticText",
+                    "text": "**Verwendung:**\n\n1. Aktivieren Sie die gewünschten Verbrauchsarten in den jeweiligen Tabs\n2. Wählen Sie den Datenpunkt Ihres Zählers/Sensors aus\n3. Tragen Sie den aktuellen Zählerstand ein (für Synchronisation)\n4. Konfigurieren Sie die Preise mit Gültigkeitsdatum\n\n**Gas-Spezial:** Der Adapter rechnet m³ automatisch in kWh um. Passen Sie Brennwert und Z-Zahl an Ihre Region an (erhalten Sie von Ihrem Gasversorger).",
+                    "sm": 12
+                },
+                "_statesInfo": {
+                    "type": "staticText",
+                    "text": "**Datenpunkte:** Der Adapter erstellt für jede aktivierte Verbrauchsart eine Struktur mit:\n\n- **consumption**: current, daily, monthly, yearly\n- **costs**: total, daily, monthly, yearly, basicCharge\n- **info**: meterReading, currentPrice, lastSync\n- **statistics**: averageDaily, averageMonthly",
+                    "sm": 12
                 }
             }
         }

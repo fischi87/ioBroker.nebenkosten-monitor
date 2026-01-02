@@ -1,15 +1,13 @@
 'use strict';
 
 /*
- * Created with @iobroker/create-adapter v3.1.2
+ * ioBroker Nebenkosten-Monitor Adapter
+ * Monitors gas, water, and electricity consumption with cost calculation
  */
 
-// The adapter-core module gives you access to the core ioBroker functions
-// you need to create an adapter
 const utils = require('@iobroker/adapter-core');
-
-// Load your modules here, e.g.:
-// const fs = require('fs');
+const calculator = require('./lib/calculator');
+const stateManager = require('./lib/stateManager');
 
 class NebenkostenMonitor extends utils.Adapter {
     /**
@@ -22,70 +20,346 @@ class NebenkostenMonitor extends utils.Adapter {
         });
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
-        // this.on('objectChange', this.onObjectChange.bind(this));
-        // this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
+
+        // Internal state tracking
+        this.lastSensorValues = {};
+        this.periodicTimers = {};
     }
 
     /**
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
-        // Initialize your adapter here
+        this.log.info('Nebenkosten-Monitor starting...');
 
-        // The adapters config (in the instance object everything under the attribute "native") is accessible via
-        // this.config:
-        this.log.debug('config option1: ${this.config.option1}');
-        this.log.debug('config option2: ${this.config.option2}');
+        // Initialize each utility type based on configuration
+        await this.initializeUtility('gas', this.config.gasAktiv);
+        await this.initializeUtility('water', this.config.wasserAktiv);
+        await this.initializeUtility('electricity', this.config.stromAktiv);
 
-        /*
-		For every state in the system there has to be also an object of type state
-		Here a simple template for a boolean variable named "testVariable"
-		Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
+        // Set up periodic tasks
+        this.setupPeriodicTasks();
 
-		IMPORTANT: State roles should be chosen carefully based on the state's purpose.
-		           Please refer to the state roles documentation for guidance:
-		           https://www.iobroker.net/#en/documentation/dev/stateroles.md
-		*/
-        await this.setObjectNotExistsAsync('testVariable', {
-            type: 'state',
-            common: {
-                name: 'testVariable',
-                type: 'boolean',
-                role: 'indicator',
-                read: true,
-                write: true,
-            },
-            native: {},
-        });
+        this.log.info('Nebenkosten-Monitor initialized successfully');
+    }
 
-        // In order to get state updates, you need to subscribe to them. The following line adds a subscription for our variable we have created above.
-        this.subscribeStates('testVariable');
-        // You can also add a subscription for multiple states. The following line watches all states starting with "lights."
-        // this.subscribeStates('lights.*');
-        // Or, if you really must, you can also watch all states. Don't do this if you don't need to. Otherwise this will cause a lot of unnecessary load on the system:
-        // this.subscribeStates('*');
+    /**
+     * Initializes a utility type (gas, water, or electricity)
+     *
+     * @param {string} type - Utility type
+     * @param {boolean} isActive - Whether this utility is active
+     */
+    async initializeUtility(type, isActive) {
+        if (!isActive) {
+            this.log.debug(`${type} monitoring is disabled`);
+            // Clean up states if utility was disabled
+            await stateManager.deleteUtilityStateStructure(this, type);
+            return;
+        }
 
-        /*
-			setState examples
-			you will notice that each setState will cause the stateChange event to fire (because of above subscribeStates cmd)
-		*/
-        // the variable testVariable is set to true as command (ack=false)
-        await this.setState('testVariable', true);
+        this.log.info(`Initializing ${type} monitoring...`);
 
-        // same thing, but the value is flagged "ack"
-        // ack should be always set to true if the value is received from or acknowledged from the target system
-        await this.setState('testVariable', { val: true, ack: true });
+        // Create state structure
+        await stateManager.createUtilityStateStructure(this, type);
 
-        // same thing, but the state is deleted after 30s (getState will return null afterwards)
-        await this.setState('testVariable', { val: true, ack: true, expire: 30 });
+        // Get sensor datapoint from config
+        const sensorDPKey = `${type}SensorDP`;
+        const sensorDP = this.config[sensorDPKey];
 
-        // examples for the checkPassword/checkGroup functions
-        const pwdResult = await this.checkPasswordAsync('admin', 'iobroker');
-        this.log.info(`check user admin pw iobroker: ${pwdResult}`);
+        if (!sensorDP) {
+            this.log.warn(`${type} is active but no sensor datapoint configured!`);
+            await this.setStateAsync(`${type}.info.sensorActive`, false, true);
+            return;
+        }
 
-        const groupResult = await this.checkGroupAsync('admin', 'admin');
-        this.log.info(`check group user admin group admin: ${groupResult}`);
+        // Subscribe to sensor datapoint
+        this.subscribeForeignStates(sensorDP);
+        await this.setStateAsync(`${type}.info.sensorActive`, true, true);
+        this.log.debug(`Subscribed to ${type} sensor: ${sensorDP}`);
+
+        // Initialize with current sensor value
+        try {
+            const sensorState = await this.getForeignStateAsync(sensorDP);
+            if (sensorState && sensorState.val !== null && typeof sensorState.val === 'number') {
+                await this.handleSensorUpdate(type, sensorDP, sensorState.val);
+            }
+        } catch (error) {
+            this.log.warn(`Could not read initial value from ${sensorDP}: ${error.message}`);
+        }
+
+        // Initialize period start timestamps if not set
+        const now = Date.now();
+        const dayStart = await this.getStateAsync(`${type}.statistics.lastDayStart`);
+        if (!dayStart || !dayStart.val) {
+            await this.setStateAsync(`${type}.statistics.lastDayStart`, now, true);
+        }
+
+        const monthStart = await this.getStateAsync(`${type}.statistics.lastMonthStart`);
+        if (!monthStart || !monthStart.val) {
+            await this.setStateAsync(`${type}.statistics.lastMonthStart`, now, true);
+        }
+
+        const yearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
+        if (!yearStart || !yearStart.val) {
+            await this.setStateAsync(`${type}.statistics.lastYearStart`, now, true);
+        }
+
+        // Update current price
+        await this.updateCurrentPrice(type);
+    }
+
+    /**
+     * Handles sensor value updates
+     *
+     * @param {string} type - Utility type
+     * @param {string} sensorDP - Sensor datapoint ID
+     * @param {number} value - New sensor value
+     */
+    async handleSensorUpdate(type, sensorDP, value) {
+        if (typeof value !== 'number' || value < 0) {
+            this.log.warn(`Invalid sensor value for ${type}: ${value}`);
+            return;
+        }
+
+        this.log.debug(`Sensor update for ${type}: ${value}`);
+
+        const now = Date.now();
+        let consumption = value;
+
+        // For gas, convert m³ to kWh
+        if (type === 'gas') {
+            const brennwert = this.config.gasBrennwert || 11.5;
+            const zZahl = this.config.gasZahl || 0.95;
+
+            // Store volume reading
+            await this.setStateAsync(`${type}.info.meterReadingVolume`, value, true);
+
+            // Convert to kWh
+            consumption = calculator.convertGasM3ToKWh(value, brennwert, zZahl);
+            consumption = calculator.roundToDecimals(consumption, 2);
+
+            this.log.debug(
+                `Gas conversion: ${value} m³ → ${consumption} kWh (Brennwert: ${brennwert}, Z-Zahl: ${zZahl})`,
+            );
+        }
+
+        // Update meter reading (in kWh for gas, m³ for water, kWh for electricity)
+        await this.setStateAsync(`${type}.info.meterReading`, consumption, true);
+
+        // Calculate deltas if we have a previous value
+        const lastValue = this.lastSensorValues[sensorDP];
+        if (lastValue !== undefined && consumption > lastValue) {
+            const delta = consumption - lastValue;
+            this.log.debug(`${type} delta: ${delta}`);
+
+            // Update daily consumption
+            const dailyConsumption = await this.getStateAsync(`${type}.consumption.daily`);
+            const newDaily = (typeof dailyConsumption?.val === 'number' ? dailyConsumption.val : 0) + delta;
+            await this.setStateAsync(`${type}.consumption.daily`, calculator.roundToDecimals(newDaily, 2), true);
+
+            // Update monthly consumption
+            const monthlyConsumption = await this.getStateAsync(`${type}.consumption.monthly`);
+            const newMonthly = (typeof monthlyConsumption?.val === 'number' ? monthlyConsumption.val : 0) + delta;
+            await this.setStateAsync(`${type}.consumption.monthly`, calculator.roundToDecimals(newMonthly, 2), true);
+
+            // Update yearly consumption
+            const yearlyConsumption = await this.getStateAsync(`${type}.consumption.yearly`);
+            const newYearly = (typeof yearlyConsumption?.val === 'number' ? yearlyConsumption.val : 0) + delta;
+            await this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(newYearly, 2), true);
+
+            // Recalculate costs
+            await this.updateCosts(type);
+        }
+
+        // Store current value and update timestamp
+        this.lastSensorValues[sensorDP] = consumption;
+        await this.setStateAsync(`${type}.consumption.current`, consumption, true);
+        await this.setStateAsync(`${type}.consumption.lastUpdate`, now, true);
+        await this.setStateAsync(`${type}.info.lastSync`, now, true);
+    }
+
+    /**
+     * Updates cost calculations for a utility type
+     *
+     * @param {string} type - Utility type
+     */
+    async updateCosts(type) {
+        const pricesKey = `${type}Preise`;
+        const priceHistory = this.config[pricesKey] || [];
+
+        if (!priceHistory || priceHistory.length === 0) {
+            this.log.debug(`No price history configured for ${type}`);
+            return;
+        }
+
+        // Get current consumptions
+        const dailyState = await this.getStateAsync(`${type}.consumption.daily`);
+        const monthlyState = await this.getStateAsync(`${type}.consumption.monthly`);
+        const yearlyState = await this.getStateAsync(`${type}.consumption.yearly`);
+
+        const daily = typeof dailyState?.val === 'number' ? dailyState.val : 0;
+        const monthly = typeof monthlyState?.val === 'number' ? monthlyState.val : 0;
+        const yearly = typeof yearlyState?.val === 'number' ? yearlyState.val : 0;
+
+        // Calculate costs
+        const dailyCost = calculator.calculateCost(daily, priceHistory);
+        const monthlyCost = calculator.calculateCost(monthly, priceHistory);
+        const yearlyCost = calculator.calculateCost(yearly, priceHistory);
+
+        // Get basic charge
+        const currentPrice = calculator.getCurrentPrice(priceHistory);
+        const basicCharge = currentPrice?.basicCharge || 0;
+
+        // Update cost states
+        await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyCost, 2), true);
+        await this.setStateAsync(`${type}.costs.monthly`, calculator.roundToDecimals(monthlyCost, 2), true);
+        await this.setStateAsync(`${type}.costs.yearly`, calculator.roundToDecimals(yearlyCost, 2), true);
+        await this.setStateAsync(`${type}.costs.basicCharge`, calculator.roundToDecimals(basicCharge, 2), true);
+
+        // Total costs = consumption costs + basic charge (yearly)
+        const totalCost = yearlyCost + basicCharge * 12; // Yearly total
+        await this.setStateAsync(`${type}.costs.total`, calculator.roundToDecimals(totalCost, 2), true);
+
+        this.log.debug(
+            `Updated costs for ${type}: daily=${dailyCost}€, monthly=${monthlyCost}€, yearly=${yearlyCost}€`,
+        );
+    }
+
+    /**
+     * Updates the current price display
+     *
+     * @param {string} type - Utility type
+     */
+    async updateCurrentPrice(type) {
+        const pricesKey = `${type}Preise`;
+        const priceHistory = this.config[pricesKey] || [];
+
+        const currentPrice = calculator.getCurrentPrice(priceHistory);
+        if (currentPrice) {
+            await this.setStateAsync(
+                `${type}.info.currentPrice`,
+                calculator.roundToDecimals(currentPrice.price, 4),
+                true,
+            );
+        }
+    }
+
+    /**
+     * Resets daily counters (called at midnight)
+     *
+     * @param {string} type - Utility type
+     */
+    async resetDailyCounters(type) {
+        this.log.info(`Resetting daily counter for ${type}`);
+
+        // Get current daily consumption for statistics
+        const dailyState = await this.getStateAsync(`${type}.consumption.daily`);
+        const dailyValue = typeof dailyState?.val === 'number' ? dailyState.val : 0;
+
+        // Reset daily consumption
+        await this.setStateAsync(`${type}.consumption.daily`, 0, true);
+        await this.setStateAsync(`${type}.costs.daily`, 0, true);
+        await this.setStateAsync(`${type}.statistics.lastDayStart`, Date.now(), true);
+
+        // Update average
+        // TODO: Store history and calculate proper average
+        await this.setStateAsync(`${type}.statistics.averageDaily`, calculator.roundToDecimals(dailyValue, 2), true);
+    }
+
+    /**
+     * Resets monthly counters (called on first of month)
+     *
+     * @param {string} type - Utility type
+     */
+    async resetMonthlyCounters(type) {
+        this.log.info(`Resetting monthly counter for ${type}`);
+
+        // Get current monthly consumption for statistics
+        const monthlyState = await this.getStateAsync(`${type}.consumption.monthly`);
+        const monthlyValue = typeof monthlyState?.val === 'number' ? monthlyState.val : 0;
+
+        // Reset monthly consumption
+        await this.setStateAsync(`${type}.consumption.monthly`, 0, true);
+        await this.setStateAsync(`${type}.costs.monthly`, 0, true);
+        await this.setStateAsync(`${type}.statistics.lastMonthStart`, Date.now(), true);
+
+        // Update average
+        await this.setStateAsync(
+            `${type}.statistics.averageMonthly`,
+            calculator.roundToDecimals(monthlyValue, 2),
+            true,
+        );
+    }
+
+    /**
+     * Resets yearly counters (called on January 1st)
+     *
+     * @param {string} type - Utility type
+     */
+    async resetYearlyCounters(type) {
+        this.log.info(`Resetting yearly counter for ${type}`);
+
+        // Reset yearly consumption
+        await this.setStateAsync(`${type}.consumption.yearly`, 0, true);
+        await this.setStateAsync(`${type}.costs.yearly`, 0, true);
+        await this.setStateAsync(`${type}.costs.total`, 0, true);
+        await this.setStateAsync(`${type}.statistics.lastYearStart`, Date.now(), true);
+    }
+
+    /**
+     * Sets up periodic tasks (daily reset, etc.)
+     */
+    setupPeriodicTasks() {
+        // Check every minute for period changes
+        this.periodicTimers.checkPeriods = setInterval(async () => {
+            await this.checkPeriodResets();
+        }, 60000); // Every minute
+
+        // Initial check
+        this.checkPeriodResets();
+    }
+
+    /**
+     * Checks if any period resets are needed
+     */
+    async checkPeriodResets() {
+        const now = new Date();
+        const types = ['gas', 'water', 'electricity'];
+
+        for (const type of types) {
+            const activeKey = `${type}Aktiv`;
+            if (!this.config[activeKey]) {
+                continue;
+            }
+
+            // Check daily reset (midnight)
+            const lastDayStart = await this.getStateAsync(`${type}.statistics.lastDayStart`);
+            if (lastDayStart?.val && typeof lastDayStart.val === 'number') {
+                const lastDay = new Date(lastDayStart.val);
+                if (now.getDate() !== lastDay.getDate() && now.getHours() === 0 && now.getMinutes() === 0) {
+                    await this.resetDailyCounters(type);
+                }
+            }
+
+            // Check monthly reset (1st of month)
+            const lastMonthStart = await this.getStateAsync(`${type}.statistics.lastMonthStart`);
+            if (lastMonthStart?.val && typeof lastMonthStart.val === 'number') {
+                const lastMonth = new Date(lastMonthStart.val);
+                if (now.getMonth() !== lastMonth.getMonth() && now.getDate() === 1 && now.getHours() === 0) {
+                    await this.resetMonthlyCounters(type);
+                }
+            }
+
+            // Check yearly reset (January 1st)
+            const lastYearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
+            if (lastYearStart?.val && typeof lastYearStart.val === 'number') {
+                const lastYear = new Date(lastYearStart.val);
+                if (now.getFullYear() !== lastYear.getFullYear() && now.getMonth() === 0 && now.getDate() === 1) {
+                    await this.resetYearlyCounters(type);
+                }
+            }
+        }
     }
 
     /**
@@ -95,11 +369,14 @@ class NebenkostenMonitor extends utils.Adapter {
      */
     onUnload(callback) {
         try {
-            // Here you must clear all timeouts or intervals that may still be active
-            // clearTimeout(timeout1);
-            // clearTimeout(timeout2);
-            // ...
-            // clearInterval(interval1);
+            this.log.info('Nebenkosten-Monitor shutting down...');
+
+            // Clear all timers
+            Object.values(this.periodicTimers).forEach(timer => {
+                if (timer) {
+                    clearInterval(timer);
+                }
+            });
 
             callback();
         } catch (error) {
@@ -108,63 +385,34 @@ class NebenkostenMonitor extends utils.Adapter {
         }
     }
 
-    // If you need to react to object changes, uncomment the following block and the corresponding line in the constructor.
-    // You also need to subscribe to the objects with `this.subscribeObjects`, similar to `this.subscribeStates`.
-    // /**
-    //  * Is called if a subscribed object changes
-    //  * @param {string} id
-    //  * @param {ioBroker.Object | null | undefined} obj
-    //  */
-    // onObjectChange(id, obj) {
-    //     if (obj) {
-    //         // The object was changed
-    //         this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-    //     } else {
-    //         // The object was deleted
-    //         this.log.info(`object ${id} deleted`);
-    //     }
-    // }
-
     /**
      * Is called if a subscribed state changes
      *
      * @param {string} id - State ID
      * @param {ioBroker.State | null | undefined} state - State object
      */
-    onStateChange(id, state) {
-        if (state) {
-            // The state was changed
-            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+    async onStateChange(id, state) {
+        if (!state || state.ack === true) {
+            // We only care about sensor updates from foreign adapters
+            return;
+        }
 
-            if (state.ack === false) {
-                // This is a command from the user (e.g., from the UI or other adapter)
-                // and should be processed by the adapter
-                this.log.info(`User command received for ${id}: ${state.val}`);
+        // Determine which utility this sensor belongs to
+        const utilities = [
+            { type: 'gas', activeKey: 'gasAktiv', sensorKey: 'gasSensorDP' },
+            { type: 'water', activeKey: 'wasserAktiv', sensorKey: 'wasserSensorDP' },
+            { type: 'electricity', activeKey: 'stromAktiv', sensorKey: 'stromSensorDP' },
+        ];
 
-                // TODO: Add your control logic here
+        for (const utility of utilities) {
+            if (this.config[utility.activeKey] && this.config[utility.sensorKey] === id) {
+                if (typeof state.val === 'number') {
+                    await this.handleSensorUpdate(utility.type, id, state.val);
+                }
+                break;
             }
-        } else {
-            // The object was deleted or the state value has expired
-            this.log.info(`state ${id} deleted`);
         }
     }
-    // If you need to accept messages in your adapter, uncomment the following block and the corresponding line in the constructor.
-    // /**
-    //  * Some message was sent to this instance over message box. Used by email, pushover, text2speech, ...
-    //  * Using this method requires "common.messagebox" property to be set to true in io-package.json
-    //  * @param {ioBroker.Message} obj
-    //  */
-    // onMessage(obj) {
-    //     if (typeof obj === 'object' && obj.message) {
-    //         if (obj.command === 'send') {
-    //             // e.g. send email or pushover or whatever
-    //             this.log.info('send command');
-
-    //             // Send response in callback if required
-    //             if (obj.callback) this.sendTo(obj.from, obj.command, 'Message received', obj.callback);
-    //         }
-    //     }
-    // }
 }
 
 if (require.main !== module) {
@@ -172,7 +420,7 @@ if (require.main !== module) {
     /**
      * @param {Partial<utils.AdapterOptions>} [options] - Adapter options
      */
-    module.exports = (options) => new NebenkostenMonitor(options);
+    module.exports = options => new NebenkostenMonitor(options);
 } else {
     // otherwise start the instance directly
     new NebenkostenMonitor();
