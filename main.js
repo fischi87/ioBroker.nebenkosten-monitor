@@ -64,14 +64,18 @@ class NebenkostenMonitor extends utils.Adapter {
         await stateManager.createUtilityStateStructure(this, type);
 
         // Get sensor datapoint from config
+        // Priority: Manual input > selectID
         const sensorDPKey = `${type}SensorDP`;
-        const sensorDP = this.config[sensorDPKey];
+        const sensorDPManualKey = `${type}SensorDPManual`;
+        const sensorDP = this.config[sensorDPManualKey] || this.config[sensorDPKey];
 
         if (!sensorDP) {
             this.log.warn(`${type} is active but no sensor datapoint configured!`);
             await this.setStateAsync(`${type}.info.sensorActive`, false, true);
             return;
         }
+
+        this.log.debug(`Using sensor datapoint for ${type}: ${sensorDP}`);
 
         // Subscribe to sensor datapoint
         this.subscribeForeignStates(sensorDP);

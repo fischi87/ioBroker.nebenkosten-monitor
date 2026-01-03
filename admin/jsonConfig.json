@@ -4,30 +4,88 @@
     "items": {
         "tabGas": {
             "type": "panel",
-            "label": "Gas",
+            "label": "🔥 Gas",
+            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xNiA2bC0yLjI5IDIuMjlhNC4yNSA0LjI1IDAgMCAxLS4yMiA1LjY4TDE2IDE2bC00LjcxLTQuNzFhMS43NSAxLjc1IDAgMCAwIDAtMi40OEwxMyA3Wm0tMy4xMSA4LjI5TDExIDEzLjQxVjIwaDJ2LTUuNzFNNSAxMmE1LjUzIDUuNTMgMCAwIDAgLjMzIDJoMS44M0E3LjQ4IDcuNDggMCAwIDEgNyAxMmMwLTQuNDIgMy41OC04IDgtOGwxLjE3IDEuNzVMMjAgMmwtMy44My0yTDE4LjA5IDJIMTJhMTAgMTAgMCAwIDAtMTAgMTBjLTQuNCAwLTggMy44My04IDguMkMyLjgyIDE4LjE1IDEuNzcgMTYgNSAxMloiLz48L3N2Zz4=",
             "items": {
+                "_gasActivationHeader": {
+                    "type": "header",
+                    "text": "Grundeinstellungen",
+                    "size": 4
+                },
                 "gasAktiv": {
                     "type": "checkbox",
                     "label": "Gas-Überwachung aktivieren",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6,
+                    "newLine": true
+                },
+                "_gasSensorHeader": {
+                    "type": "header",
+                    "text": "Sensor-Konfiguration",
+                    "size": 5,
+                    "hidden": "!data.gasAktiv"
+                },
+                "_gasSensorHelp": {
+                    "type": "staticText",
+                    "text": "Wähle deinen Gaszähler-Sensor aus der Liste oder gib die ID manuell ein.",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
                 },
                 "gasSensorDP": {
                     "type": "selectID",
-                    "label": "Datenpunkt Gaszähler (m³)",
+                    "label": "Datenpunkt auswählen (m³)",
                     "hidden": "!data.gasAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6
+                },
+                "gasSensorDPManual": {
+                    "type": "text",
+                    "label": "Oder ID manuell eingeben",
+                    "placeholder": "z.B. shelly.0.SHELLY1PM-ABC123.Meter.CounterTotal",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12,
+                    "md": 6
+                },
+                "_gasMeterHeader": {
+                    "type": "header",
+                    "text": "Zählerstand",
+                    "size": 5,
+                    "hidden": "!data.gasAktiv"
                 },
                 "gasZaehlerstandEcht": {
                     "type": "number",
                     "label": "Aktueller Zählerstand am Gerät (m³)",
+                    "placeholder": "z.B. 12345.67",
                     "hidden": "!data.gasAktiv",
-                    "sm": 6
+                    "sm": 12,
+                    "md": 6,
+                    "min": 0,
+                    "step": 0.001
+                },
+                "_gasConversionHeader": {
+                    "type": "header",
+                    "text": "Umrechnungsparameter (m³ → kWh)",
+                    "size": 5,
+                    "hidden": "!data.gasAktiv"
+                },
+                "_gasConversionHelp": {
+                    "type": "staticText",
+                    "text": "📋 **Diese Werte findest du auf deiner Gasrechnung oder beim Gasversorger.**\n\nFormel: kWh = m³ × Brennwert × Z-Zahl",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12
                 },
                 "gasBrennwert": {
                     "type": "number",
                     "label": "Brennwert (kWh/m³)",
+                    "placeholder": "Typisch: 10-12",
                     "hidden": "!data.gasAktiv",
-                    "sm": 3,
+                    "sm": 6,
+                    "md": 3,
                     "min": 8,
                     "max": 14,
                     "step": 0.1
@@ -35,17 +93,30 @@
                 "gasZahl": {
                     "type": "number",
                     "label": "Z-Zahl (Zustandszahl)",
+                    "placeholder": "Typisch: 0.90-1.00",
                     "hidden": "!data.gasAktiv",
-                    "sm": 3,
+                    "sm": 6,
+                    "md": 3,
                     "min": 0.8,
                     "max": 1.0,
                     "step": 0.01
                 },
                 "_gasPreisHeader": {
                     "type": "header",
-                    "text": "Preisinformationen",
-                    "size": 5,
+                    "text": "💰 Preisinformationen",
+                    "size": 4,
                     "hidden": "!data.gasAktiv"
+                },
+                "_gasPriceHelp": {
+                    "type": "staticText",
+                    "text": "Füge deine Gaspreise mit Gültigkeitsdatum hinzu. Der Adapter wählt automatisch den aktuell gültigen Preis.",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
                 },
                 "gasPreise": {
                     "type": "table",
@@ -57,7 +128,8 @@
                             "type": "date",
                             "attr": "validFrom",
                             "title": "Gültig ab",
-                            "width": "30%"
+                            "width": "30%",
+                            "default": "new Date().toISOString().split('T')[0]"
                         },
                         {
                             "type": "number",
@@ -65,7 +137,8 @@
                             "title": "Preis (€/kWh)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.001
+                            "step": 0.001,
+                            "default": 0.12
                         },
                         {
                             "type": "number",
@@ -73,7 +146,8 @@
                             "title": "Grundgebühr (€/Monat)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.01
+                            "step": 0.01,
+                            "default": 8.99
                         }
                     ]
                 }
@@ -81,30 +155,85 @@
         },
         "tabWasser": {
             "type": "panel",
-            "label": "Wasser",
+            "label": "💧 Wasser",
+            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMiAyLjY5bDUtNS42OUM0LjM4IDAgMiA1LjA5IDIgOS42MkMyIDEzLjA5IDQuOTEgMTYgOC41IDE2YzEuNjEgMCAzLjA5LS41OSA0LjI0LTEuNTdDMTQuNTcgMTYuMTcgMTYuODQgMTggMjAgMThjMS42IDAgMyAxLjM0IDMgM3MtMS40IDMtMyAzYTMgMyAwIDAgMS0zLTNjMC0xLjY2IDEuMzQtMyAzLTNjLjM0IDAgLjY3LjA2Ljk3LjE5QzIwLjUgMTcuMzEgMjAgMTYuMTkgMjAgMTVjMC00LjQyLTMuNTgtOC04LThjLTIuNzcgMC01LjIgMS4xMi02Ljk4IDIuOTNsLS4wMi0uMDRMMTIgMi42OW0tMyA5LjY3Yy42MyAwIDEuMjUuMTMgMS44NC4zOEw4IDE2LjI1bC0yLjg0LTMuNTFjLjU5LS4yNSAxLjIxLS4zOCAxLjg0LS4zOFoiLz48L3N2Zz4=",
             "items": {
+                "_wasserActivationHeader": {
+                    "type": "header",
+                    "text": "Grundeinstellungen",
+                    "size": 4
+                },
                 "wasserAktiv": {
                     "type": "checkbox",
                     "label": "Wasser-Überwachung aktivieren",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6,
+                    "newLine": true
+                },
+                "_wasserSensorHeader": {
+                    "type": "header",
+                    "text": "Sensor-Konfiguration",
+                    "size": 5,
+                    "hidden": "!data.wasserAktiv"
+                },
+                "_wasserSensorHelp": {
+                    "type": "staticText",
+                    "text": "Wähle deinen Wasserzähler-Sensor aus der Liste oder gib die ID manuell ein.",
+                    "hidden": "!data.wasserAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
                 },
                 "wasserSensorDP": {
                     "type": "selectID",
-                    "label": "Datenpunkt Wasserzähler (m³)",
+                    "label": "Datenpunkt auswählen (m³)",
                     "hidden": "!data.wasserAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6
+                },
+                "wasserSensorDPManual": {
+                    "type": "text",
+                    "label": "Oder ID manuell eingeben",
+                    "placeholder": "z.B. homematic.0.NEQ1234567.SENSOR.LEVEL",
+                    "hidden": "!data.wasserAktiv",
+                    "sm": 12,
+                    "md": 6
+                },
+                "_wasserMeterHeader": {
+                    "type": "header",
+                    "text": "Zählerstand",
+                    "size": 5,
+                    "hidden": "!data.wasserAktiv"
                 },
                 "wasserZaehlerstandEcht": {
                     "type": "number",
                     "label": "Aktueller Zählerstand am Gerät (m³)",
+                    "placeholder": "z.B. 543.21",
                     "hidden": "!data.wasserAktiv",
-                    "sm": 6
+                    "sm": 12,
+                    "md": 6,
+                    "min": 0,
+                    "step": 0.001
                 },
                 "_wasserPreisHeader": {
                     "type": "header",
-                    "text": "Preisinformationen",
-                    "size": 5,
+                    "text": "💰 Preisinformationen",
+                    "size": 4,
                     "hidden": "!data.wasserAktiv"
+                },
+                "_wasserPriceHelp": {
+                    "type": "staticText",
+                    "text": "Füge deine Wasserpreise mit Gültigkeitsdatum hinzu. Der Adapter wählt automatisch den aktuell gültigen Preis.",
+                    "hidden": "!data.wasserAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
                 },
                 "wasserPreise": {
                     "type": "table",
@@ -116,7 +245,8 @@
                             "type": "date",
                             "attr": "validFrom",
                             "title": "Gültig ab",
-                            "width": "30%"
+                            "width": "30%",
+                            "default": "new Date().toISOString().split('T')[0]"
                         },
                         {
                             "type": "number",
@@ -124,7 +254,8 @@
                             "title": "Preis (€/m³)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.001
+                            "step": 0.001,
+                            "default": 2.5
                         },
                         {
                             "type": "number",
@@ -132,7 +263,8 @@
                             "title": "Grundgebühr (€/Monat)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.01
+                            "step": 0.01,
+                            "default": 5.0
                         }
                     ]
                 }
@@ -140,30 +272,85 @@
         },
         "tabStrom": {
             "type": "panel",
-            "label": "Strom",
+            "label": "⚡ Strom",
+            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMSAyMUg5TDcgOWgzVjNsNiAxMGgtM3oiLz48L3N2Zz4=",
             "items": {
+                "_stromActivationHeader": {
+                    "type": "header",
+                    "text": "Grundeinstellungen",
+                    "size": 4
+                },
                 "stromAktiv": {
                     "type": "checkbox",
                     "label": "Strom-Überwachung aktivieren",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6,
+                    "newLine": true
+                },
+                "_stromSensorHeader": {
+                    "type": "header",
+                    "text": "Sensor-Konfiguration",
+                    "size": 5,
+                    "hidden": "!data.stromAktiv"
+                },
+                "_stromSensorHelp": {
+                    "type": "staticText",
+                    "text": "Wähle deinen Stromzähler-Sensor aus der Liste oder gib die ID manuell ein.",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
                 },
                 "stromSensorDP": {
                     "type": "selectID",
-                    "label": "Datenpunkt Stromzähler (kWh)",
+                    "label": "Datenpunkt auswählen (kWh)",
                     "hidden": "!data.stromAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6
+                },
+                "stromSensorDPManual": {
+                    "type": "text",
+                    "label": "Oder ID manuell eingeben",
+                    "placeholder": "z.B. shelly.0.SHELLY3EM.Total.Energy",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12,
+                    "md": 6
+                },
+                "_stromMeterHeader": {
+                    "type": "header",
+                    "text": "Zählerstand",
+                    "size": 5,
+                    "hidden": "!data.stromAktiv"
                 },
                 "stromZaehlerstandEcht": {
                     "type": "number",
                     "label": "Aktueller Zählerstand am Gerät (kWh)",
+                    "placeholder": "z.B. 45678.9",
                     "hidden": "!data.stromAktiv",
-                    "sm": 6
+                    "sm": 12,
+                    "md": 6,
+                    "min": 0,
+                    "step": 0.001
                 },
                 "_stromPreisHeader": {
                     "type": "header",
-                    "text": "Preisinformationen",
-                    "size": 5,
+                    "text": "💰 Preisinformationen",
+                    "size": 4,
                     "hidden": "!data.stromAktiv"
+                },
+                "_stromPriceHelp": {
+                    "type": "staticText",
+                    "text": "Füge deine Strompreise mit Gültigkeitsdatum hinzu. Der Adapter wählt automatisch den aktuell gültigen Preis.",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
                 },
                 "stromPreise": {
                     "type": "table",
@@ -175,7 +362,8 @@
                             "type": "date",
                             "attr": "validFrom",
                             "title": "Gültig ab",
-                            "width": "30%"
+                            "width": "30%",
+                            "default": "new Date().toISOString().split('T')[0]"
                         },
                         {
                             "type": "number",
@@ -183,7 +371,8 @@
                             "title": "Preis (€/kWh)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.001
+                            "step": 0.001,
+                            "default": 0.3
                         },
                         {
                             "type": "number",
@@ -191,7 +380,8 @@
                             "title": "Grundgebühr (€/Monat)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.01
+                            "step": 0.01,
+                            "default": 12.0
                         }
                     ]
                 }
@@ -199,26 +389,68 @@
         },
         "tabInfo": {
             "type": "panel",
-            "label": "Info",
+            "label": "ℹ️ Info & Hilfe",
             "items": {
                 "_infoHeader": {
                     "type": "header",
                     "text": "Nebenkosten-Monitor",
                     "size": 3
                 },
-                "_infoText": {
+                "_infoVersion": {
                     "type": "staticText",
-                    "text": "Dieser Adapter überwacht Gas-, Wasser- und Stromverbrauch und berechnet automatisch die Kosten basierend auf konfigurierten Preisen.",
+                    "text": "**Version:** 0.0.1\n\n**Autor:** fischi87",
                     "sm": 12
+                },
+                "_divider1": {
+                    "type": "divider"
+                },
+                "_featureHeader": {
+                    "type": "header",
+                    "text": "Funktionen",
+                    "size": 4
+                },
+                "_features": {
+                    "type": "staticText",
+                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Automatische Kostenberechnung** - Mit Preishistorie\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Statistiken** - Täglich, monatlich, jährlich\n\n✅ **Automatische Resets** - Um Mitternacht/Monatsbeginn",
+                    "sm": 12
+                },
+                "_divider2": {
+                    "type": "divider"
+                },
+                "_usageHeader": {
+                    "type": "header",
+                    "text": "Schnellstart",
+                    "size": 4
                 },
                 "_usage": {
                     "type": "staticText",
-                    "text": "**Verwendung:**\n\n1. Aktivieren Sie die gewünschten Verbrauchsarten in den jeweiligen Tabs\n2. Wählen Sie den Datenpunkt Ihres Zählers/Sensors aus\n3. Tragen Sie den aktuellen Zählerstand ein (für Synchronisation)\n4. Konfigurieren Sie die Preise mit Gültigkeitsdatum\n\n**Gas-Spezial:** Der Adapter rechnet m³ automatisch in kWh um. Passen Sie Brennwert und Z-Zahl an Ihre Region an (erhalten Sie von Ihrem Gasversorger).",
+                    "text": "**1. Sensor konfigurieren**\n- Wähle deinen Datenpunkt oder gib die ID manuell ein\n- Trage den aktuellen Zählerstand ein\n\n**2. Umrechnung (nur Gas)**\n- Brennwert & Z-Zahl findest du auf deiner Gasrechnung\n- Typische Werte: Brennwert 10-12, Z-Zahl 0.90-1.00\n\n**3. Preise hinzufügen**\n- Klicke auf **+** um einen Preis hinzuzufügen\n- Gültigkeitsdatum in der Vergangenheit = sofort aktiv\n- Mehrere Preise = Preishistorie",
                     "sm": 12
+                },
+                "_divider3": {
+                    "type": "divider"
+                },
+                "_statesHeader": {
+                    "type": "header",
+                    "text": "Datenpunkte",
+                    "size": 4
                 },
                 "_statesInfo": {
                     "type": "staticText",
-                    "text": "**Datenpunkte:** Der Adapter erstellt für jede aktivierte Verbrauchsart eine Struktur mit:\n\n- **consumption**: current, daily, monthly, yearly\n- **costs**: total, daily, monthly, yearly, basicCharge\n- **info**: meterReading, currentPrice, lastSync\n- **statistics**: averageDaily, averageMonthly",
+                    "text": "Der Adapter erstellt für jede aktivierte Verbrauchsart:\n\n**📊 consumption/** - current, daily, monthly, yearly\n\n**💰 costs/** - total, daily, monthly, yearly, basicCharge\n\n**ℹ️ info/** - meterReading, currentPrice, lastSync, sensorActive\n\n**📈 statistics/** - averageDaily, averageMonthly",
+                    "sm": 12
+                },
+                "_divider4": {
+                    "type": "divider"
+                },
+                "_supportHeader": {
+                    "type": "header",
+                    "text": "Support & Links",
+                    "size": 4
+                },
+                "_links": {
+                    "type": "staticText",
+                    "text": "📖 [GitHub Repository](https://github.com/fischi87/ioBroker.nebenkosten-monitor)\n\n🐛 [Issues melden](https://github.com/fischi87/ioBroker.nebenkosten-monitor/issues)\n\n📝 [Changelog](https://github.com/fischi87/ioBroker.nebenkosten-monitor#changelog)",
                     "sm": 12
                 }
             }
