@@ -110,7 +110,9 @@ class NebenkostenMonitor extends utils.Adapter {
             let yearStartDate = new Date(new Date().getFullYear(), 0, 1);
 
             if (prices.length > 0) {
-                const sortedPrices = [...prices].sort((a, b) => new Date(a.validFrom) - new Date(b.validFrom));
+                const sortedPrices = [...prices].sort(
+                    (a, b) => new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime(),
+                );
                 yearStartDate = new Date(sortedPrices[0].validFrom);
             }
 
@@ -123,6 +125,40 @@ class NebenkostenMonitor extends utils.Adapter {
 
         // Initial cost calculation (wichtig! Sonst bleiben Kosten bei 0)
         await this.updateCosts(type);
+
+        // Initialize yearly consumption from initial reading if set
+        const initialReadingKey = `${type}InitialReading`;
+        const initialReading = this.config[initialReadingKey] || 0;
+
+        if (initialReading > 0) {
+            const sensorState = await this.getForeignStateAsync(sensorDP);
+            if (sensorState && typeof sensorState.val === 'number') {
+                let current = sensorState.val;
+
+                // For gas: convert m³ to kWh first
+                if (type === 'gas') {
+                    const brennwert = this.config.gasBrennwert || 11.5;
+                    const zZahl = this.config.gasZahl || 0.95;
+                    current = calculator.convertGasM3ToKWh(current, brennwert, zZahl);
+                }
+
+                // Apply offset if configured
+                const offsetKey = `${type}Offset`;
+                const offset = this.config[offsetKey] || 0;
+                if (offset !== 0) {
+                    current = current + offset;
+                }
+
+                // Calculate yearly consumption: Current - Initial
+                const yearlyFromInitial = Math.max(0, current - initialReading);
+                await this.setStateAsync(`${type}.consumption.yearly`, yearlyFromInitial, true);
+                await this.updateCosts(type); // Recalculate costs with yearly value
+                this.log.info(
+                    `Init yearly ${type}: ${yearlyFromInitial.toFixed(2)} (current: ${current.toFixed(2)}, initial: ${initialReading})`,
+                );
+            }
+        }
+
         this.log.debug(`Initial cost calculation completed for ${type}`);
     }
 

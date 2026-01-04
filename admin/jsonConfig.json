@@ -126,6 +126,8 @@
                     "items": [
                         {
                             "type": "datePicker",
+                            "format": "DD.MM.YYYY",
+                            "returnAsNumber": false,
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%"
@@ -267,6 +269,8 @@
                     "items": [
                         {
                             "type": "datePicker",
+                            "format": "DD.MM.YYYY",
+                            "returnAsNumber": false,
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%"
@@ -408,6 +412,8 @@
                     "items": [
                         {
                             "type": "datePicker",
+                            "format": "DD.MM.YYYY",
+                            "returnAsNumber": false,
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%"
