@@ -104,11 +104,26 @@ class NebenkostenMonitor extends utils.Adapter {
 
         const yearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
         if (!yearStart || !yearStart.val) {
-            await this.setStateAsync(`${type}.statistics.lastYearStart`, now, true);
+            // Use earliest price date as year start
+            const pricesKey = `${type}Preise`;
+            const prices = this.config[pricesKey] || [];
+            let yearStartDate = new Date(new Date().getFullYear(), 0, 1);
+
+            if (prices.length > 0) {
+                const sortedPrices = [...prices].sort((a, b) => new Date(a.validFrom) - new Date(b.validFrom));
+                yearStartDate = new Date(sortedPrices[0].validFrom);
+            }
+
+            await this.setStateAsync(`${type}.statistics.lastYearStart`, yearStartDate.getTime(), true);
+            this.log.info(`Year start for ${type} set to ${yearStartDate.toISOString().split('T')[0]}`);
         }
 
         // Update current price
         await this.updateCurrentPrice(type);
+
+        // Initial cost calculation (wichtig! Sonst bleiben Kosten bei 0)
+        await this.updateCosts(type);
+        this.log.debug(`Initial cost calculation completed for ${type}`);
     }
 
     /**
@@ -144,6 +159,14 @@ class NebenkostenMonitor extends utils.Adapter {
             this.log.debug(
                 `Gas conversion: ${value} m³ → ${consumption} kWh (Brennwert: ${brennwert}, Z-Zahl: ${zZahl})`,
             );
+        }
+
+        // Apply offset if configured
+        const offsetKey = `${type}Offset`;
+        const offset = this.config[offsetKey] || 0;
+        if (offset !== 0) {
+            consumption = consumption + offset;
+            this.log.debug(`Applied offset for ${type}: ${offset}, new value: ${consumption}`);
         }
 
         // Update meter reading (in kWh for gas, m³ for water, kWh for electricity)

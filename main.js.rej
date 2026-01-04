@@ -1,0 +1,21 @@
+***************
+*** 170,172
+- LICENSEconst yearlyConsumption = await this.getStateAsync(`${type}.consumption.yearly`);
+- LICENSEconst newYearly = (typeof yearlyConsumption?.val === 'number' ? yearlyConsumption.val : 0) + delta;
+- LICENSEawait this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(newYearly, 2), true);
+--- 170,184 -----
++ LICENSE// Update yearly consumption
++ LICENSE// If initial reading is set, calculate from initial, otherwise use delta accumulation
++ LICENSEconst initialReadingKey = `${type}InitialReading`;
++ LICENSEconst initialReading = this.config[initialReadingKey] || 0;
++ LICENSE
++ LICENSEif (initialReading > 0) {
++ README.md// Calculate yearly as: Current - Initial
++ README.mdconst yearlyFromInitial = Math.max(0, consumption - initialReading);
++ README.mdawait this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(yearlyFromInitial, 2), true);
++ README.mdthis.log.debug(`Yearly ${type} calculated from initial: ${yearlyFromInitial} (current: ${consumption}, initial: ${initialReading})`);
++ LICENSE} else {
++ README.md// Fallback: Accumulate deltas
++ README.mdconst yearlyConsumption = await this.getStateAsync(`${type}.consumption.yearly`);
++ README.mdconst newYearly = (typeof yearlyConsumption?.val === 'number' ? yearlyConsumption.val : 0) + delta;
++ README.mdawait this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(newYearly, 2), true);
