@@ -149,7 +149,9 @@ class NebenkostenMonitor extends utils.Adapter {
                 if (type === 'gas') {
                     const brennwert = this.config.gasBrennwert || 11.5;
                     const zZahl = this.config.gasZahl || 0.95;
+                    const yearlyVolume = yearlyConsumption; // Save m³ value before conversion
                     yearlyConsumption = calculator.convertGasM3ToKWh(yearlyConsumption, brennwert, zZahl);
+                    await this.setStateAsync(`${type}.consumption.yearlyVolume`, yearlyVolume, true);
                     this.log.info(
                         `Init yearly ${type}: ${yearlyConsumption.toFixed(2)} kWh = ${(currentRaw - initialReading).toFixed(2)} m³ (current: ${currentRaw.toFixed(2)} m³, initial: ${initialReading} m³)`,
                     );
@@ -218,6 +220,43 @@ class NebenkostenMonitor extends utils.Adapter {
         if (lastValue !== undefined && consumption > lastValue) {
             const delta = consumption - lastValue;
             this.log.debug(`${type} delta: ${delta}`);
+
+            // For gas: track volume (m³) in parallel to energy (kWh)
+            if (type === 'gas') {
+                // delta is already in kWh, convert back to m³ for volume tracking
+                const brennwert = this.config.gasBrennwert || 11.5;
+                const zZahl = this.config.gasZahl || 0.95;
+                const deltaVolume = delta / (brennwert * zZahl);
+
+                const dailyVolume = await this.getStateAsync(`${type}.consumption.dailyVolume`);
+                const monthlyVolume = await this.getStateAsync(`${type}.consumption.monthlyVolume`);
+                const yearlyVolume = await this.getStateAsync(`${type}.consumption.yearlyVolume`);
+
+                await this.setStateAsync(
+                    `${type}.consumption.dailyVolume`,
+                    calculator.roundToDecimals(
+                        (typeof dailyVolume?.val === 'number' ? dailyVolume.val : 0) + deltaVolume,
+                        3,
+                    ),
+                    true,
+                );
+                await this.setStateAsync(
+                    `${type}.consumption.monthlyVolume`,
+                    calculator.roundToDecimals(
+                        (typeof monthlyVolume?.val === 'number' ? monthlyVolume.val : 0) + deltaVolume,
+                        3,
+                    ),
+                    true,
+                );
+                await this.setStateAsync(
+                    `${type}.consumption.yearlyVolume`,
+                    calculator.roundToDecimals(
+                        (typeof yearlyVolume?.val === 'number' ? yearlyVolume.val : 0) + deltaVolume,
+                        3,
+                    ),
+                    true,
+                );
+            }
 
             // Update daily consumption
             const dailyConsumption = await this.getStateAsync(`${type}.consumption.daily`);
