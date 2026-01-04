@@ -133,29 +133,34 @@ class NebenkostenMonitor extends utils.Adapter {
         if (initialReading > 0) {
             const sensorState = await this.getForeignStateAsync(sensorDP);
             if (sensorState && typeof sensorState.val === 'number') {
-                let current = sensorState.val;
+                let currentRaw = sensorState.val;
 
-                // For gas: convert m³ to kWh first
-                if (type === 'gas') {
-                    const brennwert = this.config.gasBrennwert || 11.5;
-                    const zZahl = this.config.gasZahl || 0.95;
-                    current = calculator.convertGasM3ToKWh(current, brennwert, zZahl);
-                }
-
-                // Apply offset if configured
+                // Apply offset if configured (in original unit)
                 const offsetKey = `${type}Offset`;
                 const offset = this.config[offsetKey] || 0;
                 if (offset !== 0) {
-                    current = current + offset;
+                    currentRaw = currentRaw + offset;
                 }
 
-                // Calculate yearly consumption: Current - Initial
-                const yearlyFromInitial = Math.max(0, current - initialReading);
-                await this.setStateAsync(`${type}.consumption.yearly`, yearlyFromInitial, true);
+                // Calculate yearly consumption IN ORIGINAL UNIT first
+                let yearlyConsumption = Math.max(0, currentRaw - initialReading);
+
+                // For gas: convert m³ to kWh AFTER calculating the difference
+                if (type === 'gas') {
+                    const brennwert = this.config.gasBrennwert || 11.5;
+                    const zZahl = this.config.gasZahl || 0.95;
+                    yearlyConsumption = calculator.convertGasM3ToKWh(yearlyConsumption, brennwert, zZahl);
+                    this.log.info(
+                        `Init yearly ${type}: ${yearlyConsumption.toFixed(2)} kWh = ${(currentRaw - initialReading).toFixed(2)} m³ (current: ${currentRaw.toFixed(2)} m³, initial: ${initialReading} m³)`,
+                    );
+                } else {
+                    this.log.info(
+                        `Init yearly ${type}: ${yearlyConsumption.toFixed(2)} (current: ${currentRaw.toFixed(2)}, initial: ${initialReading})`,
+                    );
+                }
+
+                await this.setStateAsync(`${type}.consumption.yearly`, yearlyConsumption, true);
                 await this.updateCosts(type); // Recalculate costs with yearly value
-                this.log.info(
-                    `Init yearly ${type}: ${yearlyFromInitial.toFixed(2)} (current: ${current.toFixed(2)}, initial: ${initialReading})`,
-                );
             }
         }
 
