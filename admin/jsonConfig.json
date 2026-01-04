@@ -126,8 +126,7 @@
                     "items": [
                         {
                             "type": "datePicker",
-                            "format": "DD.MM.YYYY",
-                            "returnAsNumber": false,
+                            "format": "YYYY-MM-DD",
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%"
@@ -269,8 +268,7 @@
                     "items": [
                         {
                             "type": "datePicker",
-                            "format": "DD.MM.YYYY",
-                            "returnAsNumber": false,
+                            "format": "YYYY-MM-DD",
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%"
@@ -412,8 +410,7 @@
                     "items": [
                         {
                             "type": "datePicker",
-                            "format": "DD.MM.YYYY",
-                            "returnAsNumber": false,
+                            "format": "YYYY-MM-DD",
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%"
