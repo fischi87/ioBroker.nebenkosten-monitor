@@ -65,7 +65,7 @@
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
+                    "step": 0.001
                 },
                 "_gasConversionHeader": {
                     "type": "header",
@@ -128,7 +128,7 @@
                             "type": "datePicker",
                             "attr": "validFrom",
                             "label": "Gültig ab",
-                            "width": "30%",
+                            "width": "30%"
                         },
                         {
                             "type": "number",
@@ -136,7 +136,7 @@
                             "label": "Preis (€/kWh)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.001,
+                            "step": 0.001
                         },
                         {
                             "type": "number",
@@ -144,7 +144,7 @@
                             "label": "Grundgebühr (€/Monat)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.01,
+                            "step": 0.01
                         }
                     ]
                 },
@@ -173,7 +173,7 @@
                     "sm": 12,
                     "md": 6,
                     "min": 0,
-                    "step": 0.01,
+                    "step": 0.01
                 }
             }
         },
@@ -240,7 +240,7 @@
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
+                    "step": 0.001
                 },
                 "_wasserPreisHeader": {
                     "type": "header",
@@ -269,7 +269,7 @@
                             "type": "datePicker",
                             "attr": "validFrom",
                             "label": "Gültig ab",
-                            "width": "30%",
+                            "width": "30%"
                         },
                         {
                             "type": "number",
@@ -277,7 +277,7 @@
                             "label": "Preis (€/m³)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.001,
+                            "step": 0.001
                         },
                         {
                             "type": "number",
@@ -285,7 +285,7 @@
                             "label": "Grundgebühr (€/Monat)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.01,
+                            "step": 0.01
                         }
                     ]
                 },
@@ -314,7 +314,7 @@
                     "sm": 12,
                     "md": 6,
                     "min": 0,
-                    "step": 0.01,
+                    "step": 0.01
                 }
             }
         },
@@ -381,7 +381,7 @@
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
+                    "step": 0.001
                 },
                 "_stromPreisHeader": {
                     "type": "header",
@@ -410,7 +410,7 @@
                             "type": "datePicker",
                             "attr": "validFrom",
                             "label": "Gültig ab",
-                            "width": "30%",
+                            "width": "30%"
                         },
                         {
                             "type": "number",
@@ -418,7 +418,7 @@
                             "label": "Preis (€/kWh)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.001,
+                            "step": 0.001
                         },
                         {
                             "type": "number",
@@ -426,7 +426,7 @@
                             "label": "Grundgebühr (€/Monat)",
                             "width": "35%",
                             "min": 0,
-                            "step": 0.01,
+                            "step": 0.01
                         }
                     ]
                 },
@@ -455,7 +455,7 @@
                     "sm": 12,
                     "md": 6,
                     "min": 0,
-                    "step": 0.01,
+                    "step": 0.01
                 }
             }
         },
