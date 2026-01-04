@@ -25,11 +25,31 @@
                     "size": 5,
                     "hidden": "!data.gasAktiv"
                 },
+                "_gasSensorHelp": {
+                    "type": "staticText",
+                    "text": "Wähle deinen Gaszähler-Sensor aus der Liste oder gib die ID manuell ein.",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
+                },
                 "gasSensorDP": {
                     "type": "selectID",
-                    "label": "🔍 Gaszähler-Sensor auswählen (m³)",
+                    "label": "Datenpunkt auswählen (m³)",
                     "hidden": "!data.gasAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6
+                },
+                "gasSensorDPManual": {
+                    "type": "text",
+                    "label": "Oder ID manuell eingeben",
+                    "placeholder": "z.B. shelly.0.SHELLY1PM-ABC123.Meter.CounterTotal",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12,
+                    "md": 6
                 },
                 "_gasMeterHeader": {
                     "type": "header",
@@ -130,34 +150,6 @@
                             "default": 8.99
                         }
                     ]
-                },
-                "_gasAbschlagHeader": {
-                    "type": "header",
-                    "text": "💳 Abschlag (Monatliche Vorauszahlung)",
-                    "size": 4,
-                    "hidden": "!data.gasAktiv"
-                },
-                "_gasAbschlagHelp": {
-                    "type": "staticText",
-                    "text": "Trage deinen monatlichen Abschlag ein. Der Adapter berechnet dann, ob du über oder unter deinem Verbrauch liegst.",
-                    "hidden": "!data.gasAktiv",
-                    "sm": 12,
-                    "style": {
-                        "fontSize": "0.9em",
-                        "color": "#666",
-                        "marginBottom": "10px"
-                    }
-                },
-                "gasAbschlag": {
-                    "type": "number",
-                    "label": "Monatlicher Abschlag (€)",
-                    "placeholder": "z.B. 85.00",
-                    "hidden": "!data.gasAktiv",
-                    "sm": 12,
-                    "md": 6,
-                    "min": 0,
-                    "step": 0.01,
-                    "default": 0
                 }
             }
         },
@@ -184,11 +176,31 @@
                     "size": 5,
                     "hidden": "!data.wasserAktiv"
                 },
+                "_wasserSensorHelp": {
+                    "type": "staticText",
+                    "text": "Wähle deinen Wasserzähler-Sensor aus der Liste oder gib die ID manuell ein.",
+                    "hidden": "!data.wasserAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
+                },
                 "wasserSensorDP": {
                     "type": "selectID",
-                    "label": "🔍 Wasserzähler-Sensor auswählen (m³)",
+                    "label": "Datenpunkt auswählen (m³)",
                     "hidden": "!data.wasserAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6
+                },
+                "wasserSensorDPManual": {
+                    "type": "text",
+                    "label": "Oder ID manuell eingeben",
+                    "placeholder": "z.B. homematic.0.NEQ1234567.SENSOR.LEVEL",
+                    "hidden": "!data.wasserAktiv",
+                    "sm": 12,
+                    "md": 6
                 },
                 "_wasserMeterHeader": {
                     "type": "header",
@@ -255,34 +267,6 @@
                             "default": 5.0
                         }
                     ]
-                },
-                "_wasserAbschlagHeader": {
-                    "type": "header",
-                    "text": "💳 Abschlag (Monatliche Vorauszahlung)",
-                    "size": 4,
-                    "hidden": "!data.wasserAktiv"
-                },
-                "_wasserAbschlagHelp": {
-                    "type": "staticText",
-                    "text": "Trage deinen monatlichen Abschlag ein. Der Adapter berechnet dann, ob du über oder unter deinem Verbrauch liegst.",
-                    "hidden": "!data.wasserAktiv",
-                    "sm": 12,
-                    "style": {
-                        "fontSize": "0.9em",
-                        "color": "#666",
-                        "marginBottom": "10px"
-                    }
-                },
-                "wasserAbschlag": {
-                    "type": "number",
-                    "label": "Monatlicher Abschlag (€)",
-                    "placeholder": "z.B. 25.00",
-                    "hidden": "!data.wasserAktiv",
-                    "sm": 12,
-                    "md": 6,
-                    "min": 0,
-                    "step": 0.01,
-                    "default": 0
                 }
             }
         },
@@ -309,11 +293,31 @@
                     "size": 5,
                     "hidden": "!data.stromAktiv"
                 },
+                "_stromSensorHelp": {
+                    "type": "staticText",
+                    "text": "Wähle deinen Stromzähler-Sensor aus der Liste oder gib die ID manuell ein.",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
+                },
                 "stromSensorDP": {
                     "type": "selectID",
-                    "label": "🔍 Stromzähler-Sensor auswählen (kWh)",
+                    "label": "Datenpunkt auswählen (kWh)",
                     "hidden": "!data.stromAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "md": 6
+                },
+                "stromSensorDPManual": {
+                    "type": "text",
+                    "label": "Oder ID manuell eingeben",
+                    "placeholder": "z.B. shelly.0.SHELLY3EM.Total.Energy",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12,
+                    "md": 6
                 },
                 "_stromMeterHeader": {
                     "type": "header",
@@ -380,34 +384,6 @@
                             "default": 12.0
                         }
                     ]
-                },
-                "_stromAbschlagHeader": {
-                    "type": "header",
-                    "text": "💳 Abschlag (Monatliche Vorauszahlung)",
-                    "size": 4,
-                    "hidden": "!data.stromAktiv"
-                },
-                "_stromAbschlagHelp": {
-                    "type": "staticText",
-                    "text": "Trage deinen monatlichen Abschlag ein. Der Adapter berechnet dann, ob du über oder unter deinem Verbrauch liegst.",
-                    "hidden": "!data.stromAktiv",
-                    "sm": 12,
-                    "style": {
-                        "fontSize": "0.9em",
-                        "color": "#666",
-                        "marginBottom": "10px"
-                    }
-                },
-                "stromAbschlag": {
-                    "type": "number",
-                    "label": "Monatlicher Abschlag (€)",
-                    "placeholder": "z.B. 65.00",
-                    "hidden": "!data.stromAktiv",
-                    "sm": 12,
-                    "md": 6,
-                    "min": 0,
-                    "step": 0.01,
-                    "default": 0
                 }
             }
         },
@@ -435,7 +411,7 @@
                 },
                 "_features": {
                     "type": "staticText",
-                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Automatische Kostenberechnung** - Mit Preishistorie\n\n✅ **Abschlag-Tracking** - Bezahlt vs. Verbraucht\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Statistiken** - Täglich, monatlich, jährlich\n\n✅ **Automatische Resets** - Um Mitternacht/Monatsbeginn",
+                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Automatische Kostenberechnung** - Mit Preishistorie\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Statistiken** - Täglich, monatlich, jährlich\n\n✅ **Automatische Resets** - Um Mitternacht/Monatsbeginn",
                     "sm": 12
                 },
                 "_divider2": {
@@ -448,7 +424,7 @@
                 },
                 "_usage": {
                     "type": "staticText",
-                    "text": "**1. Sensor konfigurieren**\n- Klicke auf das 🔍 Feld um den Objekt-Browser zu öffnen\n- Wähle deinen Sensor aus\n- Trage den aktuellen Zählerstand ein\n\n**2. Abschlag eintragen**\n- Trage deinen monatlichen Abschlag ein\n- Der Adapter zeigt dir dann: Bezahlt vs. Verbraucht\n\n**3. Preise hinzufügen**\n- Klicke auf **+** um einen Preis hinzuzufügen\n- Gültigkeitsdatum in der Vergangenheit = sofort aktiv\n- Mehrere Preise = Preishistorie",
+                    "text": "**1. Sensor konfigurieren**\n- Wähle deinen Datenpunkt oder gib die ID manuell ein\n- Trage den aktuellen Zählerstand ein\n\n**2. Umrechnung (nur Gas)**\n- Brennwert & Z-Zahl findest du auf deiner Gasrechnung\n- Typische Werte: Brennwert 10-12, Z-Zahl 0.90-1.00\n\n**3. Preise hinzufügen**\n- Klicke auf **+** um einen Preis hinzuzufügen\n- Gültigkeitsdatum in der Vergangenheit = sofort aktiv\n- Mehrere Preise = Preishistorie",
                     "sm": 12
                 },
                 "_divider3": {
@@ -461,7 +437,7 @@
                 },
                 "_statesInfo": {
                     "type": "staticText",
-                    "text": "Der Adapter erstellt für jede aktivierte Verbrauchsart:\n\n**📊 consumption/** - current, daily, monthly, yearly\n\n**💰 costs/** - total, daily, monthly, yearly, basicCharge, **paidTotal, balance**\n\n**ℹ️ info/** - meterReading, currentPrice, lastSync, sensorActive\n\n**📈 statistics/** - averageDaily, averageMonthly",
+                    "text": "Der Adapter erstellt für jede aktivierte Verbrauchsart:\n\n**📊 consumption/** - current, daily, monthly, yearly\n\n**💰 costs/** - total, daily, monthly, yearly, basicCharge\n\n**ℹ️ info/** - meterReading, currentPrice, lastSync, sensorActive\n\n**📈 statistics/** - averageDaily, averageMonthly",
                     "sm": 12
                 },
                 "_divider4": {

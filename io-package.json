@@ -78,21 +78,21 @@
     "native": {
         "gasAktiv": false,
         "gasSensorDP": "",
-        "gasSensorDPManual": "",
         "gasZaehlerstandEcht": 0,
         "gasBrennwert": 11.5,
         "gasZahl": 0.95,
         "gasPreise": [],
+        "gasAbschlag": 0,
         "wasserAktiv": false,
         "wasserSensorDP": "",
-        "wasserSensorDPManual": "",
         "wasserZaehlerstandEcht": 0,
         "wasserPreise": [],
+        "wasserAbschlag": 0,
         "stromAktiv": false,
         "stromSensorDP": "",
-        "stromSensorDPManual": "",
         "stromZaehlerstandEcht": 0,
-        "stromPreise": []
+        "stromPreise": [],
+        "stromAbschlag": 0
     },
     "objects": [],
     "instanceObjects": []

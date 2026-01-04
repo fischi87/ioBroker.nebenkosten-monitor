@@ -64,10 +64,8 @@ class NebenkostenMonitor extends utils.Adapter {
         await stateManager.createUtilityStateStructure(this, type);
 
         // Get sensor datapoint from config
-        // Priority: Manual input > selectID
         const sensorDPKey = `${type}SensorDP`;
-        const sensorDPManualKey = `${type}SensorDPManual`;
-        const sensorDP = this.config[sensorDPManualKey] || this.config[sensorDPKey];
+        const sensorDP = this.config[sensorDPKey];
 
         if (!sensorDP) {
             this.log.warn(`${type} is active but no sensor datapoint configured!`);
@@ -224,6 +222,28 @@ class NebenkostenMonitor extends utils.Adapter {
         // Total costs = consumption costs + basic charge (yearly)
         const totalCost = yearlyCost + basicCharge * 12; // Yearly total
         await this.setStateAsync(`${type}.costs.total`, calculator.roundToDecimals(totalCost, 2), true);
+
+        // Abschlag Calculation
+        const abschlagKey = `${type}Abschlag`;
+        const monthlyAbschlag = this.config[abschlagKey] || 0;
+
+        if (monthlyAbschlag > 0) {
+            const yearStartState = await this.getStateAsync(`${type}.statistics.lastYearStart`);
+            const yearStartTime = typeof yearStartState?.val === 'number' ? yearStartState.val : Date.now();
+            const monthsSinceYear = Math.max(1, Math.ceil((Date.now() - yearStartTime) / (1000 * 60 * 60 * 24 * 30)));
+
+            const paidTotal = monthlyAbschlag * monthsSinceYear;
+            const consumedCostSoFar = yearlyCost + basicCharge * monthsSinceYear;
+            const balance = paidTotal - consumedCostSoFar;
+
+            await this.setStateAsync(`${type}.costs.paidTotal`, calculator.roundToDecimals(paidTotal, 2), true);
+            await this.setStateAsync(`${type}.costs.balance`, calculator.roundToDecimals(balance, 2), true);
+
+            this.log.debug(`Abschlag ${type}: Paid=${paidTotal}€, Balance=${balance}€`);
+        } else {
+            await this.setStateAsync(`${type}.costs.paidTotal`, 0, true);
+            await this.setStateAsync(`${type}.costs.balance`, 0, true);
+        }
 
         this.log.debug(
             `Updated costs for ${type}: daily=${dailyCost}€, monthly=${monthlyCost}€, yearly=${yearlyCost}€`,
