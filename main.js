@@ -104,7 +104,18 @@ class NebenkostenMonitor extends utils.Adapter {
 
         const yearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
         if (!yearStart || !yearStart.val) {
-            await this.setStateAsync(`${type}.statistics.lastYearStart`, now, true);
+            // Use earliest price date as year start
+            const pricesKey = `${type}Preise`;
+            const prices = this.config[pricesKey] || [];
+            let yearStartDate = new Date(new Date().getFullYear(), 0, 1);
+
+            if (prices.length > 0) {
+                const sortedPrices = [...prices].sort((a, b) => new Date(a.validFrom) - new Date(b.validFrom));
+                yearStartDate = new Date(sortedPrices[0].validFrom);
+            }
+
+            await this.setStateAsync(`${type}.statistics.lastYearStart`, yearStartDate.getTime(), true);
+            this.log.info(`Year start for ${type} set to ${yearStartDate.toISOString().split('T')[0]}`);
         }
 
         // Update current price
