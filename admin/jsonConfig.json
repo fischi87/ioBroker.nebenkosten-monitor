@@ -66,7 +66,6 @@
                     "sm": 12,
                     "md": 6,
                     "step": 0.001,
-                    "default": 0
                 },
                 "_gasConversionHeader": {
                     "type": "header",
@@ -130,7 +129,6 @@
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%",
-                            "default": "new Date().toISOString().split('T')[0]"
                         },
                         {
                             "type": "number",
@@ -139,7 +137,6 @@
                             "width": "35%",
                             "min": 0,
                             "step": 0.001,
-                            "default": 0.12
                         },
                         {
                             "type": "number",
@@ -148,7 +145,6 @@
                             "width": "35%",
                             "min": 0,
                             "step": 0.01,
-                            "default": 8.99
                         }
                     ]
                 },
@@ -178,7 +174,6 @@
                     "md": 6,
                     "min": 0,
                     "step": 0.01,
-                    "default": 0
                 }
             }
         },
@@ -246,7 +241,6 @@
                     "sm": 12,
                     "md": 6,
                     "step": 0.001,
-                    "default": 0
                 },
                 "_wasserPreisHeader": {
                     "type": "header",
@@ -276,7 +270,6 @@
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%",
-                            "default": "new Date().toISOString().split('T')[0]"
                         },
                         {
                             "type": "number",
@@ -285,7 +278,6 @@
                             "width": "35%",
                             "min": 0,
                             "step": 0.001,
-                            "default": 2.5
                         },
                         {
                             "type": "number",
@@ -294,7 +286,6 @@
                             "width": "35%",
                             "min": 0,
                             "step": 0.01,
-                            "default": 5.0
                         }
                     ]
                 },
@@ -324,7 +315,6 @@
                     "md": 6,
                     "min": 0,
                     "step": 0.01,
-                    "default": 0
                 }
             }
         },
@@ -392,7 +382,6 @@
                     "sm": 12,
                     "md": 6,
                     "step": 0.001,
-                    "default": 0
                 },
                 "_stromPreisHeader": {
                     "type": "header",
@@ -422,7 +411,6 @@
                             "attr": "validFrom",
                             "label": "Gültig ab",
                             "width": "30%",
-                            "default": "new Date().toISOString().split('T')[0]"
                         },
                         {
                             "type": "number",
@@ -431,7 +419,6 @@
                             "width": "35%",
                             "min": 0,
                             "step": 0.001,
-                            "default": 0.3
                         },
                         {
                             "type": "number",
@@ -440,7 +427,6 @@
                             "width": "35%",
                             "min": 0,
                             "step": 0.01,
-                            "default": 12.0
                         }
                     ]
                 },
@@ -470,7 +456,6 @@
                     "md": 6,
                     "min": 0,
                     "step": 0.01,
-                    "default": 0
                 }
             }
         },
