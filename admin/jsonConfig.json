@@ -125,9 +125,10 @@
                     "sm": 12,
                     "items": [
                         {
-                            "type": "datePicker",
+                            "type": "text",
                             "attr": "validFrom",
-                            "label": "Gültig ab",
+                            "label": "Gültig ab (YYYY-MM-DD)",
+                            "placeholder": "2026-01-01",
                             "width": "30%"
                         },
                         {
@@ -266,9 +267,10 @@
                     "sm": 12,
                     "items": [
                         {
-                            "type": "datePicker",
+                            "type": "text",
                             "attr": "validFrom",
-                            "label": "Gültig ab",
+                            "label": "Gültig ab (YYYY-MM-DD)",
+                            "placeholder": "2026-01-01",
                             "width": "30%"
                         },
                         {
@@ -407,9 +409,10 @@
                     "sm": 12,
                     "items": [
                         {
-                            "type": "datePicker",
+                            "type": "text",
                             "attr": "validFrom",
-                            "label": "Gültig ab",
+                            "label": "Gültig ab (YYYY-MM-DD)",
+                            "placeholder": "2026-01-01",
                             "width": "30%"
                         },
                         {
