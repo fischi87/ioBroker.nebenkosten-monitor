@@ -105,7 +105,7 @@
                     "sm": 12,
                     "items": [
                         {
-                            "type": "date",
+                            "type": "datePicker",
                             "attr": "validFrom",
                             "title": "Gültig ab",
                             "width": "30%",
@@ -230,7 +230,7 @@
                     "sm": 12,
                     "items": [
                         {
-                            "type": "date",
+                            "type": "datePicker",
                             "attr": "validFrom",
                             "title": "Gültig ab",
                             "width": "30%",
@@ -355,7 +355,7 @@
                     "sm": 12,
                     "items": [
                         {
-                            "type": "date",
+                            "type": "datePicker",
                             "attr": "validFrom",
                             "title": "Gültig ab",
                             "width": "30%",
