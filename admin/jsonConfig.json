@@ -33,18 +33,28 @@
                 },
                 "_gasMeterHeader": {
                     "type": "header",
-                    "text": "Zählerstand",
+                    "text": "Offset (Optional)",
                     "size": 5,
                     "hidden": "!data.gasAktiv"
                 },
-                "gasZaehlerstandEcht": {
+                "_gasOffsetHelp": {
+                    "type": "staticText",
+                    "text": "Nur nötig wenn Sensor nicht mit physischem Zähler übereinstimmt. Offset = Physischer Wert - Sensor Wert",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
+                },
+                "gasOffset": {
                     "type": "number",
-                    "label": "Aktueller Zählerstand am Gerät (m³)",
-                    "placeholder": "z.B. 12345.67",
+                    "label": "Offset (m³)",
+                    "placeholder": "z.B. 1234.5 (optional)",
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
                     "step": 0.001
                 },
                 "_gasConversionHeader": {
@@ -192,18 +202,28 @@
                 },
                 "_wasserMeterHeader": {
                     "type": "header",
-                    "text": "Zählerstand",
+                    "text": "Offset (Optional)",
                     "size": 5,
                     "hidden": "!data.wasserAktiv"
                 },
-                "wasserZaehlerstandEcht": {
+                "_wasserOffsetHelp": {
+                    "type": "staticText",
+                    "text": "Nur nötig wenn Sensor nicht mit physischem Zähler übereinstimmt. Offset = Physischer Wert - Sensor Wert",
+                    "hidden": "!data.wasserAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
+                },
+                "wasserOffset": {
                     "type": "number",
-                    "label": "Aktueller Zählerstand am Gerät (m³)",
-                    "placeholder": "z.B. 543.21",
+                    "label": "Offset (m³)",
+                    "placeholder": "z.B. 543.2 (optional)",
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
                     "step": 0.001
                 },
                 "_wasserPreisHeader": {
@@ -317,18 +337,28 @@
                 },
                 "_stromMeterHeader": {
                     "type": "header",
-                    "text": "Zählerstand",
+                    "text": "Offset (Optional)",
                     "size": 5,
                     "hidden": "!data.stromAktiv"
                 },
-                "stromZaehlerstandEcht": {
+                "_stromOffsetHelp": {
+                    "type": "staticText",
+                    "text": "Nur nötig wenn Sensor nicht mit physischem Zähler übereinstimmt. Offset = Physischer Wert - Sensor Wert",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    }
+                },
+                "stromOffset": {
                     "type": "number",
-                    "label": "Aktueller Zählerstand am Gerät (kWh)",
-                    "placeholder": "z.B. 45678.9",
+                    "label": "Offset (kWh)",
+                    "placeholder": "z.B. 45555 (optional)",
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
                     "step": 0.001
                 },
                 "_stromPreisHeader": {
