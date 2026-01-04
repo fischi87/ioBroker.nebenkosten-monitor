@@ -109,10 +109,6 @@ class NebenkostenMonitor extends utils.Adapter {
 
         // Update current price
         await this.updateCurrentPrice(type);
-
-        // Initial cost calculation (wichtig! Sonst bleiben Kosten bei 0)
-        await this.updateCosts(type);
-        this.log.debug(`Initial cost calculation completed for ${type}`);
     }
 
     /**
@@ -148,14 +144,6 @@ class NebenkostenMonitor extends utils.Adapter {
             this.log.debug(
                 `Gas conversion: ${value} m³ → ${consumption} kWh (Brennwert: ${brennwert}, Z-Zahl: ${zZahl})`,
             );
-        }
-
-        // Apply offset if configured
-        const offsetKey = `${type}Offset`;
-        const offset = this.config[offsetKey] || 0;
-        if (offset !== 0) {
-            consumption = consumption + offset;
-            this.log.debug(`Applied offset for ${type}: ${offset}, new value: ${consumption}`);
         }
 
         // Update meter reading (in kWh for gas, m³ for water, kWh for electricity)
