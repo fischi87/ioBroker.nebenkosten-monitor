@@ -189,27 +189,9 @@ class NebenkostenMonitor extends utils.Adapter {
             await this.setStateAsync(`${type}.consumption.monthly`, calculator.roundToDecimals(newMonthly, 2), true);
 
             // Update yearly consumption
-            // If initial reading is set, calculate from initial, otherwise use delta accumulation
-            const initialReadingKey = `${type}InitialReading`;
-            const initialReading = this.config[initialReadingKey] || 0;
-
-            if (initialReading > 0) {
-                // Calculate yearly as: Current - Initial
-                const yearlyFromInitial = Math.max(0, consumption - initialReading);
-                await this.setStateAsync(
-                    `${type}.consumption.yearly`,
-                    calculator.roundToDecimals(yearlyFromInitial, 2),
-                    true,
-                );
-                this.log.debug(
-                    `Yearly ${type} from initial: ${yearlyFromInitial} (current: ${consumption}, initial: ${initialReading})`,
-                );
-            } else {
-                // Fallback: Accumulate deltas
-                const yearlyConsumption = await this.getStateAsync(`${type}.consumption.yearly`);
-                const newYearly = (typeof yearlyConsumption?.val === 'number' ? yearlyConsumption.val : 0) + delta;
-                await this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(newYearly, 2), true);
-            }
+            const yearlyConsumption = await this.getStateAsync(`${type}.consumption.yearly`);
+            const newYearly = (typeof yearlyConsumption?.val === 'number' ? yearlyConsumption.val : 0) + delta;
+            await this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(newYearly, 2), true);
 
             // Recalculate costs
             await this.updateCosts(type);
