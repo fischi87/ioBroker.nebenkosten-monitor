@@ -537,8 +537,8 @@ class NebenkostenMonitor extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state - State object
      */
     async onStateChange(id, state) {
-        if (!state || state.ack === true) {
-            // We only care about sensor updates from foreign adapters
+        if (!state || state.val === null || state.val === undefined) {
+            // Ignore deleted or empty states
             return;
         }
 
