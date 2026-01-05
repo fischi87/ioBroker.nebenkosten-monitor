@@ -348,13 +348,14 @@ class NebenkostenMonitor extends utils.Adapter {
         const currentPrice = calculator.getCurrentPrice(priceHistory);
         const basicChargeMonthly = currentPrice?.basicCharge || 0;
 
-        // Calculate elapsed months since year start
+        // Calculate elapsed months since year start (accurate year/month difference)
         const yearStartState = await this.getStateAsync(`${type}.statistics.lastYearStart`);
         const yearStartTime = typeof yearStartState?.val === 'number' ? yearStartState.val : Date.now();
-        const monthsSinceYearStart = Math.max(
-            1,
-            Math.ceil((Date.now() - yearStartTime) / (30.44 * 24 * 60 * 60 * 1000)),
-        );
+        const yearStart = new Date(yearStartTime);
+        const now = new Date();
+        const yDiff = now.getFullYear() - yearStart.getFullYear();
+        const mDiff = now.getMonth() - yearStart.getMonth();
+        const monthsSinceYearStart = Math.max(1, yDiff * 12 + mDiff + 1); // +1 to include start month
 
         // Basic charge accumulated = monthly × elapsed months
         const basicChargeAccumulated = basicChargeMonthly * monthsSinceYearStart;
@@ -384,7 +385,8 @@ class NebenkostenMonitor extends utils.Adapter {
 
             const paidTotal = monthlyAbschlag * monthsSinceYear;
             const consumedCostSoFar = yearlyCost + basicChargeMonthly * monthsSinceYear;
-            const balance = paidTotal - consumedCostSoFar;
+            // Balance: negative = credit (you get money back), positive = additional payment needed
+            const balance = consumedCostSoFar - paidTotal;
 
             await this.setStateAsync(`${type}.costs.paidTotal`, calculator.roundToDecimals(paidTotal, 2), true);
             await this.setStateAsync(`${type}.costs.balance`, calculator.roundToDecimals(balance, 2), true);
