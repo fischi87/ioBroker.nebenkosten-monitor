@@ -344,18 +344,33 @@ class NebenkostenMonitor extends utils.Adapter {
         const monthlyCost = calculator.calculateCost(monthly, priceHistory);
         const yearlyCost = calculator.calculateCost(yearly, priceHistory);
 
-        // Get basic charge
+        // Get basic charge (monthly rate)
         const currentPrice = calculator.getCurrentPrice(priceHistory);
-        const basicCharge = currentPrice?.basicCharge || 0;
+        const basicChargeMonthly = currentPrice?.basicCharge || 0;
+
+        // Calculate elapsed months since year start
+        const yearStartState = await this.getStateAsync(`${type}.statistics.lastYearStart`);
+        const yearStartTime = typeof yearStartState?.val === 'number' ? yearStartState.val : Date.now();
+        const monthsSinceYearStart = Math.max(
+            1,
+            Math.ceil((Date.now() - yearStartTime) / (30.44 * 24 * 60 * 60 * 1000)),
+        );
+
+        // Basic charge accumulated = monthly × elapsed months
+        const basicChargeAccumulated = basicChargeMonthly * monthsSinceYearStart;
 
         // Update cost states
         await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyCost, 2), true);
         await this.setStateAsync(`${type}.costs.monthly`, calculator.roundToDecimals(monthlyCost, 2), true);
         await this.setStateAsync(`${type}.costs.yearly`, calculator.roundToDecimals(yearlyCost, 2), true);
-        await this.setStateAsync(`${type}.costs.basicCharge`, calculator.roundToDecimals(basicCharge, 2), true);
+        await this.setStateAsync(
+            `${type}.costs.basicCharge`,
+            calculator.roundToDecimals(basicChargeAccumulated, 2),
+            true,
+        );
 
-        // Total costs = consumption costs + basic charge (yearly)
-        const totalCost = yearlyCost + basicCharge * 12; // Yearly total
+        // Total costs = consumption costs + accumulated basic charge (not full year!)
+        const totalCost = yearlyCost + basicChargeAccumulated;
         await this.setStateAsync(`${type}.costs.total`, calculator.roundToDecimals(totalCost, 2), true);
 
         // Abschlag Calculation
@@ -368,7 +383,7 @@ class NebenkostenMonitor extends utils.Adapter {
             const monthsSinceYear = Math.max(1, Math.ceil((Date.now() - yearStartTime) / (1000 * 60 * 60 * 24 * 30)));
 
             const paidTotal = monthlyAbschlag * monthsSinceYear;
-            const consumedCostSoFar = yearlyCost + basicCharge * monthsSinceYear;
+            const consumedCostSoFar = yearlyCost + basicChargeMonthly * monthsSinceYear;
             const balance = paidTotal - consumedCostSoFar;
 
             await this.setStateAsync(`${type}.costs.paidTotal`, calculator.roundToDecimals(paidTotal, 2), true);
