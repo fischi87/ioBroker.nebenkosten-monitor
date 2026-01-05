@@ -274,15 +274,29 @@ class NebenkostenMonitor extends utils.Adapter {
             const initialReading = this.config[initialReadingKey] || 0;
 
             if (initialReading > 0) {
-                // Calculate yearly as: Current - Initial
-                const yearlyFromInitial = Math.max(0, consumption - initialReading);
+                // Calculate yearly as: Current - Initial (in ORIGINAL unit!)
+                let yearlyAmount;
+
+                if (type === 'gas') {
+                    // For gas: value is m³, consumption is kWh
+                    // Calculate difference in m³, then convert to kWh
+                    const yearlyM3 = Math.max(0, value - initialReading);
+                    await this.setStateAsync(`${type}.consumption.yearlyVolume`, yearlyM3, true);
+
+                    const brennwert = this.config.gasBrennwert || 11.5;
+                    const zZahl = this.config.gasZahl || 0.95;
+                    yearlyAmount = calculator.convertGasM3ToKWh(yearlyM3, brennwert, zZahl);
+                    this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)} kWh = ${yearlyM3.toFixed(2)} m³`);
+                } else {
+                    // For water/electricity: use consumption directly
+                    yearlyAmount = Math.max(0, consumption - initialReading);
+                    this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)}`);
+                }
+
                 await this.setStateAsync(
                     `${type}.consumption.yearly`,
-                    calculator.roundToDecimals(yearlyFromInitial, 2),
+                    calculator.roundToDecimals(yearlyAmount, 2),
                     true,
-                );
-                this.log.debug(
-                    `Yearly ${type} from initial: ${yearlyFromInitial} (current: ${consumption}, initial: ${initialReading})`,
                 );
             } else {
                 // Fallback: Accumulate deltas
