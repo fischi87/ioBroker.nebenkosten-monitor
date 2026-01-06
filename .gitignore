@@ -19,6 +19,9 @@ Thumbs.db
 *.js.js
 .DS_Store
 
+# Development notes (private)
+TODO.md
+
 # i18n intermediate files
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt

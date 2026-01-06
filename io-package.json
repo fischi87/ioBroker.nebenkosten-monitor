@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "news": {
+            "1.0.1": {
+                "en": "Bugfix: Water sensor configuration, removed redundant currentVolume state, added logo",
+                "de": "Bugfix: Wasser-Sensor Konfiguration, redundanter currentVolume State entfernt, Logo hinzugefügt",
+                "ru": "Исправление: настройка датчика воды, удалено избыточное состояние currentVolume, добавлен логотип",
+                "pt": "Correção: configuração do sensor de água, estado currentVolume redundante removido, logotipo adicionado",
+                "nl": "Bugfix: Watersensor configuratie, overtollige currentVolume state verwijderd, logo toegevoegd",
+                "fr": "Correction : configuration capteur d'eau, état currentVolume redondant supprimé, logo ajouté",
+                "it": "Correzione: configurazione sensore acqua, stato currentVolume ridondante rimosso, logo aggiunto",
+                "es": "Corrección: configuración sensor de agua, estado currentVolume redundante eliminado, logo añadido",
+                "pl": "Poprawka: konfiguracja czujnika wody, usunięto zbędny stan currentVolume, dodano logo",
+                "uk": "Виправлення: налаштування датчика води, видалено зайвий стан currentVolume, додано логотип",
+                "zh-cn": "错误修正：水传感器配置，删除冗余currentVolume状态，添加徽标"
+            },
             "1.0.0": {
                 "en": "Stable release - Gas, Water, Electricity monitoring with cost calculation",
                 "de": "Stabile Version - Gas, Wasser, Strom Überwachung mit Kostenberechnung",

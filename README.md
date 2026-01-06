@@ -2,14 +2,9 @@
 
 # ioBroker.nebenkosten-monitor
 
-[![NPM version](https://img.shields.io/npm/v/iobroker.nebenkosten-monitor.svg)](https://www.npmjs.com/package/iobroker.nebenkosten-monitor)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.nebenkosten-monitor.svg)](https://www.npmjs.com/package/iobroker.nebenkosten-monitor)
-![Number of Installations](https://iobroker.live/badges/nebenkosten-monitor-installed.svg)
-![Current version in stable repository](https://iobroker.live/badges/nebenkosten-monitor-stable.svg)
-
-[![NPM](https://nodei.co/npm/iobroker.nebenkosten-monitor.png?downloads=true)](https://nodei.co/npm/iobroker.nebenkosten-monitor/)
-
-**Tests:** ![Test and Release](https://github.com/fischi87/ioBroker.nebenkosten-monitor/workflows/Test%20and%20Release/badge.svg)
+[![GitHub release](https://img.shields.io/github/v/release/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/releases)
+[![GitHub license](https://img.shields.io/github/license/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/blob/main/LICENSE)
+[![Test and Release](https://github.com/fischi87/ioBroker.nebenkosten-monitor/workflows/Test%20and%20Release/badge.svg)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/actions)
 
 ## Nebenkosten-Monitor Adapter für ioBroker
 

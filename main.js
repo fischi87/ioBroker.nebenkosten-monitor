@@ -64,7 +64,14 @@ class NebenkostenMonitor extends utils.Adapter {
         await stateManager.createUtilityStateStructure(this, type);
 
         // Get sensor datapoint from config
-        const sensorDPKey = `${type}SensorDP`;
+        // Map German field names to English (config uses German, code uses English)
+        const sensorDPMapping = {
+            gas: 'gasSensorDP',
+            water: 'wasserSensorDP',
+            electricity: 'stromSensorDP',
+        };
+
+        const sensorDPKey = sensorDPMapping[type];
         const sensorDP = this.config[sensorDPKey];
 
         if (!sensorDP) {
