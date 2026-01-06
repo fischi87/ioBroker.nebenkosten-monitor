@@ -104,18 +104,8 @@ class NebenkostenMonitor extends utils.Adapter {
 
         const yearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
         if (!yearStart || !yearStart.val) {
-            // Use earliest price date as year start
-            const pricesKey = `${type}Preise`;
-            const prices = this.config[pricesKey] || [];
-            let yearStartDate = new Date(new Date().getFullYear(), 0, 1);
-
-            if (prices.length > 0) {
-                const sortedPrices = [...prices].sort(
-                    (a, b) => new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime(),
-                );
-                yearStartDate = new Date(sortedPrices[0].validFrom);
-            }
-
+            // Set year start to January 1st of current year
+            const yearStartDate = new Date(new Date().getFullYear(), 0, 1);
             await this.setStateAsync(`${type}.statistics.lastYearStart`, yearStartDate.getTime(), true);
             this.log.info(`Year start for ${type} set to ${yearStartDate.toISOString().split('T')[0]}`);
         }
@@ -322,11 +312,14 @@ class NebenkostenMonitor extends utils.Adapter {
      * @param {string} type - Utility type
      */
     async updateCosts(type) {
-        const pricesKey = `${type}Preise`;
-        const priceHistory = this.config[pricesKey] || [];
+        // Get price and basic charge from config
+        const priceKey = `${type}Preis`;
+        const grundgebuehrKey = `${type}Grundgebuehr`;
+        const price = this.config[priceKey] || 0;
+        const basicChargeMonthly = this.config[grundgebuehrKey] || 0;
 
-        if (!priceHistory || priceHistory.length === 0) {
-            this.log.debug(`No price history configured for ${type}`);
+        if (price === 0) {
+            this.log.debug(`No price configured for ${type}`);
             return;
         }
 
@@ -340,13 +333,9 @@ class NebenkostenMonitor extends utils.Adapter {
         const yearly = typeof yearlyState?.val === 'number' ? yearlyState.val : 0;
 
         // Calculate costs
-        const dailyCost = calculator.calculateCost(daily, priceHistory);
-        const monthlyCost = calculator.calculateCost(monthly, priceHistory);
-        const yearlyCost = calculator.calculateCost(yearly, priceHistory);
-
-        // Get basic charge (monthly rate)
-        const currentPrice = calculator.getCurrentPrice(priceHistory);
-        const basicChargeMonthly = currentPrice?.basicCharge || 0;
+        const dailyCost = calculator.calculateCost(daily, price);
+        const monthlyCost = calculator.calculateCost(monthly, price);
+        const yearlyCost = calculator.calculateCost(yearly, price);
 
         // Calculate elapsed months since year start (accurate year/month difference)
         const yearStartState = await this.getStateAsync(`${type}.statistics.lastYearStart`);
@@ -369,10 +358,6 @@ class NebenkostenMonitor extends utils.Adapter {
             calculator.roundToDecimals(basicChargeAccumulated, 2),
             true,
         );
-
-        // Total costs = consumption costs + accumulated basic charge (not full year!)
-        const totalCost = yearlyCost + basicChargeAccumulated;
-        await this.setStateAsync(`${type}.costs.total`, calculator.roundToDecimals(totalCost, 2), true);
 
         // Abschlag Calculation
         const abschlagKey = `${type}Abschlag`;
@@ -408,17 +393,10 @@ class NebenkostenMonitor extends utils.Adapter {
      * @param {string} type - Utility type
      */
     async updateCurrentPrice(type) {
-        const pricesKey = `${type}Preise`;
-        const priceHistory = this.config[pricesKey] || [];
+        const priceKey = `${type}Preis`;
+        const price = this.config[priceKey] || 0;
 
-        const currentPrice = calculator.getCurrentPrice(priceHistory);
-        if (currentPrice) {
-            await this.setStateAsync(
-                `${type}.info.currentPrice`,
-                calculator.roundToDecimals(currentPrice.price, 4),
-                true,
-            );
-        }
+        await this.setStateAsync(`${type}.info.currentPrice`, calculator.roundToDecimals(price, 4), true);
     }
 
     /**
@@ -479,7 +457,7 @@ class NebenkostenMonitor extends utils.Adapter {
         // Reset yearly consumption
         await this.setStateAsync(`${type}.consumption.yearly`, 0, true);
         await this.setStateAsync(`${type}.costs.yearly`, 0, true);
-        await this.setStateAsync(`${type}.costs.total`, 0, true);
+
         await this.setStateAsync(`${type}.statistics.lastYearStart`, Date.now(), true);
     }
 
@@ -509,20 +487,22 @@ class NebenkostenMonitor extends utils.Adapter {
                 continue;
             }
 
-            // Check daily reset (midnight)
+            // Check daily reset (any time after day change)
             const lastDayStart = await this.getStateAsync(`${type}.statistics.lastDayStart`);
             if (lastDayStart?.val && typeof lastDayStart.val === 'number') {
                 const lastDay = new Date(lastDayStart.val);
-                if (now.getDate() !== lastDay.getDate() && now.getHours() === 0 && now.getMinutes() === 0) {
+                // Reset if day OR month changed (handles month transitions)
+                if (now.getDate() !== lastDay.getDate() || now.getMonth() !== lastDay.getMonth()) {
                     await this.resetDailyCounters(type);
                 }
             }
 
-            // Check monthly reset (1st of month)
+            // Check monthly reset (1st of any month)
             const lastMonthStart = await this.getStateAsync(`${type}.statistics.lastMonthStart`);
             if (lastMonthStart?.val && typeof lastMonthStart.val === 'number') {
                 const lastMonth = new Date(lastMonthStart.val);
-                if (now.getMonth() !== lastMonth.getMonth() && now.getDate() === 1 && now.getHours() === 0) {
+                // Reset if month changed
+                if (now.getMonth() !== lastMonth.getMonth() || now.getFullYear() !== lastMonth.getFullYear()) {
                     await this.resetMonthlyCounters(type);
                 }
             }
@@ -531,7 +511,8 @@ class NebenkostenMonitor extends utils.Adapter {
             const lastYearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
             if (lastYearStart?.val && typeof lastYearStart.val === 'number') {
                 const lastYear = new Date(lastYearStart.val);
-                if (now.getFullYear() !== lastYear.getFullYear() && now.getMonth() === 0 && now.getDate() === 1) {
+                // Reset if year changed
+                if (now.getFullYear() !== lastYear.getFullYear()) {
                     await this.resetYearlyCounters(type);
                 }
             }

@@ -118,36 +118,19 @@
                         "marginBottom": "10px"
                     }
                 },
-                "gasPreise": {
-                    "type": "table",
+                "gasPreis": {
+                    "type": "number",
                     "hidden": "!data.gasAktiv",
-                    "label": "Gaspreise",
-                    "sm": 12,
-                    "items": [
-                        {
-                            "type": "text",
-                            "attr": "validFrom",
-                            "label": "Gültig ab (YYYY-MM-DD)",
-                            "placeholder": "2026-01-01",
-                            "width": "30%"
-                        },
-                        {
-                            "type": "number",
-                            "attr": "price",
-                            "label": "Preis (€/kWh)",
-                            "width": "35%",
-                            "min": 0,
-                            "step": 0.001
-                        },
-                        {
-                            "type": "number",
-                            "attr": "basicCharge",
-                            "label": "Grundgebühr (€/Monat)",
-                            "width": "35%",
-                            "min": 0,
-                            "step": 0.01
-                        }
-                    ]
+                    "label": "Arbeitspreis (€/kWh)",
+                    "min": 0,
+                    "step": 0.001
+                },
+                "gasGrundgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.gasAktiv",
+                    "label": "Grundgebühr (€/Monat)",
+                    "min": 0,
+                    "step": 0.01
                 },
                 "_gasAbschlagHeader": {
                     "type": "header",
@@ -260,36 +243,19 @@
                         "marginBottom": "10px"
                     }
                 },
-                "wasserPreise": {
-                    "type": "table",
+                "wasserPreis": {
+                    "type": "number",
                     "hidden": "!data.wasserAktiv",
-                    "label": "Wasserpreise",
-                    "sm": 12,
-                    "items": [
-                        {
-                            "type": "text",
-                            "attr": "validFrom",
-                            "label": "Gültig ab (YYYY-MM-DD)",
-                            "placeholder": "2026-01-01",
-                            "width": "30%"
-                        },
-                        {
-                            "type": "number",
-                            "attr": "price",
-                            "label": "Preis (€/m³)",
-                            "width": "35%",
-                            "min": 0,
-                            "step": 0.001
-                        },
-                        {
-                            "type": "number",
-                            "attr": "basicCharge",
-                            "label": "Grundgebühr (€/Monat)",
-                            "width": "35%",
-                            "min": 0,
-                            "step": 0.01
-                        }
-                    ]
+                    "label": "Arbeitspreis (€/m³)",
+                    "min": 0,
+                    "step": 0.001
+                },
+                "wasserGrundgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.wasserAktiv",
+                    "label": "Grundgebühr (€/Monat)",
+                    "min": 0,
+                    "step": 0.01
                 },
                 "_wasserAbschlagHeader": {
                     "type": "header",
@@ -402,36 +368,19 @@
                         "marginBottom": "10px"
                     }
                 },
-                "stromPreise": {
-                    "type": "table",
+                "stromPreis": {
+                    "type": "number",
                     "hidden": "!data.stromAktiv",
-                    "label": "Strompreise",
-                    "sm": 12,
-                    "items": [
-                        {
-                            "type": "text",
-                            "attr": "validFrom",
-                            "label": "Gültig ab (YYYY-MM-DD)",
-                            "placeholder": "2026-01-01",
-                            "width": "30%"
-                        },
-                        {
-                            "type": "number",
-                            "attr": "price",
-                            "label": "Preis (€/kWh)",
-                            "width": "35%",
-                            "min": 0,
-                            "step": 0.001
-                        },
-                        {
-                            "type": "number",
-                            "attr": "basicCharge",
-                            "label": "Grundgebühr (€/Monat)",
-                            "width": "35%",
-                            "min": 0,
-                            "step": 0.01
-                        }
-                    ]
+                    "label": "Arbeitspreis (€/kWh)",
+                    "min": 0,
+                    "step": 0.001
+                },
+                "stromGrundgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.stromAktiv",
+                    "label": "Grundgebühr (€/Monat)",
+                    "min": 0,
+                    "step": 0.01
                 },
                 "_stromAbschlagHeader": {
                     "type": "header",
@@ -499,7 +448,7 @@
                 },
                 "_usage": {
                     "type": "staticText",
-                    "text": "**1. Sensor konfigurieren**\n- Klicke auf das 🔍 Feld um den Objekt-Browser zu öffnen\n- Wähle deinen Sensor aus\n- Trage den aktuellen Zählerstand ein\n\n**2. Abschlag eintragen**\n- Trage deinen monatlichen Abschlag ein\n- Der Adapter zeigt dir dann: Bezahlt vs. Verbraucht\n\n**3. Preise hinzufügen**\n- Klicke auf **+** um einen Preis hinzuzufügen\n- Gültigkeitsdatum in der Vergangenheit = sofort aktiv\n- Mehrere Preise = Preishistorie",
+                    "text": "**1. Sensor konfigurieren** 🔍\n• Wähle deinen Sensor-Datenpunkt aus (m³ für Gas/Wasser, kWh für Strom)\n• Trage **Zählerstand bei Vertragsbeginn** ein (wichtig für korrekte Jahresrechnung!)\n\n**2. Preise eintragen** 💶\n• **Arbeitspreis**: z.B. 0,1835 €/kWh (Gas), 2,08 €/m³ (Wasser)\n• **Grundgebühr**: z.B. 15,03 €/Monat\n\n**3. Abschlag eintragen** 💳\n• Deine monatliche Vorauszahlung (z.B. 150 €)\n• Der Adapter berechnet dann **balance** (Nachzahlung oder Guthaben)\n\n✅ **Fertig!** Der Adapter läuft jetzt automatisch!",
                     "sm": 12
                 },
                 "_divider3": {
@@ -512,7 +461,7 @@
                 },
                 "_statesInfo": {
                     "type": "staticText",
-                    "text": "Der Adapter erstellt für jede aktivierte Verbrauchsart:\n\n**📊 consumption/** - current, daily, monthly, yearly\n\n**💰 costs/** - total, daily, monthly, yearly, basicCharge, **paidTotal, balance**\n\n**ℹ️ info/** - meterReading, currentPrice, lastSync, sensorActive\n\n**📈 statistics/** - averageDaily, averageMonthly",
+                    "text": "**📊 consumption/** (Verbrauch)\n• **daily** - Heute verbraucht (Reset: 00:00 Uhr)\n• **monthly** - Diesen Monat (Reset: 1. des Monats)\n• **yearly** - Dieses Jahr (Aktuell - Initial Reading)\n• **dailyVolume/monthlyVolume/yearlyVolume** - In m³ (nur Gas)\n\n**💰 costs/** (Kosten)\n• **daily/monthly/yearly** - Nur Verbrauchskosten (kWh × Preis)\n• **basicCharge** - Grundgebühr akkumuliert (€/Monat × Monate)\n• **paidTotal** - Bezahlt via Abschlag (Abschlag × Monate)\n• **balance** - 🎯 WICHTIG! Nachzahlung (+) oder Guthaben (-)\n    ▸ Negativ (-24€) = Guthaben ✅ Du bekommst Geld zurück\n    ▸ Positiv (+50€) = Nachzahlung ❌ Du musst zahlen\n\n**ℹ️ info/**\n• **currentPrice** - Aktueller Arbeitspreis\n• **meterReading** - Zählerstand (kWh oder m³)\n• **lastSync** - Letzte Sensor-Aktualisierung\n• **sensorActive** - Sensor verbunden?",
                     "sm": 12
                 },
                 "_divider4": {

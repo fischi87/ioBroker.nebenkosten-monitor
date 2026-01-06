@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "0.0.2",
+        "version": "0.0.6",
         "news": {
             "0.0.1": {
                 "en": "initial release",
@@ -82,19 +82,22 @@
         "gasInitialReading": 0,
         "gasBrennwert": 11.5,
         "gasZahl": 0.95,
-        "gasPreise": [],
+        "gasPreis": 0,
+        "gasGrundgebuehr": 0,
         "gasAbschlag": 0,
         "wasserAktiv": false,
         "wasserSensorDP": "",
         "wasserOffset": 0,
         "wasserInitialReading": 0,
-        "wasserPreise": [],
+        "wasserPreis": 0,
+        "wasserGrundgebuehr": 0,
         "wasserAbschlag": 0,
         "stromAktiv": false,
         "stromSensorDP": "",
         "stromOffset": 0,
         "stromInitialReading": 0,
-        "stromPreise": [],
+        "stromPreis": 0,
+        "stromGrundgebuehr": 0,
         "stromAbschlag": 0
     },
     "objects": [],

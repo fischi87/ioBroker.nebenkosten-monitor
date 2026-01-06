@@ -1,6 +1,6 @@
 {
   "name": "iobroker.nebenkosten-monitor",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "description": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
   "author": {
     "name": "fischi87",
