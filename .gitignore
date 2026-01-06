@@ -13,6 +13,12 @@ iobroker.*.tgz
 Thumbs.db
 .commitinfo
 
+# Backup and temp files
+*.backup
+*.rej
+*.js.js
+.DS_Store
+
 # i18n intermediate files
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt

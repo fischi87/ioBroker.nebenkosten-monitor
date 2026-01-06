@@ -1,6 +1,6 @@
 {
   "name": "iobroker.nebenkosten-monitor",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "description": "Überwachung von Gas, Wasser und Strom mit Kostenrechnung",
   "author": {
     "name": "fischi87",
@@ -14,10 +14,18 @@
   "homepage": "https://github.com/fischi87/ioBroker.nebenkosten-monitor",
   "license": "MIT",
   "keywords": [
-    "Nebenkosten",
-    "Strom",
-    "Gas",
-    "Abschlag"
+    "iobroker",
+    "nebenkosten",
+    "strom",
+    "gas",
+    "wasser",
+    "costs",
+    "energy",
+    "monitoring",
+    "abschlag",
+    "verbrauch",
+    "home-automation",
+    "smart-home"
   ],
   "repository": {
     "type": "git",

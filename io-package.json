@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "0.0.6",
+        "version": "1.0.0",
         "news": {
+            "1.0.0": {
+                "en": "Stable release - Gas, Water, Electricity monitoring with cost calculation",
+                "de": "Stabile Version - Gas, Wasser, Strom Überwachung mit Kostenberechnung",
+                "ru": "Стабильный релиз - Мониторинг газа, воды, электричества с расчетом затрат",
+                "pt": "Versão estável - Monitorização de gás, água, eletricidade com cálculo de custos",
+                "nl": "Stabiele release - Gas, Water, Elektriciteit monitoring met kostenberekening",
+                "fr": "Version stable - Surveillance gaz, eau, électricité avec calcul des coûts",
+                "it": "Versione stabile - Monitoraggio gas, acqua, elettricità con calcolo costi",
+                "es": "Versión estable - Monitoreo de gas, agua, electricidad con cálculo de costos",
+                "pl": "Stabilne wydanie - Monitorowanie gazu, wody, energii elektrycznej z wyliczaniem kosztów",
+                "uk": "Стабільний реліз - Моніторинг газу, води, електрики з розрахунком витрат",
+                "zh-cn": "稳定版本 - 燃气、水、电监控及成本计算"
+            },
             "0.0.1": {
                 "en": "initial release",
                 "de": "Erstveröffentlichung",
