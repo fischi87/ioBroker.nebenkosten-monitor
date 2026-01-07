@@ -381,10 +381,10 @@ class NebenkostenMonitor extends utils.Adapter {
         const monthly = typeof monthlyState?.val === 'number' ? monthlyState.val : 0;
         const yearly = typeof yearlyState?.val === 'number' ? yearlyState.val : 0;
 
-        // Cost calculation
-        const dailyCost = calculator.calculateCost(daily, price);
-        const monthlyCost = calculator.calculateCost(monthly, price);
-        const yearlyCost = calculator.calculateCost(yearly, price);
+        // Consumption cost calculation (purely based on units)
+        const dailyConsumptionCost = calculator.calculateCost(daily, price);
+        const monthlyConsumptionCost = calculator.calculateCost(monthly, price);
+        const yearlyConsumptionCost = calculator.calculateCost(yearly, price);
 
         // Calculate months since CONTRACT START (not year start!) for correct basic charge
         const contractStartKey = `${configType}ContractStart`;
@@ -453,10 +453,23 @@ class NebenkostenMonitor extends utils.Adapter {
         // Basic charge accumulated = monthly × months since contract start
         const basicChargeAccumulated = basicChargeMonthly * (monthsSinceContract || 0);
 
+        // --- TOTAL COST CALCULATION (Consumption + Basic Charge) ---
+        // 1. Daily: Pro-rated basic charge based on days in current month
+        const nowForDays = new Date();
+        const daysInMonth = new Date(nowForDays.getFullYear(), nowForDays.getMonth() + 1, 0).getDate();
+        const dailyBasicCharge = basicChargeMonthly / daysInMonth;
+        const dailyTotalCost = dailyConsumptionCost + dailyBasicCharge;
+
+        // 2. Monthly: Full monthly basic charge
+        const monthlyTotalCost = monthlyConsumptionCost + basicChargeMonthly;
+
+        // 3. Yearly: Accumulated basic charge since contract start
+        const yearlyTotalCost = yearlyConsumptionCost + basicChargeAccumulated;
+
         // Update cost states
-        await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyCost, 2), true);
-        await this.setStateAsync(`${type}.costs.monthly`, calculator.roundToDecimals(monthlyCost, 2), true);
-        await this.setStateAsync(`${type}.costs.yearly`, calculator.roundToDecimals(yearlyCost, 2), true);
+        await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyTotalCost, 2), true);
+        await this.setStateAsync(`${type}.costs.monthly`, calculator.roundToDecimals(monthlyTotalCost, 2), true);
+        await this.setStateAsync(`${type}.costs.yearly`, calculator.roundToDecimals(yearlyTotalCost, 2), true);
         await this.setStateAsync(
             `${type}.costs.basicCharge`,
             calculator.roundToDecimals(basicChargeAccumulated, 2),
@@ -473,7 +486,8 @@ class NebenkostenMonitor extends utils.Adapter {
             const paidTotal = monthlyAbschlag * monthsSinceContract;
 
             // Calculate consumed cost (yearly consumption + accumulated basic charge)
-            const consumedCostSoFar = yearlyCost + basicChargeAccumulated;
+            // Note: yearlyTotalCost already includes basicChargeAccumulated
+            const consumedCostSoFar = yearlyTotalCost;
 
             // Balance: negative = credit (you get money back), positive = additional payment needed
             const balance = consumedCostSoFar - paidTotal;
@@ -488,7 +502,7 @@ class NebenkostenMonitor extends utils.Adapter {
         }
 
         this.log.debug(
-            `Updated costs for ${type}: daily=${dailyCost}€, monthly=${monthlyCost}€, yearly=${yearlyCost}€`,
+            `Updated costs for ${type}: daily=${dailyTotalCost.toFixed(2)}€, monthly=${monthlyTotalCost.toFixed(2)}€, yearly=${yearlyTotalCost.toFixed(2)}€`,
         );
     }
 
