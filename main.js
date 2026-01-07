@@ -338,9 +338,7 @@ class NebenkostenMonitor extends utils.Adapter {
             await this.updateCosts(type);
         }
 
-        // Store current value and update timestamp
-        this.lastSensorValues[sensorDP] = consumption;
-        await this.setStateAsync(`${type}.consumption.current`, consumption, true);
+        // Update timestamp
         await this.setStateAsync(`${type}.consumption.lastUpdate`, now, true);
         await this.setStateAsync(`${type}.info.lastSync`, now, true);
     }
@@ -364,8 +362,10 @@ class NebenkostenMonitor extends utils.Adapter {
         // Get price and basic charge from config
         const priceKey = `${configType}Preis`;
         const grundgebuehrKey = `${configType}Grundgebuehr`;
+        const jahresgebuehrKey = `${configType}Jahresgebuehr`;
         const price = this.config[priceKey] || 0;
         const basicChargeMonthly = this.config[grundgebuehrKey] || 0;
+        const annualFeePerYear = this.config[jahresgebuehrKey] || 0;
 
         if (price === 0) {
             this.log.debug(`No price configured for ${type} (${configType})`);
@@ -450,29 +450,29 @@ class NebenkostenMonitor extends utils.Adapter {
             this.log.debug(`${type}: No contract start, using year start. Months: ${monthsSinceContract}`);
         }
 
+        // --- TOTAL COST CALCULATION (Consumption + Basic Charge) ---
         // Basic charge accumulated = monthly × months since contract start
         const basicChargeAccumulated = basicChargeMonthly * (monthsSinceContract || 0);
 
-        // --- TOTAL COST CALCULATION (Consumption + Basic Charge) ---
-        // 1. Daily: Pro-rated basic charge based on days in current month
-        const nowForDays = new Date();
-        const daysInMonth = new Date(nowForDays.getFullYear(), nowForDays.getMonth() + 1, 0).getDate();
-        const dailyBasicCharge = basicChargeMonthly / daysInMonth;
-        const dailyTotalCost = dailyConsumptionCost + dailyBasicCharge;
+        // Annual fee accumulated = (yearly / 12) × months since contract start
+        const annualFeeMonthly = annualFeePerYear / 12;
+        const annualFeeAccumulated = annualFeeMonthly * (monthsSinceContract || 0);
 
-        // 2. Monthly: Full monthly basic charge
-        const monthlyTotalCost = monthlyConsumptionCost + basicChargeMonthly;
+        // Total fix costs for basicCharge state (Basic Charge + Proportional Annual Fee)
+        const totalFixCostsAccumulated = basicChargeAccumulated + annualFeeAccumulated;
 
-        // 3. Yearly: Accumulated basic charge since contract start
-        const yearlyTotalCost = yearlyConsumptionCost + basicChargeAccumulated;
+        // Total yearly costs = Yearly consumption + total fix costs
+        const totalYearlyCost = yearlyConsumptionCost + totalFixCostsAccumulated;
 
         // Update cost states
-        await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyTotalCost, 2), true);
-        await this.setStateAsync(`${type}.costs.monthly`, calculator.roundToDecimals(monthlyTotalCost, 2), true);
-        await this.setStateAsync(`${type}.costs.yearly`, calculator.roundToDecimals(yearlyTotalCost, 2), true);
+        await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyConsumptionCost, 2), true);
+        await this.setStateAsync(`${type}.costs.monthly`, calculator.roundToDecimals(monthlyConsumptionCost, 2), true);
+        await this.setStateAsync(`${type}.costs.yearly`, calculator.roundToDecimals(yearlyConsumptionCost, 2), true);
+        await this.setStateAsync(`${type}.costs.totalYearly`, calculator.roundToDecimals(totalYearlyCost, 2), true);
+        await this.setStateAsync(`${type}.costs.annualFee`, calculator.roundToDecimals(annualFeeAccumulated, 2), true);
         await this.setStateAsync(
             `${type}.costs.basicCharge`,
-            calculator.roundToDecimals(basicChargeAccumulated, 2),
+            calculator.roundToDecimals(totalFixCostsAccumulated, 2),
             true,
         );
 
@@ -486,8 +486,8 @@ class NebenkostenMonitor extends utils.Adapter {
             const paidTotal = monthlyAbschlag * monthsSinceContract;
 
             // Calculate consumed cost (yearly consumption + accumulated basic charge)
-            // Note: yearlyTotalCost already includes basicChargeAccumulated
-            const consumedCostSoFar = yearlyTotalCost;
+            // Note: totalYearlyCost already includes basicChargeAccumulated
+            const consumedCostSoFar = totalYearlyCost;
 
             // Balance: negative = credit (you get money back), positive = additional payment needed
             const balance = consumedCostSoFar - paidTotal;
@@ -502,7 +502,7 @@ class NebenkostenMonitor extends utils.Adapter {
         }
 
         this.log.debug(
-            `Updated costs for ${type}: daily=${dailyTotalCost.toFixed(2)}€, monthly=${monthlyTotalCost.toFixed(2)}€, yearly=${yearlyTotalCost.toFixed(2)}€`,
+            `Updated costs for ${type}: daily=${dailyConsumptionCost.toFixed(2)}€, monthly=${monthlyConsumptionCost.toFixed(2)}€, yearly=${yearlyConsumptionCost.toFixed(2)}€, totalYearly=${totalYearlyCost.toFixed(2)}€`,
         );
     }
 
@@ -512,7 +512,15 @@ class NebenkostenMonitor extends utils.Adapter {
      * @param {string} type - Utility type
      */
     async updateCurrentPrice(type) {
-        const priceKey = `${type}Preis`;
+        // Map English type names to German config field names
+        const typeMapping = {
+            electricity: 'strom',
+            water: 'wasser',
+            gas: 'gas',
+        };
+        const configType = typeMapping[type] || type;
+
+        const priceKey = `${configType}Preis`;
         const price = this.config[priceKey] || 0;
 
         await this.setStateAsync(`${type}.info.currentPrice`, calculator.roundToDecimals(price, 4), true);

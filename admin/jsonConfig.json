@@ -140,6 +140,13 @@
                     "min": 0,
                     "step": 0.01
                 },
+                "gasJahresgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.gasAktiv",
+                    "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
+                    "min": 0,
+                    "step": 0.01
+                },
                 "_gasAbschlagHeader": {
                     "type": "header",
                     "text": "💳 Abschlag (Monatliche Vorauszahlung)",
@@ -273,6 +280,13 @@
                     "min": 0,
                     "step": 0.01
                 },
+                "wasserJahresgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.wasserAktiv",
+                    "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
+                    "min": 0,
+                    "step": 0.01
+                },
                 "_wasserAbschlagHeader": {
                     "type": "header",
                     "text": "💳 Abschlag (Monatliche Vorauszahlung)",
@@ -403,6 +417,13 @@
                     "type": "number",
                     "hidden": "!data.stromAktiv",
                     "label": "Grundgebühr (€/Monat)",
+                    "min": 0,
+                    "step": 0.01
+                },
+                "stromJahresgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.stromAktiv",
+                    "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
                     "min": 0,
                     "step": 0.01
                 },

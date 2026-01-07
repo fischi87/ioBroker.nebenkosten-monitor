@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.2.1",
+        "version": "1.2.2",
         "news": {
+            "1.2.2": {
+                "en": "Add annual fee support, fix electricity price display, remove redundant states",
+                "de": "Jahresgebühr hinzugefügt, Anzeige Strompreis korrigiert, redundante Datenpunkte entfernt"
+            },
             "1.2.1": {
                 "en": "Fix: Resolved linting errors (ESLint curly rule) that caused CI failure",
                 "de": "Fix: Linting-Fehler (ESLint curly rule) behoben, die zum CI-Fehler führten"

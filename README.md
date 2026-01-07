@@ -41,6 +41,7 @@
 7. 💶 **Preise eintragen**:
     - Arbeitspreis: 0,1835 €/kWh
     - Grundgebühr: 15,03 €/Monat
+    - Jahresgebühr: 60,00 €/Jahr (z.B. Zählermiete)
 8. 💳 **Abschlag** - Monatliche Vorauszahlung (z.B. 150 €)
 
 **Fertig!** Der Adapter berechnet nun automatisch alle Kosten! 🎉
@@ -53,17 +54,15 @@ Für jede aktivierte Verbrauchsart (Gas/Wasser/Strom) werden folgende Ordner ang
 
 ### 🗂️ **consumption** (Verbrauch)
 
-| Datenpunkt        | Beschreibung                                          | Beispiel         |
-| ----------------- | ----------------------------------------------------- | ---------------- |
-| `daily`           | Verbrauch **heute** (seit 00:00 Uhr)                  | 12,02 kWh        |
-| `dailyVolume`\*   | Verbrauch heute in m³ (nur Gas)                       | 1,092 m³         |
-| `monthly`         | Verbrauch **diesen Monat** (seit 1. des Monats)       | 117,77 kWh       |
-| `monthlyVolume`\* | Monatlicher Verbrauch in m³ (nur Gas)                 | 10,69 m³         |
-| `yearly`          | Verbrauch **seit Vertragsbeginn** (this billing year) | 730,01 kWh       |
-| `yearlyVolume`\*  | Jahresverbrauch in m³ (nur Gas)                       | 66,82 m³         |
-| `lastUpdate`      | Letzte Aktualisierung                                 | 06.01.2026 14:11 |
-
-_\*nur bei Gas verfügbar_
+| Datenpunkt      | Beschreibung                                          | Beispiel         |
+| --------------- | ----------------------------------------------------- | ---------------- |
+| `daily`         | Verbrauch **heute** (seit 00:00 Uhr)                  | 12,02 kWh        |
+| `dailyVolume`   | Verbrauch heute in m³                                 | 1,092 m³         |
+| `monthly`       | Verbrauch **diesen Monat** (seit 1. des Monats)       | 117,77 kWh       |
+| `monthlyVolume` | Monatlicher Verbrauch in m³                           | 10,69 m³         |
+| `yearly`        | Verbrauch **seit Vertragsbeginn** (this billing year) | 730,01 kWh       |
+| `yearlyVolume`  | Jahresverbrauch in m³                                 | 66,82 m³         |
+| `lastUpdate`    | Letzte Aktualisierung                                 | 06.01.2026 14:11 |
 
 **💡 Tipp:** `yearly` wird automatisch als `(Aktueller Zählerstand - Offset) - Initial Reading` berechnet!
 
@@ -73,14 +72,16 @@ _\*nur bei Gas verfügbar_
 
 ### 💰 **costs** (Kosten)
 
-| Datenpunkt    | Was ist das?                                                  | Berechnung                         | Beispiel                      |
-| ------------- | ------------------------------------------------------------- | ---------------------------------- | ----------------------------- |
-| `daily`       | Kosten **heute**                                              | daily × Arbeitspreis               | 2,27 €                        |
-| `monthly`     | Kosten **diesen Monat**                                       | monthly × Arbeitspreis             | 21,61 €                       |
-| `yearly`      | **Verbrauchskosten** seit Jahresbeginn                        | yearly × Arbeitspreis              | 137,61 €                      |
-| `basicCharge` | **Grundgebühr akkumuliert**                                   | Grundgebühr × Monate               | 15,03 €                       |
-| `paidTotal`   | **Bezahlt** via Abschlag                                      | Abschlag × Monate                  | 150,00 €                      |
-| `balance`     | **🎯 WICHTIGSTER Wert!**<br>Nachzahlung (+) oder Guthaben (-) | (yearly + basicCharge) - paidTotal | **+2,64 €**<br>→ Nachzahlung! |
+| Datenpunkt    | Was ist das?                                                  | Berechnung                                 | Beispiel                       |
+| ------------- | ------------------------------------------------------------- | ------------------------------------------ | ------------------------------ |
+| `daily`       | Kosten **heute**                                              | daily × Arbeitspreis                       | 2,27 €                         |
+| `monthly`     | Kosten **diesen Monat**                                       | monthly × Arbeitspreis                     | 21,61 €                        |
+| `yearly`      | **Verbrauchskosten** seit Vertragsbeginn                      | yearly × Arbeitspreis                      | 137,61 €                       |
+| `totalYearly` | **Gesamtkosten Jahr** (Verbrauch + alle Fixkosten)            | yearly-cost + basicCharge + annualFee      | 162,64 €                       |
+| `basicCharge` | **Grundgebühr akkumuliert** (inkl. Jahresgebühr anteilig)     | (Grundgebühr + (Jahresgebühr/12)) × Monate | 19,20 €                        |
+| `annualFee`   | **Jahresgebühr akkumuliert**                                  | (Jahresgebühr / 12) × Monate               | 4,17 €                         |
+| `paidTotal`   | **Bezahlt** via Abschlag                                      | Abschlag × Monate                          | 150,00 €                       |
+| `balance`     | **🎯 WICHTIGSTER Wert!**<br>Nachzahlung (+) oder Guthaben (-) | totalYearly - paidTotal                    | **+12,64 €**<br>→ Nachzahlung! |
 
 #### 🔍 **balance** genauer erklärt:
 
@@ -233,6 +234,14 @@ Balance:        -10 € → 10 € Guthaben! ✅
 ---
 
 ## 📜 Changelog
+
+### 1.2.2 (2026-01-07)
+
+- **NEW:** Unterstützung für zusätzliche **Jahresgebühren** (z.B. Zählermiete)
+- **NEW:** Datenpunkt `costs.totalYearly` für die echten Gesamtkosten
+- **FIX:** Arbeitspreis-Anzeige bei Strom korrigiert
+- **FIX:** Redundante Datenpunkte (`consumption.current`) entfernt
+- **DOCS:** README korrigiert (m³ nicht nur für Gas)
 
 ### 0.0.5 (2026-01-06)
 
