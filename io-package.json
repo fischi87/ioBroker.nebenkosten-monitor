@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "news": {
+            "1.2.1": {
+                "en": "Fix: Resolved linting errors (ESLint curly rule) that caused CI failure",
+                "de": "Fix: Linting-Fehler (ESLint curly rule) behoben, die zum CI-Fehler führten"
+            },
             "1.2.0": {
                 "en": "CRITICAL FIX: Gas offset now applied to m³ BEFORE kWh conversion (fixes yearly 1.12M kWh → 806 kWh)",
                 "de": "KRITISCHER FIX: Gas-Offset wird jetzt auf m³ VOR kWh-Konvertierung angewendet (behebt yearly 1,12M kWh → 806 kWh)",

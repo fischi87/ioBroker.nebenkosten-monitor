@@ -394,10 +394,14 @@ class NebenkostenMonitor extends utils.Adapter {
         if (contractStartDate) {
             // Parse German date format (DD.MM.YYYY or DD.MM.YY)
             const parseGermanDate = dateStr => {
-                if (!dateStr || typeof dateStr !== 'string') return null;
+                if (!dateStr || typeof dateStr !== 'string') {
+                    return null;
+                }
 
                 const parts = dateStr.trim().split('.');
-                if (parts.length !== 3) return null;
+                if (parts.length !== 3) {
+                    return null;
+                }
 
                 let day = parseInt(parts[0], 10);
                 let month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
@@ -408,7 +412,9 @@ class NebenkostenMonitor extends utils.Adapter {
                     year += 2000;
                 }
 
-                if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+                if (isNaN(day) || isNaN(month) || isNaN(year)) {
+                    return null;
+                }
 
                 return new Date(year, month, day);
             };
