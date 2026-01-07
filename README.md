@@ -34,12 +34,14 @@
 
 1. ✅ **Gas-Überwachung aktivieren**
 2. 🔍 **Sensor auswählen** - Deinen Gaszähler-Sensor (in m³)
-3. 📝 **Zählerstand bei Vertragsbeginn** - z.B. 10250 m³
-4. 🔥 **Brennwert & Z-Zahl** - Von deiner Gasrechnung (z.B. 11,5 und 0,95)
-5. 💶 **Preise eintragen**:
+3. 📝 **Zählerstand bei Vertragsbeginn** - z.B. 10250 m³ (für korrekte Jahresberechnung)
+4. 📅 **Vertragsbeginn** - z.B. 01.01.2026 (für korrekten Jahresreset und Abschlagsberechnung)
+5. 🔧 **Offset** _(optional)_ - Falls dein Hardware-Zähler nicht bei 0 startet
+6. 🔥 **Brennwert & Z-Zahl** - Von deiner Gasrechnung (z.B. 11,5 und 0,95)
+7. 💶 **Preise eintragen**:
     - Arbeitspreis: 0,1835 €/kWh
     - Grundgebühr: 15,03 €/Monat
-6. 💳 **Abschlag** - Monatliche Vorauszahlung (z.B. 150 €)
+8. 💳 **Abschlag** - Monatliche Vorauszahlung (z.B. 150 €)
 
 **Fertig!** Der Adapter berechnet nun automatisch alle Kosten! 🎉
 
@@ -51,19 +53,21 @@ Für jede aktivierte Verbrauchsart (Gas/Wasser/Strom) werden folgende Ordner ang
 
 ### 🗂️ **consumption** (Verbrauch)
 
-| Datenpunkt        | Beschreibung                                    | Beispiel         |
-| ----------------- | ----------------------------------------------- | ---------------- |
-| `daily`           | Verbrauch **heute** (seit 00:00 Uhr)            | 12,02 kWh        |
-| `dailyVolume`\*   | Verbrauch heute in m³ (nur Gas)                 | 1,092 m³         |
-| `monthly`         | Verbrauch **diesen Monat** (seit 1. des Monats) | 117,77 kWh       |
-| `monthlyVolume`\* | Monatlicher Verbrauch in m³ (nur Gas)           | 10,69 m³         |
-| `yearly`          | Verbrauch **dieses Jahr** (seit 1. Januar)      | 730,01 kWh       |
-| `yearlyVolume`\*  | Jahresverbrauch in m³ (nur Gas)                 | 66,82 m³         |
-| `lastUpdate`      | Letzte Aktualisierung                           | 06.01.2026 14:11 |
+| Datenpunkt        | Beschreibung                                          | Beispiel         |
+| ----------------- | ----------------------------------------------------- | ---------------- |
+| `daily`           | Verbrauch **heute** (seit 00:00 Uhr)                  | 12,02 kWh        |
+| `dailyVolume`\*   | Verbrauch heute in m³ (nur Gas)                       | 1,092 m³         |
+| `monthly`         | Verbrauch **diesen Monat** (seit 1. des Monats)       | 117,77 kWh       |
+| `monthlyVolume`\* | Monatlicher Verbrauch in m³ (nur Gas)                 | 10,69 m³         |
+| `yearly`          | Verbrauch **seit Vertragsbeginn** (this billing year) | 730,01 kWh       |
+| `yearlyVolume`\*  | Jahresverbrauch in m³ (nur Gas)                       | 66,82 m³         |
+| `lastUpdate`      | Letzte Aktualisierung                                 | 06.01.2026 14:11 |
 
 _\*nur bei Gas verfügbar_
 
-**💡 Tipp:** `yearly` wird automatisch aus `Aktueller Zählerstand - Initial Reading` berechnet!
+**💡 Tipp:** `yearly` wird automatisch als `(Aktueller Zählerstand - Offset) - Initial Reading` berechnet!
+
+**📅 Wichtig:** Der Jahresreset erfolgt am **Vertragsbeginn-Datum** (z.B. 12. Mai), NICHT am 1. Januar!
 
 ---
 

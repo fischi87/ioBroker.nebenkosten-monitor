@@ -67,6 +67,14 @@
                     "md": 6,
                     "step": 0.001
                 },
+                "gasContractStart": {
+                    "type": "text",
+                    "label": "📅 Vertragsbeginn",
+                    "placeholder": "z.B. 12.05.2025 oder 01.01.25",
+                    "hidden": "!data.gasAktiv",
+                    "sm": 12,
+                    "md": 6
+                },
                 "_gasConversionHeader": {
                     "type": "header",
                     "text": "Umrechnungsparameter (m³ → kWh)",
@@ -216,15 +224,23 @@
                     "md": 6,
                     "step": 0.001
                 },
-                "wasserInitialReading": {
+                "wasserMeterReading": {
                     "type": "number",
                     "label": "Zählerstand bei Vertragsbeginn (m³)",
-                    "placeholder": "z.B. 500 (Zählerstand am frühesten Preisdatum)",
+                    "placeholder": "z.B. 5000 (Zählerstand am frühesten Preisdatum)",
                     "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch",
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
                     "step": 0.001
+                },
+                "wasserContractStart": {
+                    "type": "text",
+                    "label": "📅 Vertragsbeginn",
+                    "placeholder": "z.B. 12.05.2025 oder 01.01.25",
+                    "hidden": "!data.wasserAktiv",
+                    "sm": 12,
+                    "md": 6
                 },
                 "_wasserPreisHeader": {
                     "type": "header",
@@ -350,6 +366,14 @@
                     "sm": 12,
                     "md": 6,
                     "step": 0.001
+                },
+                "stromContractStart": {
+                    "type": "text",
+                    "label": "📅 Vertragsbeginn",
+                    "placeholder": "z.B. 12.05.2025 oder 01.01.25",
+                    "hidden": "!data.stromAktiv",
+                    "sm": 12,
+                    "md": 6
                 },
                 "_stromPreisHeader": {
                     "type": "header",

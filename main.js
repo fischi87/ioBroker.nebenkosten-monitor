@@ -124,7 +124,15 @@ class NebenkostenMonitor extends utils.Adapter {
         await this.updateCosts(type);
 
         // Initialize yearly consumption from initial reading if set
-        const initialReadingKey = `${type}InitialReading`;
+        // Map English type to German config names
+        const typeMapping = {
+            electricity: 'strom',
+            water: 'wasser',
+            gas: 'gas',
+        };
+        const configType = typeMapping[type] || type;
+
+        const initialReadingKey = `${configType}InitialReading`;
         const initialReading = this.config[initialReadingKey] || 0;
 
         if (initialReading > 0) {
@@ -133,13 +141,13 @@ class NebenkostenMonitor extends utils.Adapter {
                 let currentRaw = sensorState.val;
 
                 // Apply offset if configured (in original unit)
-                const offsetKey = `${type}Offset`;
+                // Offset is SUBTRACTED because it represents the base meter reading
+                const offsetKey = `${configType}Offset`;
                 const offset = this.config[offsetKey] || 0;
                 if (offset !== 0) {
-                    currentRaw = currentRaw + offset;
+                    currentRaw = currentRaw - offset;
+                    this.log.debug(`Applied offset for ${type}: -${offset}, new value: ${currentRaw}`);
                 }
-
-                // Calculate yearly consumption IN ORIGINAL UNIT first
                 let yearlyConsumption = Math.max(0, currentRaw - initialReading);
 
                 // For gas: convert m³ to kWh AFTER calculating the difference
@@ -183,30 +191,43 @@ class NebenkostenMonitor extends utils.Adapter {
 
         const now = Date.now();
         let consumption = value;
+        let consumptionM3 = null; // For gas: track m³ value with offset applied (for yearly calculation)
 
-        // For gas, convert m³ to kWh
+        // Map English type to German config names
+        const typeMapping = {
+            electricity: 'strom',
+            water: 'wasser',
+            gas: 'gas',
+        };
+        const configType = typeMapping[type] || type;
+
+        // Apply offset FIRST (in original unit: m³ for gas, kWh for electricity/water)
+        // Offset is SUBTRACTED because it represents the base meter reading
+        const offsetKey = `${configType}Offset`;
+        const offset = this.config[offsetKey] || 0;
+        if (offset !== 0) {
+            consumption = consumption - offset;
+            this.log.debug(`Applied offset for ${type}: -${offset}, new value: ${consumption}`);
+        }
+
+        // For gas, convert m³ to kWh AFTER offset is applied!
         if (type === 'gas') {
             const brennwert = this.config.gasBrennwert || 11.5;
             const zZahl = this.config.gasZahl || 0.95;
 
+            // Save m³ value (with offset applied) for yearly calculation
+            consumptionM3 = consumption;
+
             // Store volume reading
-            await this.setStateAsync(`${type}.info.meterReadingVolume`, value, true);
+            await this.setStateAsync(`${type}.info.meterReadingVolume`, consumption, true);
 
             // Convert to kWh
-            consumption = calculator.convertGasM3ToKWh(value, brennwert, zZahl);
+            consumption = calculator.convertGasM3ToKWh(consumption, brennwert, zZahl);
             consumption = calculator.roundToDecimals(consumption, 2);
 
             this.log.debug(
-                `Gas conversion: ${value} m³ → ${consumption} kWh (Brennwert: ${brennwert}, Z-Zahl: ${zZahl})`,
+                `Gas conversion: ${consumptionM3.toFixed(2)} m³ → ${consumption} kWh (Brennwert: ${brennwert}, Z-Zahl: ${zZahl})`,
             );
-        }
-
-        // Apply offset if configured
-        const offsetKey = `${type}Offset`;
-        const offset = this.config[offsetKey] || 0;
-        if (offset !== 0) {
-            consumption = consumption + offset;
-            this.log.debug(`Applied offset for ${type}: ${offset}, new value: ${consumption}`);
         }
 
         // Update meter reading (in kWh for gas, m³ for water, kWh for electricity)
@@ -266,26 +287,37 @@ class NebenkostenMonitor extends utils.Adapter {
             await this.setStateAsync(`${type}.consumption.monthly`, calculator.roundToDecimals(newMonthly, 2), true);
 
             // Update yearly consumption
-            // If initial reading is set, calculate from initial, otherwise use delta accumulation
-            const initialReadingKey = `${type}InitialReading`;
+            // Calculate yearly consumption if initial reading is set
+            // ALWAYS recalculate from current sensor to be reset-proof
+            const typeMapping = {
+                electricity: 'strom',
+                water: 'wasser',
+                gas: 'gas',
+            };
+            const configType = typeMapping[type] || type;
+            const initialReadingKey = `${configType}InitialReading`;
             const initialReading = this.config[initialReadingKey] || 0;
 
             if (initialReading > 0) {
-                // Calculate yearly as: Current - Initial (in ORIGINAL unit!)
+                // Calculate yearly as: (Current with offset applied) - Initial
                 let yearlyAmount;
 
                 if (type === 'gas') {
-                    // For gas: value is m³, consumption is kWh
+                    // For gas: use consumptionM3 (m³ with offset already applied)
                     // Calculate difference in m³, then convert to kWh
-                    const yearlyM3 = Math.max(0, value - initialReading);
-                    await this.setStateAsync(`${type}.consumption.yearlyVolume`, yearlyM3, true);
+                    const yearlyM3 = Math.max(0, consumptionM3 - initialReading);
+                    await this.setStateAsync(
+                        `${type}.consumption.yearlyVolume`,
+                        calculator.roundToDecimals(yearlyM3, 2),
+                        true,
+                    );
 
                     const brennwert = this.config.gasBrennwert || 11.5;
                     const zZahl = this.config.gasZahl || 0.95;
                     yearlyAmount = calculator.convertGasM3ToKWh(yearlyM3, brennwert, zZahl);
                     this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)} kWh = ${yearlyM3.toFixed(2)} m³`);
                 } else {
-                    // For water/electricity: use consumption directly
+                    // For water/electricity: consumption already has offset applied
                     yearlyAmount = Math.max(0, consumption - initialReading);
                     this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)}`);
                 }
@@ -319,14 +351,24 @@ class NebenkostenMonitor extends utils.Adapter {
      * @param {string} type - Utility type
      */
     async updateCosts(type) {
+        // Map English type names to German config field names
+        // Config uses German names (strom, wasser, gas) but code uses English (electricity, water, gas)
+        const typeMapping = {
+            electricity: 'strom',
+            water: 'wasser',
+            gas: 'gas',
+        };
+
+        const configType = typeMapping[type] || type;
+
         // Get price and basic charge from config
-        const priceKey = `${type}Preis`;
-        const grundgebuehrKey = `${type}Grundgebuehr`;
+        const priceKey = `${configType}Preis`;
+        const grundgebuehrKey = `${configType}Grundgebuehr`;
         const price = this.config[priceKey] || 0;
         const basicChargeMonthly = this.config[grundgebuehrKey] || 0;
 
         if (price === 0) {
-            this.log.debug(`No price configured for ${type}`);
+            this.log.debug(`No price configured for ${type} (${configType})`);
             return;
         }
 
@@ -339,22 +381,71 @@ class NebenkostenMonitor extends utils.Adapter {
         const monthly = typeof monthlyState?.val === 'number' ? monthlyState.val : 0;
         const yearly = typeof yearlyState?.val === 'number' ? yearlyState.val : 0;
 
-        // Calculate costs
+        // Cost calculation
         const dailyCost = calculator.calculateCost(daily, price);
         const monthlyCost = calculator.calculateCost(monthly, price);
         const yearlyCost = calculator.calculateCost(yearly, price);
 
-        // Calculate elapsed months since year start (accurate year/month difference)
-        const yearStartState = await this.getStateAsync(`${type}.statistics.lastYearStart`);
-        const yearStartTime = typeof yearStartState?.val === 'number' ? yearStartState.val : Date.now();
-        const yearStart = new Date(yearStartTime);
-        const now = new Date();
-        const yDiff = now.getFullYear() - yearStart.getFullYear();
-        const mDiff = now.getMonth() - yearStart.getMonth();
-        const monthsSinceYearStart = Math.max(1, yDiff * 12 + mDiff + 1); // +1 to include start month
+        // Calculate months since CONTRACT START (not year start!) for correct basic charge
+        const contractStartKey = `${configType}ContractStart`;
+        const contractStartDate = this.config[contractStartKey];
 
-        // Basic charge accumulated = monthly × elapsed months
-        const basicChargeAccumulated = basicChargeMonthly * monthsSinceYearStart;
+        let monthsSinceContract;
+        if (contractStartDate) {
+            // Parse German date format (DD.MM.YYYY or DD.MM.YY)
+            const parseGermanDate = dateStr => {
+                if (!dateStr || typeof dateStr !== 'string') return null;
+
+                const parts = dateStr.trim().split('.');
+                if (parts.length !== 3) return null;
+
+                let day = parseInt(parts[0], 10);
+                let month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
+                let year = parseInt(parts[2], 10);
+
+                // Handle 2-digit years (e.g. 25 -> 2025)
+                if (year < 100) {
+                    year += 2000;
+                }
+
+                if (isNaN(day) || isNaN(month) || isNaN(year)) return null;
+
+                return new Date(year, month, day);
+            };
+
+            // Use contract start date if provided
+            const contractStart = parseGermanDate(contractStartDate);
+
+            if (contractStart && !isNaN(contractStart.getTime())) {
+                const now = new Date();
+
+                // Calculate months between contract start and now
+                const yDiff = now.getFullYear() - contractStart.getFullYear();
+                const mDiff = now.getMonth() - contractStart.getMonth();
+                monthsSinceContract = Math.max(1, yDiff * 12 + mDiff + 1); // +1 to include start month
+
+                this.log.debug(
+                    `${type}: Contract start ${contractStartDate} (parsed: ${contractStart.toISOString()}), months since: ${monthsSinceContract}`,
+                );
+            } else {
+                this.log.warn(`${type}: Invalid contract start date format: ${contractStartDate}. Expected DD.MM.YYYY`);
+                monthsSinceContract = null;
+            }
+        } else {
+            // Fallback: Use year start (backward compatibility for existing users)
+            const yearStartState = await this.getStateAsync(`${type}.statistics.lastYearStart`);
+            const yearStartTime = typeof yearStartState?.val === 'number' ? yearStartState.val : Date.now();
+            const yearStart = new Date(yearStartTime);
+            const now = new Date();
+            const yDiff = now.getFullYear() - yearStart.getFullYear();
+            const mDiff = now.getMonth() - yearStart.getMonth();
+            monthsSinceContract = Math.max(1, yDiff * 12 + mDiff + 1);
+
+            this.log.debug(`${type}: No contract start, using year start. Months: ${monthsSinceContract}`);
+        }
+
+        // Basic charge accumulated = monthly × months since contract start
+        const basicChargeAccumulated = basicChargeMonthly * monthsSinceContract;
 
         // Update cost states
         await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyCost, 2), true);
@@ -367,16 +458,17 @@ class NebenkostenMonitor extends utils.Adapter {
         );
 
         // Abschlag Calculation
-        const abschlagKey = `${type}Abschlag`;
+        // Use monthsSinceContract (already calculated above) for correct billing period
+        const abschlagKey = `${configType}Abschlag`;
         const monthlyAbschlag = this.config[abschlagKey] || 0;
 
-        if (monthlyAbschlag > 0) {
-            const yearStartState = await this.getStateAsync(`${type}.statistics.lastYearStart`);
-            const yearStartTime = typeof yearStartState?.val === 'number' ? yearStartState.val : Date.now();
-            const monthsSinceYear = Math.max(1, Math.ceil((Date.now() - yearStartTime) / (1000 * 60 * 60 * 24 * 30)));
+        if (monthlyAbschlag > 0 && monthsSinceContract) {
+            // Calculate total paid via Abschlag (monthly payment × months since contract start)
+            const paidTotal = monthlyAbschlag * monthsSinceContract;
 
-            const paidTotal = monthlyAbschlag * monthsSinceYear;
-            const consumedCostSoFar = yearlyCost + basicChargeMonthly * monthsSinceYear;
+            // Calculate consumed cost (yearly consumption + accumulated basic charge)
+            const consumedCostSoFar = yearlyCost + basicChargeAccumulated;
+
             // Balance: negative = credit (you get money back), positive = additional payment needed
             const balance = consumedCostSoFar - paidTotal;
 
@@ -514,13 +606,42 @@ class NebenkostenMonitor extends utils.Adapter {
                 }
             }
 
-            // Check yearly reset (January 1st)
+            // Check yearly reset (CONTRACT ANNIVERSARY, not calendar year!)
+            // This is critical for correct cost calculations
+            const contractStartKey =
+                type === 'gas' ? 'gasContractStart' : type === 'water' ? 'wasserContractStart' : 'stromContractStart';
+            const contractStartDate = this.config[contractStartKey];
+
             const lastYearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
             if (lastYearStart?.val && typeof lastYearStart.val === 'number') {
-                const lastYear = new Date(lastYearStart.val);
-                // Reset if year changed
-                if (now.getFullYear() !== lastYear.getFullYear()) {
-                    await this.resetYearlyCounters(type);
+                const lastYearStartDate = new Date(lastYearStart.val);
+
+                if (contractStartDate) {
+                    // Use contract anniversary for reset
+                    const contractStart = new Date(contractStartDate);
+                    const anniversaryMonth = contractStart.getMonth();
+                    const anniversaryDay = contractStart.getDate();
+
+                    // Check if we passed the anniversary this year
+                    // Only reset once per year on the anniversary date
+                    const isAtOrPastAnniversary =
+                        now.getMonth() > anniversaryMonth ||
+                        (now.getMonth() === anniversaryMonth && now.getDate() >= anniversaryDay);
+
+                    const lastResetWasThisYear = lastYearStartDate.getFullYear() === now.getFullYear();
+
+                    if (isAtOrPastAnniversary && !lastResetWasThisYear) {
+                        this.log.info(
+                            `${type}: Contract anniversary reached (${anniversaryDay}.${anniversaryMonth + 1}). Resetting yearly counters.`,
+                        );
+                        await this.resetYearlyCounters(type);
+                    }
+                } else {
+                    // Fallback: Calendar year reset (January 1st) for backward compatibility
+                    if (now.getFullYear() !== lastYearStartDate.getFullYear()) {
+                        this.log.info(`${type}: Year changed (no contract date set). Resetting yearly counters.`);
+                        await this.resetYearlyCounters(type);
+                    }
                 }
             }
         }
