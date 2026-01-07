@@ -305,7 +305,7 @@ class NebenkostenMonitor extends utils.Adapter {
                 if (type === 'gas') {
                     // For gas: use consumptionM3 (m³ with offset already applied)
                     // Calculate difference in m³, then convert to kWh
-                    const yearlyM3 = Math.max(0, consumptionM3 - initialReading);
+                    const yearlyM3 = Math.max(0, (consumptionM3 || 0) - initialReading);
                     await this.setStateAsync(
                         `${type}.consumption.yearlyVolume`,
                         calculator.roundToDecimals(yearlyM3, 2),
@@ -451,7 +451,7 @@ class NebenkostenMonitor extends utils.Adapter {
         }
 
         // Basic charge accumulated = monthly × months since contract start
-        const basicChargeAccumulated = basicChargeMonthly * monthsSinceContract;
+        const basicChargeAccumulated = basicChargeMonthly * (monthsSinceContract || 0);
 
         // Update cost states
         await this.setStateAsync(`${type}.costs.daily`, calculator.roundToDecimals(dailyCost, 2), true);
