@@ -16,9 +16,9 @@
 - 💰 **Automatische Kostenberechnung** mit Arbeitspreis und Grundgebühr
 - 💳 **Abschlagsüberwachung** - Sehe sofort ob Nachzahlung oder Guthaben droht
 - 🔄 **Flexible Sensoren** - Nutzt vorhandene Sensoren (Shelly, Tasmota, Homematic, etc.)
-- 📈 **Automatische Statistiken** - täglich, monatlich und jährlich
-- ⚡ **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
-- 🕛 **Automatische Resets** - Täglich, monatlich und jährlich
+- ⚡ **HT/NT-Tarife** - Volle Unterstützung für Hoch- und Nebentarife (Tag/Nacht)
+- 🔄 **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
+- 🕛 **Automatische Resets** - Täglich, monatlich und jährlich (Vertragsjubiläum)
 
 ---
 
@@ -62,6 +62,12 @@ Für jede aktivierte Verbrauchsart (Gas/Wasser/Strom) werden folgende Ordner ang
 | `monthlyVolume` | Monatlicher Verbrauch in m³                           | 10,69 m³         |
 | `yearly`        | Verbrauch **seit Vertragsbeginn** (this billing year) | 730,01 kWh       |
 | `yearlyVolume`  | Jahresverbrauch in m³                                 | 66,82 m³         |
+| `dailyHT`       | Tagesverbrauch im **Haupttarif** (HT)                 | 8,40 kWh         |
+| `dailyNT`       | Tagesverbrauch im **Nebentarif** (NT)                 | 3,62 kWh         |
+| `monthlyHT`     | Monatsverbrauch im HT                                 | 82,15 kWh        |
+| `monthlyNT`     | Monatsverbrauch im NT                                 | 35,62 kWh        |
+| `yearlyHT`      | Jahresverbrauch im HT                                 | 511,00 kWh       |
+| `yearlyNT`      | Jahresverbrauch im NT                                 | 219,01 kWh       |
 | `lastUpdate`    | Letzte Aktualisierung                                 | 06.01.2026 14:11 |
 
 **💡 Tipp:** `yearly` wird automatisch als `(Aktueller Zählerstand - Offset) - Initial Reading` berechnet!
@@ -128,6 +134,63 @@ Balance:           +2,64 € → Nachzahlung
 
 ---
 
+### 📅 **billing** (Abrechnungszeitraum)
+
+| Datenpunkt          | Beschreibung                             | Beispiel    |
+| ------------------- | ---------------------------------------- | ----------- |
+| `endReading`        | Endzählerstand (manuell eintragen)       | 10316.82 m³ |
+| `closePeriod`       | Zeitraum jetzt abschließen (Button)      | true/false  |
+| `periodEnd`         | Abrechnungszeitraum endet am             | 01.01.2027  |
+| `daysRemaining`     | Tage bis Abrechnungsende                 | 359 Tage    |
+| `newInitialReading` | Neuer Startwert (für Config übernehmen!) | 10316.82 m³ |
+
+**💡 Workflow am Jahresende:**
+
+1. Physischen Zähler ablesen (z.B. 10316.82 m³)
+2. Wert in `endReading` eintragen
+3. `closePeriod` auf `true` setzen
+4. ✅ Adapter archiviert automatisch alle Daten in `history.{JAHR}.*`
+5. ⚠️ **Wichtig:** Config aktualisieren mit neuem `initialReading` (siehe `newInitialReading`)
+
+---
+
+### 📊 **history** (Jahres-Historie)
+
+| Datenpunkt                  | Beschreibung                            | Beispiel   |
+| --------------------------- | --------------------------------------- | ---------- |
+| `history.2024.yearly`       | Jahresverbrauch 2024                    | 730.01 kWh |
+| `history.2024.yearlyVolume` | Jahresverbrauch 2024 in m³ (Gas/Wasser) | 66.82 m³   |
+| `history.2024.totalYearly`  | Gesamtkosten 2024                       | 162.64 €   |
+| `history.2024.balance`      | Bilanz 2024 (Nachzahlung/Guthaben)      | +12.64 €   |
+
+**💡 Automatische Archivierung:**
+
+- Wird beim Abschluss des Abrechnungszeitraums erstellt
+- Speichert alle wichtigen Jahreshöchstwerte inkl. HT/NT
+- Ermöglicht Jahresvergleiche
+
+---
+
+### 🔧 **adjustment** (Manuelle Anpassung)
+
+Korrigiere Sensor-Abdrift durch manuelle Anpassung.
+
+| Datenpunkt | Beschreibung                         | Beispiel  |
+| ---------- | ------------------------------------ | --------- |
+| `value`    | Korrekturwert (Differenz zum Zähler) | +4.2 m³   |
+| `note`     | Notiz/Grund für Anpassung (optional) | "Ausfall" |
+| `applied`  | Zeitstempel der letzten Anwendung    | 17035...  |
+
+**💡 Workflow:**
+
+1. Physischen Zähler ablesen: **10350 m³**
+2. Adapter zeigt: **10346 m³**
+3. Differenz in `adjustment.value` eintragen: **+4**
+4. ✅ Alle Berechnungen werden automatisch korrigiert.
+5. **Dank der HT/NT-Integration** werden Anpassungen bei HT/NT-Tarifen automatisch dem Haupttarif (HT) angerechnet.
+
+---
+
 ## ⚙️ Spezialfunktionen
 
 ### ⚡ Gas: m³ → kWh Umrechnung
@@ -135,13 +198,6 @@ Balance:           +2,64 € → Nachzahlung
 Gasverbrauch wird in **m³ gemessen**, aber in **kWh abgerechnet**.
 
 **Formel:** `kWh = m³ × Brennwert × Z-Zahl`
-
-**Beispiel:**
-
-- Verbrauch: 66,82 m³
-- Brennwert: 11,5 kWh/m³ (von Gasrechnung)
-- Z-Zahl: 0,95 (von Gasrechnung)
-- **Ergebnis:** 66,82 × 11,5 × 0,95 = **730,01 kWh**
 
 💡 **Tipp:** Brennwert und Z-Zahl findest du auf deiner Gasrechnung!
 
@@ -155,146 +211,46 @@ Der Adapter setzt Zähler automatisch zurück:
 | --------------------- | ------------- | ------------------- |
 | **00:00 Uhr** täglich | `daily` → 0   | Neuer Tag beginnt   |
 | **1. des Monats**     | `monthly` → 0 | Neuer Monat beginnt |
-| **1. Januar**         | `yearly` → 0  | Neues Jahr beginnt  |
-
-✅ **Keine manuelle Aktion nötig!**
-
----
-
-### 💳 Abschlagsüberwachung
-
-Trage deinen **monatlichen Abschlag** ein (z.B. 150 €).
-
-Der Adapter zeigt dir dann:
-
-1. **paidTotal** - Wieviel du bisher bezahlt hast
-2. **balance** - Ob Nachzahlung oder Guthaben droht
-
-**Beispiel nach 6 Monaten:**
-
-```
-Bezahlt:        6 × 150 € = 900 €
-Verbraucht:     800 € + 90 € Grundgebühr = 890 €
-Balance:        -10 € → 10 € Guthaben! ✅
-```
-
----
-
-## 📝 Beispiel-Konfigurationen
-
-### Gas mit Shelly Plus 1PM
-
-1. Shelly als Impulszähler am Gaszähler montieren
-2. Datenpunkt auswählen: `shelly.0.shellypluspm1.Meter0`
-3. Brennwert: 11,5 | Z-Zahl: 0,95
-4. Arbeitspreis: 0,1835 €/kWh
-5. Grundgebühr: 15,03 €/Monat
-
-### Wasser mit Homematic
-
-1. HM-Sen-Wa-Od Sensor installieren
-2. Datenpunkt auswählen: `hm-rpc.0.ABC123.METER`
-3. Arbeitspreis: 2,08 €/m³
-4. Grundgebühr: 15,00 €/Monat
-
-### Strom mit Shelly 3EM
-
-1. Shelly 3EM installiert
-2. Datenpunkt: `shelly.0.shelly3em.Total`
-3. Arbeitspreis: 0,30 €/kWh
-4. Grundgebühr: 12,00 €/Monat
-
----
-
-## 🔧 Troubleshooting
-
-### ❌ Sensor liefert keine Werte
-
-1. ✅ Sensor-Datenpunkt korrekt?
-2. 📋 Log prüfen (Adapter-Instanz → Log)
-3. 🔍 `info.sensorActive` = true?
-
-### ❌ Kosten = 0 €
-
-1. ✅ Arbeitspreis eingetragen? (darf nicht 0 sein)
-2. ✅ Verbrauch > 0?
-3. 🔍 `info.currentPrice` prüfen
-
-### ❌ Gas-Umrechnung stimmt nicht
-
-1. ✅ Brennwert korrekt? (10-12 kWh/m³)
-2. ✅ Z-Zahl korrekt? (0,90-1,00)
-3. 📋 Werte auf Gasrechnung nachsehen
-
-### ❌ Zählerstand weicht ab
-
-1. ✅ **Offset** eintragen: `Physischer Wert - Sensor Wert`
-2. ✅ **Initial Reading** prüfen (Vertragsbeginn)
+| **Vertragsjubiläum**  | `yearly` → 0  | Abrechnungsjahr neu |
 
 ---
 
 ## 📜 Changelog
 
-### 1.2.2 (2026-01-07)
+### 1.2.5 (2026-01-08)
 
+- **NEW:** Transparente Anzeige des Vertragsbeginns bei jedem Adapter-Start im Log
+- **NEW:** Unterstützung für zusätzliche **Jahresgebühren** (z.B. Zählermiete)
+- **NEW:** Datenpunkt `costs.totalYearly` für die echten Gesamtkosten
+- **FIX:** Kritischer Fehler in der Verbrauchs-Delta-Berechnung behoben (v1.2.4)
+- **FIX:** Arbeitspreis-Anzeige bei Strom korrigiert
+- **FIX:** Gas m³ → kWh Umrechnung für Anpassungswerte
+- **FIX:** Korrekte Initialisierung des Vertragsjahres bei Neustart
+- **FIX:** Vereinheitlichung der Konfigurationsschlüssel (`wasserInitialReading`)
+- **ROBUSTNESS:** Schutz vor Datenverlust bei Adapter-Neustart (Zählerstand-Persistierung)
+- **ROBUSTNESS:** Integration von manuellen Anpassungen in die HT/NT-Kostenrechnung
+- **NEW:** Volle Unterstützung für **HT/NT-Tarife** für alle Energieträger (Strom, Gas, Wasser)
+- **NEW:** Automatische Archivierung von HT/NT-Verbräuchen und Kosten in der Historie
+- **DOCS:** Internationalisierung von Titel und Beschreibung
+
+### 1.2.2 (2026-01-08)
+
+- **NEW:** Manuelle Anpassung für Sensor-Abdrift-Korrektur
+- **NEW:** Abrechnungszeitraum-Management mit automatischer Archivierung
 - **NEW:** Unterstützung für zusätzliche **Jahresgebühren** (z.B. Zählermiete)
 - **NEW:** Datenpunkt `costs.totalYearly` für die echten Gesamtkosten
 - **FIX:** Arbeitspreis-Anzeige bei Strom korrigiert
-- **FIX:** Redundante Datenpunkte (`consumption.current`) entfernt
-- **DOCS:** README korrigiert (m³ nicht nur für Gas)
-
-### 0.0.5 (2026-01-06)
-
-- **FIX:** Täglicher/Monatlicher Reset funktioniert jetzt zuverlässig
-- Vereinfachte Reset-Logik (nicht mehr zeitkritisch)
-
-### 0.0.4 (2026-01-05)
-
-- **BREAKING CHANGE:** Preis-Tabellen durch einfache Felder ersetzt
-- Nur noch: Arbeitspreis + Grundgebühr (keine Preishistorie mehr)
-- Einfachere Konfiguration
-- Entfernt: `costs.total` (redundant)
-
-### 0.0.3 (2026-01-05)
-
-- Verbesserte Monate-Berechnung (Year/Month Differenz statt Tage)
-- Balance-Vorzeichen gefixt (negativ = Guthaben)
-
-### 0.0.2 (2026-01-05)
-
-- Korrekte Grundgebühren-Akkumulation
-- Jahresverbrauch basiert auf Initial Reading
-- Gas Volume States (m³) hinzugefügt
+- **FIX:** Gas m³ → kWh Umrechnung für Anpassungswerte
+- **DOCS:** Internationalisierung von Titel und Beschreibung
 
 ### 0.0.1 (2026-01-02)
 
 - Initial release
-- Gas, Wasser, Strom Überwachung
-- Kostenberechnung
-- Automatische Resets
 
 ---
 
-## 📄 License
+## License
 
 MIT License
 
 Copyright (c) 2026 fischi87 <axel.fischer@hotmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.

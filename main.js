@@ -38,10 +38,32 @@ class NebenkostenMonitor extends utils.Adapter {
         await this.initializeUtility('water', this.config.wasserAktiv);
         await this.initializeUtility('electricity', this.config.stromAktiv);
 
+        // Subscribe to billing period closure triggers
+        this.subscribeStates('*.billing.closePeriod');
+
+        // Subscribe to manual adjustment changes
+        this.subscribeStates('*.adjustment.value');
+        this.subscribeStates('*.adjustment.note');
+
         // Set up periodic tasks
         this.setupPeriodicTasks();
 
         this.log.info('Nebenkosten-Monitor initialized successfully');
+    }
+
+    /**
+     * Maps internal utility type to config/state name
+     *
+     * @param {string} type - gas, water, or electricity
+     * @returns {string} - gas, wasser, or strom
+     */
+    getConfigType(type) {
+        const mapping = {
+            electricity: 'strom',
+            water: 'wasser',
+            gas: 'gas',
+        };
+        return mapping[type] || type;
     }
 
     /**
@@ -61,17 +83,10 @@ class NebenkostenMonitor extends utils.Adapter {
         this.log.info(`Initializing ${type} monitoring...`);
 
         // Create state structure
-        await stateManager.createUtilityStateStructure(this, type);
+        await stateManager.createUtilityStateStructure(this, type, this.config);
 
-        // Get sensor datapoint from config
-        // Map German field names to English (config uses German, code uses English)
-        const sensorDPMapping = {
-            gas: 'gasSensorDP',
-            water: 'wasserSensorDP',
-            electricity: 'stromSensorDP',
-        };
-
-        const sensorDPKey = sensorDPMapping[type];
+        const configType = this.getConfigType(type);
+        const sensorDPKey = `${configType}SensorDP`;
         const sensorDP = this.config[sensorDPKey];
 
         if (!sensorDP) {
@@ -82,12 +97,28 @@ class NebenkostenMonitor extends utils.Adapter {
 
         this.log.debug(`Using sensor datapoint for ${type}: ${sensorDP}`);
 
+        // Log configured contract start for user verification
+        const contractStartKey = `${configType}ContractStart`;
+        const contractStartDateStr = this.config[contractStartKey];
+        if (contractStartDateStr) {
+            this.log.info(`${type}: Managed with contract start: ${contractStartDateStr}`);
+        }
+
         // Subscribe to sensor datapoint
+
         this.subscribeForeignStates(sensorDP);
         await this.setStateAsync(`${type}.info.sensorActive`, true, true);
         this.log.debug(`Subscribed to ${type} sensor: ${sensorDP}`);
 
+        // Restore last sensor value from persistent state to prevent delta loss
+        const lastReading = await this.getStateAsync(`${type}.info.meterReading`);
+        if (lastReading && typeof lastReading.val === 'number') {
+            this.lastSensorValues[sensorDP] = lastReading.val;
+            this.log.debug(`${type}: Restored last sensor value: ${lastReading.val}`);
+        }
+
         // Initialize with current sensor value
+
         try {
             const sensorState = await this.getForeignStateAsync(sensorDP);
             if (sensorState && sensorState.val !== null && typeof sensorState.val === 'number') {
@@ -111,12 +142,37 @@ class NebenkostenMonitor extends utils.Adapter {
 
         const yearStart = await this.getStateAsync(`${type}.statistics.lastYearStart`);
         if (!yearStart || !yearStart.val) {
-            // Set year start to January 1st of current year
-            const yearStartDate = new Date(new Date().getFullYear(), 0, 1);
-            await this.setStateAsync(`${type}.statistics.lastYearStart`, yearStartDate.getTime(), true);
-            this.log.info(`Year start for ${type} set to ${yearStartDate.toISOString().split('T')[0]}`);
-        }
+            // Determine year start based on contract date or January 1st
+            const contractStartKey = `${configType}ContractStart`;
+            const contractStartDateStr = this.config[contractStartKey];
 
+            let yearStartDate;
+            if (contractStartDateStr) {
+                const contractStart = calculator.parseGermanDate(contractStartDateStr);
+                if (contractStart && !isNaN(contractStart.getTime())) {
+                    // Calculate last anniversary
+                    const nowDate = new Date(now);
+                    const currentYear = nowDate.getFullYear();
+                    yearStartDate = new Date(currentYear, contractStart.getMonth(), contractStart.getDate(), 12, 0, 0);
+
+                    // If anniversary is in the future this year, take last year
+                    if (yearStartDate > nowDate) {
+                        yearStartDate.setFullYear(currentYear - 1);
+                    }
+                }
+            }
+
+            if (!yearStartDate) {
+                // Fallback: January 1st of current year
+                const nowDate = new Date(now);
+                yearStartDate = new Date(nowDate.getFullYear(), 0, 1, 12, 0, 0);
+                this.log.info(
+                    `${type}: No contract start found. Setting initial year start to January 1st: ${yearStartDate.toLocaleDateString('de-DE')}`,
+                );
+            }
+
+            await this.setStateAsync(`${type}.statistics.lastYearStart`, yearStartDate.getTime(), true);
+        }
         // Update current price
         await this.updateCurrentPrice(type);
 
@@ -124,14 +180,6 @@ class NebenkostenMonitor extends utils.Adapter {
         await this.updateCosts(type);
 
         // Initialize yearly consumption from initial reading if set
-        // Map English type to German config names
-        const typeMapping = {
-            electricity: 'strom',
-            water: 'wasser',
-            gas: 'gas',
-        };
-        const configType = typeMapping[type] || type;
-
         const initialReadingKey = `${configType}InitialReading`;
         const initialReading = this.config[initialReadingKey] || 0;
 
@@ -171,6 +219,9 @@ class NebenkostenMonitor extends utils.Adapter {
             }
         }
 
+        // Update billing countdown
+        await this.updateBillingCountdown(type);
+
         this.log.debug(`Initial cost calculation completed for ${type}`);
     }
 
@@ -193,13 +244,7 @@ class NebenkostenMonitor extends utils.Adapter {
         let consumption = value;
         let consumptionM3 = null; // For gas: track m³ value with offset applied (for yearly calculation)
 
-        // Map English type to German config names
-        const typeMapping = {
-            electricity: 'strom',
-            water: 'wasser',
-            gas: 'gas',
-        };
-        const configType = typeMapping[type] || type;
+        const configType = this.getConfigType(type);
 
         // Apply offset FIRST (in original unit: m³ for gas, kWh for electricity/water)
         // Offset is SUBTRACTED because it represents the base meter reading
@@ -235,108 +280,148 @@ class NebenkostenMonitor extends utils.Adapter {
 
         // Calculate deltas if we have a previous value
         const lastValue = this.lastSensorValues[sensorDP];
-        if (lastValue !== undefined && consumption > lastValue) {
-            const delta = consumption - lastValue;
-            this.log.debug(`${type} delta: ${delta}`);
 
-            // For gas: track volume (m³) in parallel to energy (kWh)
+        // Update last value for NEXT calculation
+        this.lastSensorValues[sensorDP] = consumption;
+
+        // Skip delta calculation if this is the first value (lastValue is undefined)
+        // or if the sensor value decreased (meter reset or wrong value)
+        if (lastValue === undefined || consumption <= lastValue) {
+            if (lastValue !== undefined && consumption < lastValue) {
+                this.log.warn(
+                    `${type}: Sensor value decreased (${lastValue} -> ${consumption}). Assuming meter reset or replacement.`,
+                );
+            }
+            // First run or reset: just update objects and recalculate costs to ensure consistency
+            await this.updateCosts(type);
+            return;
+        }
+
+        const delta = consumption - lastValue;
+        this.log.debug(`${type} delta: ${delta}`);
+
+        // For gas: track volume (m³) in parallel to energy (kWh)
+        if (type === 'gas') {
+            // delta is already in kWh, convert back to m³ for volume tracking
+            const brennwert = this.config.gasBrennwert || 11.5;
+            const zZahl = this.config.gasZahl || 0.95;
+            const deltaVolume = delta / (brennwert * zZahl);
+
+            const dailyVolume = await this.getStateAsync(`${type}.consumption.dailyVolume`);
+            const monthlyVolume = await this.getStateAsync(`${type}.consumption.monthlyVolume`);
+            const yearlyVolume = await this.getStateAsync(`${type}.consumption.yearlyVolume`);
+
+            await this.setStateAsync(
+                `${type}.consumption.dailyVolume`,
+                calculator.roundToDecimals(
+                    (typeof dailyVolume?.val === 'number' ? dailyVolume.val : 0) + deltaVolume,
+                    3,
+                ),
+                true,
+            );
+            await this.setStateAsync(
+                `${type}.consumption.monthlyVolume`,
+                calculator.roundToDecimals(
+                    (typeof monthlyVolume?.val === 'number' ? monthlyVolume.val : 0) + deltaVolume,
+                    3,
+                ),
+                true,
+            );
+            await this.setStateAsync(
+                `${type}.consumption.yearlyVolume`,
+                calculator.roundToDecimals(
+                    (typeof yearlyVolume?.val === 'number' ? yearlyVolume.val : 0) + deltaVolume,
+                    3,
+                ),
+                true,
+            );
+        }
+
+        // Update daily consumption
+        const dailyConsumption = await this.getStateAsync(`${type}.consumption.daily`);
+        const newDaily = (typeof dailyConsumption?.val === 'number' ? dailyConsumption.val : 0) + delta;
+        await this.setStateAsync(`${type}.consumption.daily`, calculator.roundToDecimals(newDaily, 2), true);
+
+        // Update monthly consumption
+        const monthlyConsumption = await this.getStateAsync(`${type}.consumption.monthly`);
+        const newMonthly = (typeof monthlyConsumption?.val === 'number' ? monthlyConsumption.val : 0) + delta;
+        await this.setStateAsync(`${type}.consumption.monthly`, calculator.roundToDecimals(newMonthly, 2), true);
+
+        // HT/NT tracking
+        const htNtEnabledKey = `${configType}HtNtEnabled`;
+        if (this.config[htNtEnabledKey]) {
+            const isHT = calculator.isHTTime(this.config, configType);
+            const suffix = isHT ? 'HT' : 'NT';
+
+            // Update daily HT/NT
+            const dailyHTNTState = await this.getStateAsync(`${type}.consumption.daily${suffix}`);
+            const newDailyHTNT = (typeof dailyHTNTState?.val === 'number' ? dailyHTNTState.val : 0) + delta;
+            await this.setStateAsync(
+                `${type}.consumption.daily${suffix}`,
+                calculator.roundToDecimals(newDailyHTNT, 2),
+                true,
+            );
+
+            // Update monthly HT/NT
+            const monthlyHTNTState = await this.getStateAsync(`${type}.consumption.monthly${suffix}`);
+            const newMonthlyHTNT = (typeof monthlyHTNTState?.val === 'number' ? monthlyHTNTState.val : 0) + delta;
+            await this.setStateAsync(
+                `${type}.consumption.monthly${suffix}`,
+                calculator.roundToDecimals(newMonthlyHTNT, 2),
+                true,
+            );
+
+            // Update yearly HT/NT (recalculated from initial reading logic below if enabled,
+            // but we also need to store the delta-based value for the period between resets)
+            const yearlyHTNTState = await this.getStateAsync(`${type}.consumption.yearly${suffix}`);
+            const newYearlyHTNT = (typeof yearlyHTNTState?.val === 'number' ? yearlyHTNTState.val : 0) + delta;
+            await this.setStateAsync(
+                `${type}.consumption.yearly${suffix}`,
+                calculator.roundToDecimals(newYearlyHTNT, 2),
+                true,
+            );
+        }
+
+        // Update yearly consumption
+        // Calculate yearly consumption if initial reading is set
+        // ALWAYS recalculate from current sensor to be reset-proof
+        const initialReadingKey = `${configType}InitialReading`;
+        const initialReading = this.config[initialReadingKey] || 0;
+
+        if (initialReading > 0) {
+            // Calculate yearly as: (Current with offset applied) - Initial
+            let yearlyAmount;
+
             if (type === 'gas') {
-                // delta is already in kWh, convert back to m³ for volume tracking
-                const brennwert = this.config.gasBrennwert || 11.5;
-                const zZahl = this.config.gasZahl || 0.95;
-                const deltaVolume = delta / (brennwert * zZahl);
-
-                const dailyVolume = await this.getStateAsync(`${type}.consumption.dailyVolume`);
-                const monthlyVolume = await this.getStateAsync(`${type}.consumption.monthlyVolume`);
-                const yearlyVolume = await this.getStateAsync(`${type}.consumption.yearlyVolume`);
-
-                await this.setStateAsync(
-                    `${type}.consumption.dailyVolume`,
-                    calculator.roundToDecimals(
-                        (typeof dailyVolume?.val === 'number' ? dailyVolume.val : 0) + deltaVolume,
-                        3,
-                    ),
-                    true,
-                );
-                await this.setStateAsync(
-                    `${type}.consumption.monthlyVolume`,
-                    calculator.roundToDecimals(
-                        (typeof monthlyVolume?.val === 'number' ? monthlyVolume.val : 0) + deltaVolume,
-                        3,
-                    ),
-                    true,
-                );
+                // For gas: use consumptionM3 (m³ with offset already applied)
+                // Calculate difference in m³, then convert to kWh
+                const yearlyM3 = Math.max(0, (consumptionM3 || 0) - initialReading);
                 await this.setStateAsync(
                     `${type}.consumption.yearlyVolume`,
-                    calculator.roundToDecimals(
-                        (typeof yearlyVolume?.val === 'number' ? yearlyVolume.val : 0) + deltaVolume,
-                        3,
-                    ),
+                    calculator.roundToDecimals(yearlyM3, 2),
                     true,
                 );
-            }
 
-            // Update daily consumption
-            const dailyConsumption = await this.getStateAsync(`${type}.consumption.daily`);
-            const newDaily = (typeof dailyConsumption?.val === 'number' ? dailyConsumption.val : 0) + delta;
-            await this.setStateAsync(`${type}.consumption.daily`, calculator.roundToDecimals(newDaily, 2), true);
-
-            // Update monthly consumption
-            const monthlyConsumption = await this.getStateAsync(`${type}.consumption.monthly`);
-            const newMonthly = (typeof monthlyConsumption?.val === 'number' ? monthlyConsumption.val : 0) + delta;
-            await this.setStateAsync(`${type}.consumption.monthly`, calculator.roundToDecimals(newMonthly, 2), true);
-
-            // Update yearly consumption
-            // Calculate yearly consumption if initial reading is set
-            // ALWAYS recalculate from current sensor to be reset-proof
-            const typeMapping = {
-                electricity: 'strom',
-                water: 'wasser',
-                gas: 'gas',
-            };
-            const configType = typeMapping[type] || type;
-            const initialReadingKey = `${configType}InitialReading`;
-            const initialReading = this.config[initialReadingKey] || 0;
-
-            if (initialReading > 0) {
-                // Calculate yearly as: (Current with offset applied) - Initial
-                let yearlyAmount;
-
-                if (type === 'gas') {
-                    // For gas: use consumptionM3 (m³ with offset already applied)
-                    // Calculate difference in m³, then convert to kWh
-                    const yearlyM3 = Math.max(0, (consumptionM3 || 0) - initialReading);
-                    await this.setStateAsync(
-                        `${type}.consumption.yearlyVolume`,
-                        calculator.roundToDecimals(yearlyM3, 2),
-                        true,
-                    );
-
-                    const brennwert = this.config.gasBrennwert || 11.5;
-                    const zZahl = this.config.gasZahl || 0.95;
-                    yearlyAmount = calculator.convertGasM3ToKWh(yearlyM3, brennwert, zZahl);
-                    this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)} kWh = ${yearlyM3.toFixed(2)} m³`);
-                } else {
-                    // For water/electricity: consumption already has offset applied
-                    yearlyAmount = Math.max(0, consumption - initialReading);
-                    this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)}`);
-                }
-
-                await this.setStateAsync(
-                    `${type}.consumption.yearly`,
-                    calculator.roundToDecimals(yearlyAmount, 2),
-                    true,
-                );
+                const brennwert = this.config.gasBrennwert || 11.5;
+                const zZahl = this.config.gasZahl || 0.95;
+                yearlyAmount = calculator.convertGasM3ToKWh(yearlyM3, brennwert, zZahl);
+                this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)} kWh = ${yearlyM3.toFixed(2)} m³`);
             } else {
-                // Fallback: Accumulate deltas
-                const yearlyConsumption = await this.getStateAsync(`${type}.consumption.yearly`);
-                const newYearly = (typeof yearlyConsumption?.val === 'number' ? yearlyConsumption.val : 0) + delta;
-                await this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(newYearly, 2), true);
+                // For water/electricity: consumption already has offset applied
+                yearlyAmount = Math.max(0, consumption - initialReading);
+                this.log.debug(`Yearly ${type}: ${yearlyAmount.toFixed(2)}`);
             }
 
-            // Recalculate costs
-            await this.updateCosts(type);
+            await this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(yearlyAmount, 2), true);
+        } else {
+            // Fallback: Accumulate deltas
+            const yearlyConsumption = await this.getStateAsync(`${type}.consumption.yearly`);
+            const newYearly = (typeof yearlyConsumption?.val === 'number' ? yearlyConsumption.val : 0) + delta;
+            await this.setStateAsync(`${type}.consumption.yearly`, calculator.roundToDecimals(newYearly, 2), true);
         }
+
+        // Recalculate costs
+        await this.updateCosts(type);
 
         // Update timestamp
         await this.setStateAsync(`${type}.consumption.lastUpdate`, now, true);
@@ -348,16 +433,9 @@ class NebenkostenMonitor extends utils.Adapter {
      *
      * @param {string} type - Utility type
      */
-    async updateCosts(type) {
-        // Map English type names to German config field names
-        // Config uses German names (strom, wasser, gas) but code uses English (electricity, water, gas)
-        const typeMapping = {
-            electricity: 'strom',
-            water: 'wasser',
-            gas: 'gas',
-        };
 
-        const configType = typeMapping[type] || type;
+    async updateCosts(type) {
+        const configType = this.getConfigType(type);
 
         // Get price and basic charge from config
         const priceKey = `${configType}Preis`;
@@ -379,12 +457,106 @@ class NebenkostenMonitor extends utils.Adapter {
 
         const daily = typeof dailyState?.val === 'number' ? dailyState.val : 0;
         const monthly = typeof monthlyState?.val === 'number' ? monthlyState.val : 0;
-        const yearly = typeof yearlyState?.val === 'number' ? yearlyState.val : 0;
+        let yearly = typeof yearlyState?.val === 'number' ? yearlyState.val : 0;
 
-        // Consumption cost calculation (purely based on units)
-        const dailyConsumptionCost = calculator.calculateCost(daily, price);
-        const monthlyConsumptionCost = calculator.calculateCost(monthly, price);
-        const yearlyConsumptionCost = calculator.calculateCost(yearly, price);
+        // Apply manual adjustment if configured
+        const adjustmentState = await this.getStateAsync(`${type}.adjustment.value`);
+        const adjustment = typeof adjustmentState?.val === 'number' ? adjustmentState.val : 0;
+        if (adjustment !== 0) {
+            this.log.debug(`Applying adjustment to ${type}: ${adjustment}`);
+
+            // For gas: work with m³ values, convert once at the end
+            if (type === 'gas') {
+                const yearlyVolumeState = await this.getStateAsync(`${type}.consumption.yearlyVolume`);
+                const yearlyVolume = typeof yearlyVolumeState?.val === 'number' ? yearlyVolumeState.val : 0;
+
+                // Add adjustment in m³ (both same unit!)
+                const totalM3 = yearlyVolume + adjustment;
+
+                // Convert to kWh once
+                const brennwert = this.config.gasBrennwert || 11.5;
+                const zZahl = this.config.gasZahl || 0.95;
+                yearly = calculator.convertGasM3ToKWh(totalM3, brennwert, zZahl);
+
+                this.log.debug(
+                    `Gas adjustment: ${yearlyVolume} m³ + ${adjustment} m³ = ${totalM3} m³ → ${yearly.toFixed(2)} kWh`,
+                );
+            } else {
+                // Water/Electricity: adjustment is in same unit as consumption
+                yearly += adjustment;
+            }
+        }
+
+        // Consumption cost calculation
+        let dailyConsumptionCost, monthlyConsumptionCost, yearlyConsumptionCost;
+
+        const htNtEnabledKey = `${configType}HtNtEnabled`;
+        if (this.config[htNtEnabledKey]) {
+            // HT/NT Calculation
+            const htPrice = this.config[`${configType}HtPrice`] || 0;
+            const ntPrice = this.config[`${configType}NtPrice`] || 0;
+
+            // Get HT/NT consumption
+            const dailyHT = (await this.getStateAsync(`${type}.consumption.dailyHT`))?.val || 0;
+            const dailyNT = (await this.getStateAsync(`${type}.consumption.dailyNT`))?.val || 0;
+            const monthlyHT = (await this.getStateAsync(`${type}.consumption.monthlyHT`))?.val || 0;
+            const monthlyNT = (await this.getStateAsync(`${type}.consumption.monthlyNT`))?.val || 0;
+
+            let yearlyHT = (await this.getStateAsync(`${type}.consumption.yearlyHT`))?.val || 0;
+            const yearlyNT = (await this.getStateAsync(`${type}.consumption.yearlyNT`))?.val || 0;
+
+            // Add manual adjustment to HT consumption for cost calculation
+            if (adjustment !== 0) {
+                if (type === 'gas') {
+                    const brennwert = this.config.gasBrennwert || 11.5;
+                    const zZahl = this.config.gasZahl || 0.95;
+                    yearlyHT = Number(yearlyHT) + calculator.convertGasM3ToKWh(adjustment, brennwert, zZahl);
+                } else {
+                    yearlyHT = Number(yearlyHT) + Number(adjustment);
+                }
+            }
+
+            dailyConsumptionCost = Number(dailyHT) * parseFloat(htPrice) + Number(dailyNT) * parseFloat(ntPrice);
+            monthlyConsumptionCost = Number(monthlyHT) * parseFloat(htPrice) + Number(monthlyNT) * parseFloat(ntPrice);
+            yearlyConsumptionCost = Number(yearlyHT) * parseFloat(htPrice) + Number(yearlyNT) * parseFloat(ntPrice);
+
+            // Update HT/NT specific cost states
+            await this.setStateAsync(
+                `${type}.costs.dailyHT`,
+                calculator.roundToDecimals(Number(dailyHT) * parseFloat(htPrice), 2),
+                true,
+            );
+            await this.setStateAsync(
+                `${type}.costs.dailyNT`,
+                calculator.roundToDecimals(Number(dailyNT) * parseFloat(ntPrice), 2),
+                true,
+            );
+            await this.setStateAsync(
+                `${type}.costs.monthlyHT`,
+                calculator.roundToDecimals(Number(monthlyHT) * parseFloat(htPrice), 2),
+                true,
+            );
+            await this.setStateAsync(
+                `${type}.costs.monthlyNT`,
+                calculator.roundToDecimals(Number(monthlyNT) * parseFloat(ntPrice), 2),
+                true,
+            );
+            await this.setStateAsync(
+                `${type}.costs.yearlyHT`,
+                calculator.roundToDecimals(Number(yearlyHT) * parseFloat(htPrice), 2),
+                true,
+            );
+            await this.setStateAsync(
+                `${type}.costs.yearlyNT`,
+                calculator.roundToDecimals(Number(yearlyNT) * parseFloat(ntPrice), 2),
+                true,
+            );
+        } else {
+            // Standard single tariff calculation
+            dailyConsumptionCost = calculator.calculateCost(daily, price);
+            monthlyConsumptionCost = calculator.calculateCost(monthly, price);
+            yearlyConsumptionCost = calculator.calculateCost(yearly, price);
+        }
 
         // Calculate months since CONTRACT START (not year start!) for correct basic charge
         const contractStartKey = `${configType}ContractStart`;
@@ -392,35 +564,8 @@ class NebenkostenMonitor extends utils.Adapter {
 
         let monthsSinceContract;
         if (contractStartDate) {
-            // Parse German date format (DD.MM.YYYY or DD.MM.YY)
-            const parseGermanDate = dateStr => {
-                if (!dateStr || typeof dateStr !== 'string') {
-                    return null;
-                }
-
-                const parts = dateStr.trim().split('.');
-                if (parts.length !== 3) {
-                    return null;
-                }
-
-                let day = parseInt(parts[0], 10);
-                let month = parseInt(parts[1], 10) - 1; // Month is 0-indexed
-                let year = parseInt(parts[2], 10);
-
-                // Handle 2-digit years (e.g. 25 -> 2025)
-                if (year < 100) {
-                    year += 2000;
-                }
-
-                if (isNaN(day) || isNaN(month) || isNaN(year)) {
-                    return null;
-                }
-
-                return new Date(year, month, day);
-            };
-
             // Use contract start date if provided
-            const contractStart = parseGermanDate(contractStartDate);
+            const contractStart = calculator.parseGermanDate(contractStartDate);
 
             if (contractStart && !isNaN(contractStart.getTime())) {
                 const now = new Date();
@@ -527,6 +672,317 @@ class NebenkostenMonitor extends utils.Adapter {
     }
 
     /**
+     * Closes the billing period and archives data
+     *
+     * @param {string} type - Utility type
+     */
+    async closeBillingPeriod(type) {
+        this.log.info(`🔔 Schließe Abrechnungszeitraum für ${type}...`);
+
+        // 1. Endzählerstand validieren
+        const endReadingState = await this.getStateAsync(`${type}.billing.endReading`);
+        const endReading = typeof endReadingState?.val === 'number' ? endReadingState.val : null;
+
+        if (!endReading || endReading <= 0) {
+            this.log.error(
+                `❌ Kein gültiger Endzählerstand für ${type}. Bitte trage zuerst einen Wert in ${type}.billing.endReading ein!`,
+            );
+            await this.setStateAsync(`${type}.billing.closePeriod`, false, true);
+            return;
+        }
+
+        // 2. Aktuelles Jahr bestimmen (basierend auf Vertragsbeginn)
+        const configType = this.getConfigType(type);
+        const contractStartKey = `${configType}ContractStart`;
+        const contractStart = this.config[contractStartKey];
+
+        if (!contractStart) {
+            this.log.error(`❌ Kein Vertragsbeginn für ${type} konfiguriert. Kann Jahr nicht bestimmen.`);
+            await this.setStateAsync(`${type}.billing.closePeriod`, false, true);
+            return;
+        }
+
+        // Parse the contract start date using centralized helper
+        const startDate = calculator.parseGermanDate(contractStart);
+        if (!startDate) {
+            this.log.error(`❌ Ungültiges Datum-Format für Vertragsbeginn: ${contractStart}`);
+            await this.setStateAsync(`${type}.billing.closePeriod`, false, true);
+            return;
+        }
+
+        const year = startDate.getFullYear();
+
+        // 3. Alle aktuellen Werte auslesen
+        const yearlyState = await this.getStateAsync(`${type}.consumption.yearly`);
+        const totalYearlyState = await this.getStateAsync(`${type}.costs.totalYearly`);
+        const balanceState = await this.getStateAsync(`${type}.costs.balance`);
+
+        const yearly = typeof yearlyState?.val === 'number' ? yearlyState.val : 0;
+        const totalYearly = typeof totalYearlyState?.val === 'number' ? totalYearlyState.val : 0;
+        const balance = typeof balanceState?.val === 'number' ? balanceState.val : 0;
+
+        // HT/NT states
+        const htNtEnabledKey = `${configType}HtNtEnabled`;
+        const htNtEnabled = this.config[htNtEnabledKey] || false;
+        let yearlyHT = 0,
+            yearlyNT = 0,
+            costsHT = 0,
+            costsNT = 0;
+
+        if (htNtEnabled) {
+            yearlyHT = Number((await this.getStateAsync(`${type}.consumption.yearlyHT`))?.val || 0);
+            yearlyNT = Number((await this.getStateAsync(`${type}.consumption.yearlyNT`))?.val || 0);
+            costsHT = Number((await this.getStateAsync(`${type}.costs.yearlyHT`))?.val || 0);
+            costsNT = Number((await this.getStateAsync(`${type}.costs.yearlyNT`))?.val || 0);
+        }
+
+        // For gas/water: also get volume
+        let yearlyVolume = 0;
+        if (type === 'gas' || type === 'water') {
+            const yearlyVolumeState = await this.getStateAsync(`${type}.consumption.yearlyVolume`);
+            yearlyVolume = typeof yearlyVolumeState?.val === 'number' ? yearlyVolumeState.val : 0;
+        }
+
+        // 4. In Historie schreiben (dynamisch States anlegen!)
+        this.log.info(`📦 Archiviere Daten für ${type} Jahr ${year}...`);
+
+        // Create history channel if it doesn't exist
+        await this.setObjectNotExistsAsync(`${type}.history`, {
+            type: 'channel',
+            common: {
+                name: 'Historie',
+            },
+            native: {},
+        });
+
+        // Create year channel
+        await this.setObjectNotExistsAsync(`${type}.history.${year}`, {
+            type: 'channel',
+            common: {
+                name: `Jahr ${year}`,
+            },
+            native: {},
+        });
+
+        // Create and set history states
+        const consumptionUnit = type === 'gas' ? 'kWh' : type === 'water' ? 'm³' : 'kWh';
+
+        await this.setObjectNotExistsAsync(`${type}.history.${year}.yearly`, {
+            type: 'state',
+            common: {
+                name: `Jahresverbrauch ${year}`,
+                type: 'number',
+                role: 'value',
+                read: true,
+                write: false,
+                unit: consumptionUnit,
+            },
+            native: {},
+        });
+        await this.setStateAsync(`${type}.history.${year}.yearly`, yearly, true);
+
+        // HT/NT consumption history
+        if (htNtEnabled) {
+            const htNtStates = [
+                { id: 'yearlyHT', name: 'Haupttarif (HT)' },
+                { id: 'yearlyNT', name: 'Nebentarif (NT)' },
+            ];
+            for (const htn of htNtStates) {
+                await this.setObjectNotExistsAsync(`${type}.history.${year}.${htn.id}`, {
+                    type: 'state',
+                    common: {
+                        name: `Jahresverbrauch ${year} ${htn.name}`,
+                        type: 'number',
+                        role: 'value',
+                        read: true,
+                        write: false,
+                        unit: consumptionUnit,
+                    },
+                    native: {},
+                });
+            }
+            await this.setStateAsync(`${type}.history.${year}.yearlyHT`, yearlyHT, true);
+            await this.setStateAsync(`${type}.history.${year}.yearlyNT`, yearlyNT, true);
+        }
+
+        if (type === 'gas' || type === 'water') {
+            await this.setObjectNotExistsAsync(`${type}.history.${year}.yearlyVolume`, {
+                type: 'state',
+                common: {
+                    name: `Jahresverbrauch ${year} (m³)`,
+                    type: 'number',
+                    role: 'value',
+                    read: true,
+                    write: false,
+                    unit: 'm³',
+                },
+                native: {},
+            });
+            await this.setStateAsync(`${type}.history.${year}.yearlyVolume`, yearlyVolume, true);
+        }
+
+        await this.setObjectNotExistsAsync(`${type}.history.${year}.totalYearly`, {
+            type: 'state',
+            common: {
+                name: `Gesamtkosten ${year}`,
+                type: 'number',
+                role: 'value.money',
+                read: true,
+                write: false,
+                unit: '€',
+            },
+            native: {},
+        });
+        await this.setStateAsync(`${type}.history.${year}.totalYearly`, totalYearly, true);
+
+        // HT/NT costs history
+        if (htNtEnabled) {
+            const htNtCostStates = [
+                { id: 'costsHT', name: 'Haupttarif (HT)' },
+                { id: 'costsNT', name: 'Nebentarif (NT)' },
+            ];
+            for (const htc of htNtCostStates) {
+                await this.setObjectNotExistsAsync(`${type}.history.${year}.${htc.id}`, {
+                    type: 'state',
+                    common: {
+                        name: `Kosten ${year} ${htc.name}`,
+                        type: 'number',
+                        role: 'value.money',
+                        read: true,
+                        write: false,
+                        unit: '€',
+                    },
+                    native: {},
+                });
+            }
+            await this.setStateAsync(`${type}.history.${year}.costsHT`, costsHT, true);
+            await this.setStateAsync(`${type}.history.${year}.costsNT`, costsNT, true);
+        }
+
+        await this.setObjectNotExistsAsync(`${type}.history.${year}.balance`, {
+            type: 'state',
+            common: {
+                name: `Bilanz ${year}`,
+                type: 'number',
+                role: 'value.money',
+                read: true,
+                write: false,
+                unit: '€',
+            },
+            native: {},
+        });
+        await this.setStateAsync(`${type}.history.${year}.balance`, balance, true);
+
+        // 5. Info-State für neuen initialReading setzen
+        await this.setStateAsync(`${type}.billing.newInitialReading`, endReading, true);
+
+        this.log.warn(`⚠️ WICHTIG: Bitte aktualisiere die Config!`);
+        this.log.warn(`→ Gehe zu Admin → Instanzen → nebenkosten-monitor`);
+        this.log.warn(`→ Setze "${configType}InitialReading" = ${endReading}`);
+
+        // 6. Alle Zähler zurücksetzen
+        this.log.info(`🔄 Setze alle Zähler für ${type} zurück...`);
+        await this.setStateAsync(`${type}.consumption.yearly`, 0, true);
+        if (htNtEnabled) {
+            await this.setStateAsync(`${type}.consumption.yearlyHT`, 0, true);
+            await this.setStateAsync(`${type}.consumption.yearlyNT`, 0, true);
+        }
+
+        if (type === 'gas' || type === 'water') {
+            await this.setStateAsync(`${type}.consumption.yearlyVolume`, 0, true);
+        }
+        await this.setStateAsync(`${type}.costs.yearly`, 0, true);
+        if (htNtEnabled) {
+            await this.setStateAsync(`${type}.costs.yearlyHT`, 0, true);
+            await this.setStateAsync(`${type}.costs.yearlyNT`, 0, true);
+        }
+        await this.setStateAsync(`${type}.costs.totalYearly`, 0, true);
+        await this.setStateAsync(`${type}.costs.basicCharge`, 0, true);
+        await this.setStateAsync(`${type}.costs.annualFee`, 0, true);
+        await this.setStateAsync(`${type}.costs.balance`, 0, true);
+        await this.setStateAsync(`${type}.costs.paidTotal`, 0, true);
+
+        // 7. closePeriod zurücksetzen
+        await this.setStateAsync(`${type}.billing.closePeriod`, false, true);
+
+        this.log.info(`✅ Abrechnungszeitraum ${year} für ${type} erfolgreich abgeschlossen und archiviert!`);
+        this.log.info(`🎉 Neuer Zeitraum hat begonnen. Viel Erfolg!`);
+    }
+
+    /**
+     * Updates billing countdown (days remaining until contract anniversary)
+     *
+     * @param {string} type - Utility type
+     */
+    async updateBillingCountdown(type) {
+        const typeMapping = {
+            electricity: 'strom',
+            water: 'wasser',
+            gas: 'gas',
+        };
+        const configType = typeMapping[type] || type;
+        const contractStartKey = `${configType}ContractStart`;
+        const contractStart = this.config[contractStartKey];
+
+        if (!contractStart) {
+            return; // No contract start configured, skip
+        }
+
+        // Parse German date format
+        const parseGermanDate = dateStr => {
+            if (!dateStr || typeof dateStr !== 'string') {
+                return null;
+            }
+            const parts = dateStr.trim().split('.');
+            if (parts.length !== 3) {
+                return null;
+            }
+            let day = parseInt(parts[0], 10);
+            let month = parseInt(parts[1], 10) - 1;
+            let year = parseInt(parts[2], 10);
+            if (year < 100) {
+                year += 2000;
+            }
+            if (isNaN(day) || isNaN(month) || isNaN(year)) {
+                return null;
+            }
+            // Create date at noon to avoid timezone issues
+            return new Date(year, month, day, 12, 0, 0);
+        };
+
+        const startDate = parseGermanDate(contractStart);
+        if (!startDate) {
+            this.log.warn(`Invalid contract start date format for ${type}: ${contractStart}`);
+            return;
+        }
+
+        // Calculate next anniversary
+        const today = new Date();
+        const nextAnniversary = new Date(startDate);
+        nextAnniversary.setFullYear(today.getFullYear());
+
+        // If anniversary already passed this year, move to next year
+        if (nextAnniversary < today) {
+            nextAnniversary.setFullYear(today.getFullYear() + 1);
+        }
+
+        // Calculate days remaining
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const daysRemaining = Math.ceil((nextAnniversary.getTime() - today.getTime()) / msPerDay);
+
+        // For display: periodEnd should be the LAST day of the current period (the day before the anniversary)
+        const displayPeriodEnd = new Date(nextAnniversary);
+        displayPeriodEnd.setDate(displayPeriodEnd.getDate() - 1);
+
+        await this.setStateAsync(`${type}.billing.daysRemaining`, daysRemaining, true);
+        await this.setStateAsync(`${type}.billing.periodEnd`, displayPeriodEnd.toLocaleDateString('de-DE'), true);
+
+        this.log.debug(
+            `${type}: ${daysRemaining} Tage bis Abrechnungsende (${displayPeriodEnd.toLocaleDateString('de-DE')})`,
+        );
+    }
+
+    /**
      * Resets daily counters (called at midnight)
      *
      * @param {string} type - Utility type
@@ -540,11 +996,11 @@ class NebenkostenMonitor extends utils.Adapter {
 
         // Reset daily consumption
         await this.setStateAsync(`${type}.consumption.daily`, 0, true);
+        await this.setStateAsync(`${type}.consumption.dailyVolume`, 0, true);
         await this.setStateAsync(`${type}.costs.daily`, 0, true);
         await this.setStateAsync(`${type}.statistics.lastDayStart`, Date.now(), true);
 
         // Update average
-        // TODO: Store history and calculate proper average
         await this.setStateAsync(`${type}.statistics.averageDaily`, calculator.roundToDecimals(dailyValue, 2), true);
     }
 
@@ -562,6 +1018,7 @@ class NebenkostenMonitor extends utils.Adapter {
 
         // Reset monthly consumption
         await this.setStateAsync(`${type}.consumption.monthly`, 0, true);
+        await this.setStateAsync(`${type}.consumption.monthlyVolume`, 0, true);
         await this.setStateAsync(`${type}.costs.monthly`, 0, true);
         await this.setStateAsync(`${type}.statistics.lastMonthStart`, Date.now(), true);
 
@@ -583,6 +1040,7 @@ class NebenkostenMonitor extends utils.Adapter {
 
         // Reset yearly consumption
         await this.setStateAsync(`${type}.consumption.yearly`, 0, true);
+        await this.setStateAsync(`${type}.consumption.yearlyVolume`, 0, true);
         await this.setStateAsync(`${type}.costs.yearly`, 0, true);
 
         await this.setStateAsync(`${type}.statistics.lastYearStart`, Date.now(), true);
@@ -615,11 +1073,12 @@ class NebenkostenMonitor extends utils.Adapter {
             }
 
             // Check daily reset (any time after day change)
+            const nowDate = new Date(now);
             const lastDayStart = await this.getStateAsync(`${type}.statistics.lastDayStart`);
             if (lastDayStart?.val && typeof lastDayStart.val === 'number') {
                 const lastDay = new Date(lastDayStart.val);
                 // Reset if day OR month changed (handles month transitions)
-                if (now.getDate() !== lastDay.getDate() || now.getMonth() !== lastDay.getMonth()) {
+                if (nowDate.getDate() !== lastDay.getDate() || nowDate.getMonth() !== lastDay.getMonth()) {
                     await this.resetDailyCounters(type);
                 }
             }
@@ -629,7 +1088,7 @@ class NebenkostenMonitor extends utils.Adapter {
             if (lastMonthStart?.val && typeof lastMonthStart.val === 'number') {
                 const lastMonth = new Date(lastMonthStart.val);
                 // Reset if month changed
-                if (now.getMonth() !== lastMonth.getMonth() || now.getFullYear() !== lastMonth.getFullYear()) {
+                if (nowDate.getMonth() !== lastMonth.getMonth() || nowDate.getFullYear() !== lastMonth.getFullYear()) {
                     await this.resetMonthlyCounters(type);
                 }
             }
@@ -646,27 +1105,34 @@ class NebenkostenMonitor extends utils.Adapter {
 
                 if (contractStartDate) {
                     // Use contract anniversary for reset
-                    const contractStart = new Date(contractStartDate);
-                    const anniversaryMonth = contractStart.getMonth();
-                    const anniversaryDay = contractStart.getDate();
+                    const contractStart = calculator.parseGermanDate(contractStartDate);
 
-                    // Check if we passed the anniversary this year
-                    // Only reset once per year on the anniversary date
-                    const isAtOrPastAnniversary =
-                        now.getMonth() > anniversaryMonth ||
-                        (now.getMonth() === anniversaryMonth && now.getDate() >= anniversaryDay);
+                    if (contractStart && !isNaN(contractStart.getTime())) {
+                        const anniversaryMonth = contractStart.getMonth();
+                        const anniversaryDay = contractStart.getDate();
 
-                    const lastResetWasThisYear = lastYearStartDate.getFullYear() === now.getFullYear();
+                        // Check if we passed the anniversary this year
+                        // Only reset once per year on the anniversary date
+                        const isAtOrPastAnniversary =
+                            nowDate.getMonth() > anniversaryMonth ||
+                            (nowDate.getMonth() === anniversaryMonth && nowDate.getDate() >= anniversaryDay);
 
-                    if (isAtOrPastAnniversary && !lastResetWasThisYear) {
-                        this.log.info(
-                            `${type}: Contract anniversary reached (${anniversaryDay}.${anniversaryMonth + 1}). Resetting yearly counters.`,
+                        const lastResetWasThisYear = lastYearStartDate.getFullYear() === nowDate.getFullYear();
+
+                        if (isAtOrPastAnniversary && !lastResetWasThisYear) {
+                            this.log.info(
+                                `${type}: Contract anniversary reached (${anniversaryDay}.${anniversaryMonth + 1}). Resetting yearly counters.`,
+                            );
+                            await this.resetYearlyCounters(type);
+                        }
+                    } else {
+                        this.log.warn(
+                            `${type}: Invalid contract start date format: ${contractStartDate}. Expected DD.MM.YYYY`,
                         );
-                        await this.resetYearlyCounters(type);
                     }
                 } else {
                     // Fallback: Calendar year reset (January 1st) for backward compatibility
-                    if (now.getFullYear() !== lastYearStartDate.getFullYear()) {
+                    if (nowDate.getFullYear() !== lastYearStartDate.getFullYear()) {
                         this.log.info(`${type}: Year changed (no contract date set). Resetting yearly counters.`);
                         await this.resetYearlyCounters(type);
                     }
@@ -707,6 +1173,33 @@ class NebenkostenMonitor extends utils.Adapter {
     async onStateChange(id, state) {
         if (!state || state.val === null || state.val === undefined) {
             // Ignore deleted or empty states
+            return;
+        }
+
+        // Check if this is a closePeriod button press
+        if (id.includes('.billing.closePeriod') && state.val === true && !state.ack) {
+            // Extract type from ID: e.g., "nebenkosten-monitor.0.gas.billing.closePeriod"
+            const parts = id.split('.');
+            const type = parts[parts.length - 3]; // gas, water, or electricity
+
+            this.log.info(`User triggered billing period closure for ${type}`);
+            await this.closeBillingPeriod(type);
+            return;
+        }
+
+        // Check if this is an adjustment value change
+        if (id.includes('.adjustment.value') && !state.ack) {
+            // Extract type from ID
+            const parts = id.split('.');
+            const type = parts[parts.length - 3]; // gas, water, or electricity
+
+            this.log.info(`Adjustment value changed for ${type}: ${state.val}`);
+
+            // Update timestamp
+            await this.setStateAsync(`${type}.adjustment.applied`, Date.now(), true);
+
+            // Recalculate costs with new adjustment
+            await this.updateCosts(type);
             return;
         }
 

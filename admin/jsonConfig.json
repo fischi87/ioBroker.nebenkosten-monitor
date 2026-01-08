@@ -17,7 +17,10 @@
                     "label": "Gas-Überwachung aktivieren",
                     "sm": 12,
                     "md": 6,
-                    "newLine": true
+                    "newLine": true,
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
                 },
                 "_gasSensorHeader": {
                     "type": "header",
@@ -29,7 +32,11 @@
                     "type": "objectId",
                     "label": "🔍 Gaszähler-Sensor auswählen (m³)",
                     "hidden": "!data.gasAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 4
                 },
                 "_gasMeterHeader": {
                     "type": "header",
@@ -46,7 +53,11 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "gasOffset": {
                     "type": "number",
@@ -55,17 +66,23 @@
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "gasInitialReading": {
                     "type": "number",
                     "label": "Zählerstand bei Vertragsbeginn (m³)",
                     "placeholder": "z.B. 10000 (Zählerstand am frühesten Preisdatum)",
-                    "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch",
+                    "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch. 💡 Jahresabschluss: Nutze gas.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "gasContractStart": {
                     "type": "text",
@@ -73,7 +90,10 @@
                     "placeholder": "z.B. 12.05.2025 oder 01.01.25",
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
-                    "md": 6
+                    "md": 6,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "_gasConversionHeader": {
                     "type": "header",
@@ -85,7 +105,11 @@
                     "type": "staticText",
                     "text": "📋 **Diese Werte findest du auf deiner Gasrechnung oder beim Gasversorger.**\n\nFormel: kWh = m³ × Brennwert × Z-Zahl",
                     "hidden": "!data.gasAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "gasBrennwert": {
                     "type": "number",
@@ -96,7 +120,10 @@
                     "md": 3,
                     "min": 8,
                     "max": 14,
-                    "step": 0.1
+                    "step": 0.1,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "gasZahl": {
                     "type": "number",
@@ -106,8 +133,11 @@
                     "sm": 6,
                     "md": 3,
                     "min": 0.8,
-                    "max": 1.0,
-                    "step": 0.01
+                    "max": 1,
+                    "step": 0.01,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "_gasPreisHeader": {
                     "type": "header",
@@ -124,28 +154,127 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "gasPreis": {
                     "type": "number",
-                    "hidden": "!data.gasAktiv",
+                    "hidden": "!data.gasAktiv || data.gasHtNtEnabled",
                     "label": "Arbeitspreis (€/kWh)",
                     "min": 0,
-                    "step": 0.001
+                    "step": 0.0001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "_gasHtNtDivider": {
+                    "type": "divider",
+                    "hidden": "!data.gasAktiv"
+                },
+                "_gasHtNtWarning": {
+                    "type": "header",
+                    "text": "⚠️ HT/NT-Tarife (Tag/Nacht)",
+                    "size": 5,
+                    "hidden": "!data.gasAktiv"
+                },
+                "_gasHtNtInfo": {
+                    "type": "staticText",
+                    "text": "**Wichtig:** Die HT/NT-Berechnung ist nur präzise, wenn sie ab **Vertragsbeginn** aktiv ist. Bei nachträglicher Aktivierung kann der Adapter nicht wissen, welcher Verbrauch zu welcher Tageszeit stattfand.",
+                    "hidden": "!data.gasAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "gasHtNtEnabled": {
+                    "type": "checkbox",
+                    "hidden": "!data.gasAktiv",
+                    "label": "HT/NT-Tarif verwenden",
+                    "help": "Aktiviere zeitbasierte Tarife. Best Practice: Aktiviere dies VOR dem Vertragsbeginn oder nutze billing.closePeriod zum Neubeginn.",
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "gasHtPrice": {
+                    "type": "number",
+                    "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
+                    "label": "Haupttarif (HT) Preis (€/kWh)",
+                    "min": 0,
+                    "step": 0.0001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "gasHtStart": {
+                    "type": "text",
+                    "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
+                    "label": "HT Start (z.B. 06:00)",
+                    "placeholder": "06:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "gasHtEnd": {
+                    "type": "text",
+                    "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
+                    "label": "HT Ende (z.B. 22:00)",
+                    "placeholder": "22:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "gasNtPrice": {
+                    "type": "number",
+                    "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
+                    "label": "Nebentarif (NT) Preis (€/kWh)",
+                    "min": 0,
+                    "step": 0.0001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "gasNtStart": {
+                    "type": "text",
+                    "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
+                    "label": "NT Start (z.B. 22:00)",
+                    "placeholder": "22:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "gasNtEnd": {
+                    "type": "text",
+                    "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
+                    "label": "NT Ende (z.B. 06:00)",
+                    "placeholder": "06:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "gasGrundgebuehr": {
                     "type": "number",
                     "hidden": "!data.gasAktiv",
                     "label": "Grundgebühr (€/Monat)",
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "gasJahresgebuehr": {
                     "type": "number",
                     "hidden": "!data.gasAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "_gasAbschlagHeader": {
                     "type": "header",
@@ -162,7 +291,11 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "gasAbschlag": {
                     "type": "number",
@@ -172,7 +305,10 @@
                     "sm": 12,
                     "md": 6,
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 }
             }
         },
@@ -191,7 +327,10 @@
                     "label": "Wasser-Überwachung aktivieren",
                     "sm": 12,
                     "md": 6,
-                    "newLine": true
+                    "newLine": true,
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
                 },
                 "_wasserSensorHeader": {
                     "type": "header",
@@ -203,7 +342,11 @@
                     "type": "objectId",
                     "label": "🔍 Wasserzähler-Sensor auswählen (m³)",
                     "hidden": "!data.wasserAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 4
                 },
                 "_wasserMeterHeader": {
                     "type": "header",
@@ -220,7 +363,11 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "wasserOffset": {
                     "type": "number",
@@ -229,17 +376,23 @@
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
-                "wasserMeterReading": {
+                "wasserInitialReading": {
                     "type": "number",
                     "label": "Zählerstand bei Vertragsbeginn (m³)",
                     "placeholder": "z.B. 5000 (Zählerstand am frühesten Preisdatum)",
-                    "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch",
+                    "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch. 💡 Jahresabschluss: Nutze wasser.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "wasserContractStart": {
                     "type": "text",
@@ -247,7 +400,10 @@
                     "placeholder": "z.B. 12.05.2025 oder 01.01.25",
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
-                    "md": 6
+                    "md": 6,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "_wasserPreisHeader": {
                     "type": "header",
@@ -264,28 +420,42 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "wasserPreis": {
                     "type": "number",
                     "hidden": "!data.wasserAktiv",
                     "label": "Arbeitspreis (€/m³)",
                     "min": 0,
-                    "step": 0.001
+                    "step": 0.0001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "wasserGrundgebuehr": {
                     "type": "number",
                     "hidden": "!data.wasserAktiv",
                     "label": "Grundgebühr (€/Monat)",
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "wasserJahresgebuehr": {
                     "type": "number",
                     "hidden": "!data.wasserAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "_wasserAbschlagHeader": {
                     "type": "header",
@@ -302,7 +472,11 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "wasserAbschlag": {
                     "type": "number",
@@ -312,7 +486,10 @@
                     "sm": 12,
                     "md": 6,
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 }
             }
         },
@@ -331,7 +508,10 @@
                     "label": "Strom-Überwachung aktivieren",
                     "sm": 12,
                     "md": 6,
-                    "newLine": true
+                    "newLine": true,
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
                 },
                 "_stromSensorHeader": {
                     "type": "header",
@@ -343,7 +523,11 @@
                     "type": "objectId",
                     "label": "🔍 Stromzähler-Sensor auswählen (kWh)",
                     "hidden": "!data.stromAktiv",
-                    "sm": 12
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 4
                 },
                 "_stromMeterHeader": {
                     "type": "header",
@@ -360,7 +544,11 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "stromOffset": {
                     "type": "number",
@@ -369,17 +557,23 @@
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "stromInitialReading": {
                     "type": "number",
                     "label": "Zählerstand bei Vertragsbeginn (kWh)",
                     "placeholder": "z.B. 40000 (Zählerstand am frühesten Preisdatum)",
-                    "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch",
+                    "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch. 💡 Jahresabschluss: Nutze strom.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "stromContractStart": {
                     "type": "text",
@@ -387,7 +581,10 @@
                     "placeholder": "z.B. 12.05.2025 oder 01.01.25",
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
-                    "md": 6
+                    "md": 6,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "_stromPreisHeader": {
                     "type": "header",
@@ -404,28 +601,127 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "stromPreis": {
                     "type": "number",
-                    "hidden": "!data.stromAktiv",
+                    "hidden": "!data.stromAktiv || data.stromHtNtEnabled",
                     "label": "Arbeitspreis (€/kWh)",
                     "min": 0,
-                    "step": 0.001
+                    "step": 0.0001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "_stromHtNtDivider": {
+                    "type": "divider",
+                    "hidden": "!data.stromAktiv"
+                },
+                "_stromHtNtWarning": {
+                    "type": "header",
+                    "text": "⚠️ HT/NT-Tarife (Tag/Nacht)",
+                    "size": 5,
+                    "hidden": "!data.stromAktiv"
+                },
+                "_stromHtNtInfo": {
+                    "type": "staticText",
+                    "text": "**Wichtig:** Die HT/NT-Berechnung ist nur präzise, wenn sie ab **Vertragsbeginn** aktiv ist. Bei nachträglicher Aktivierung kann der Adapter nicht wissen, welcher Verbrauch zu welcher Tageszeit stattfand.",
+                    "hidden": "!data.stromAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "stromHtNtEnabled": {
+                    "type": "checkbox",
+                    "hidden": "!data.stromAktiv",
+                    "label": "HT/NT-Tarif verwenden",
+                    "help": "Aktiviere zeitbasierte Tarife. Best Practice: Aktiviere dies VOR dem Vertragsbeginn oder nutze billing.closePeriod zum Neubeginn.",
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "stromHtPrice": {
+                    "type": "number",
+                    "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
+                    "label": "Haupttarif (HT) Preis (€/kWh)",
+                    "min": 0,
+                    "step": 0.0001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "stromHtStart": {
+                    "type": "text",
+                    "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
+                    "label": "HT Start (z.B. 06:00)",
+                    "placeholder": "06:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "stromHtEnd": {
+                    "type": "text",
+                    "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
+                    "label": "HT Ende (z.B. 22:00)",
+                    "placeholder": "22:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "stromNtPrice": {
+                    "type": "number",
+                    "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
+                    "label": "Nebentarif (NT) Preis (€/kWh)",
+                    "min": 0,
+                    "step": 0.0001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "stromNtStart": {
+                    "type": "text",
+                    "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
+                    "label": "NT Start (z.B. 22:00)",
+                    "placeholder": "22:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "stromNtEnd": {
+                    "type": "text",
+                    "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
+                    "label": "NT Ende (z.B. 06:00)",
+                    "placeholder": "06:00",
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "stromGrundgebuehr": {
                     "type": "number",
                     "hidden": "!data.stromAktiv",
                     "label": "Grundgebühr (€/Monat)",
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "stromJahresgebuehr": {
                     "type": "number",
                     "hidden": "!data.stromAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 },
                 "_stromAbschlagHeader": {
                     "type": "header",
@@ -442,7 +738,11 @@
                         "fontSize": "0.9em",
                         "color": "#666",
                         "marginBottom": "10px"
-                    }
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "stromAbschlag": {
                     "type": "number",
@@ -452,7 +752,10 @@
                     "sm": 12,
                     "md": 6,
                     "min": 0,
-                    "step": 0.01
+                    "step": 0.01,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
                 }
             }
         },
@@ -467,8 +770,12 @@
                 },
                 "_infoVersion": {
                     "type": "staticText",
-                    "text": "**Version:** 0.0.1\n\n**Autor:** fischi87",
-                    "sm": 12
+                    "text": "**Version:** 1.2.5\n\n**Autor:** fischi87",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "_divider1": {
                     "type": "divider"
@@ -480,8 +787,12 @@
                 },
                 "_features": {
                     "type": "staticText",
-                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Automatische Kostenberechnung** - Mit Preishistorie\n\n✅ **Abschlag-Tracking** - Bezahlt vs. Verbraucht\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Statistiken** - Täglich, monatlich, jährlich\n\n✅ **Automatische Resets** - Um Mitternacht/Monatsbeginn",
-                    "sm": 12
+                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Automatische Kostenberechnung** - Mit Jahresgebühren\n\n✅ **Abschlag-Tracking** - Bezahlt vs. Verbraucht\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Abrechnungszeitraum-Management** - Jahresabschluss & Archivierung\n\n✅ **Jahres-Historie** - Automatische Datenarchivierung\n\n✅ **Statistiken** - Täglich, monatlich, jährlich",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "_divider2": {
                     "type": "divider"
@@ -494,7 +805,11 @@
                 "_usage": {
                     "type": "staticText",
                     "text": "**1. Sensor konfigurieren** 🔍\n• Wähle deinen Sensor-Datenpunkt aus (m³ für Gas/Wasser, kWh für Strom)\n• Trage **Zählerstand bei Vertragsbeginn** ein (wichtig für korrekte Jahresrechnung!)\n\n**2. Preise eintragen** 💶\n• **Arbeitspreis**: z.B. 0,1835 €/kWh (Gas), 2,08 €/m³ (Wasser)\n• **Grundgebühr**: z.B. 15,03 €/Monat\n\n**3. Abschlag eintragen** 💳\n• Deine monatliche Vorauszahlung (z.B. 150 €)\n• Der Adapter berechnet dann **balance** (Nachzahlung oder Guthaben)\n\n✅ **Fertig!** Der Adapter läuft jetzt automatisch!",
-                    "sm": 12
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "_divider3": {
                     "type": "divider"
@@ -506,10 +821,31 @@
                 },
                 "_statesInfo": {
                     "type": "staticText",
-                    "text": "**📊 consumption/** (Verbrauch)\n• **daily** - Heute verbraucht (Reset: 00:00 Uhr)\n• **monthly** - Diesen Monat (Reset: 1. des Monats)\n• **yearly** - Dieses Jahr (Aktuell - Initial Reading)\n• **dailyVolume/monthlyVolume/yearlyVolume** - In m³ (nur Gas)\n\n**💰 costs/** (Kosten)\n• **daily/monthly/yearly** - Nur Verbrauchskosten (kWh × Preis)\n• **basicCharge** - Grundgebühr akkumuliert (€/Monat × Monate)\n• **paidTotal** - Bezahlt via Abschlag (Abschlag × Monate)\n• **balance** - 🎯 WICHTIG! Nachzahlung (+) oder Guthaben (-)\n    ▸ Negativ (-24€) = Guthaben ✅ Du bekommst Geld zurück\n    ▸ Positiv (+50€) = Nachzahlung ❌ Du musst zahlen\n\n**ℹ️ info/**\n• **currentPrice** - Aktueller Arbeitspreis\n• **meterReading** - Zählerstand (kWh oder m³)\n• **lastSync** - Letzte Sensor-Aktualisierung\n• **sensorActive** - Sensor verbunden?",
-                    "sm": 12
+                    "text": "**� consumption/** (Verbrauch)\n• **daily** - Heute verbraucht\n• **monthly** - Diesen Monat\n• **yearly** - Dieses Jahr\n\n**💰 costs/** (Kosten)\n• **yearly** - Verbrauchskosten\n• **totalYearly** - Gesamtkosten (inkl. Fixkosten)\n• **basicCharge** - Grundgebühr akkumuliert\n• **annualFee** - Jahresgebühr akkumuliert\n• **balance** - 🎯 Nachzahlung (+) oder Guthaben (-)\n\n**📅 billing/** (Abrechnungszeitraum)\n• **endReading** - Endzählerstand eintragen\n• **closePeriod** - Zeitraum abschließen (Button)\n• **daysRemaining** - Tage bis Jahresende\n\n**📊 history/** (Jahres-Historie)\n• **history.2024.yearly** - Jahresverbrauch\n• **history.2024.totalYearly** - Gesamtkosten\n• **history.2024.balance** - Bilanz",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "_divider4": {
+                    "type": "divider"
+                },
+                "_billingHeader": {
+                    "type": "header",
+                    "text": "📅 Jahresabschluss",
+                    "size": 4
+                },
+                "_billingWorkflow": {
+                    "type": "staticText",
+                    "text": "**Am Ende des Abrechnungszeitraums:**\n\n1️⃣ Physischen Zähler ablesen (z.B. Gas: 10316.82 m³)\n\n2️⃣ Wert in State eintragen: `gas.billing.endReading`\n\n3️⃣ Zeitraum abschließen: `gas.billing.closePeriod` → true\n\n4️⃣ ✅ Adapter archiviert automatisch in `gas.history.{JAHR}.*`\n\n5️⃣ ⚠️ **Wichtig:** Config mit neuem `initialReading` aktualisieren\n    (siehe `gas.billing.newInitialReading` für den Wert)\n\n💡 **Tipp:** Nutze ioBroker Objects-Tab oder VIS zum Setzen der States!",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "_divider5": {
                     "type": "divider"
                 },
                 "_supportHeader": {
@@ -520,7 +856,11 @@
                 "_links": {
                     "type": "staticText",
                     "text": "📖 [GitHub Repository](https://github.com/fischi87/ioBroker.nebenkosten-monitor)\n\n🐛 [Issues melden](https://github.com/fischi87/ioBroker.nebenkosten-monitor/issues)\n\n📝 [Changelog](https://github.com/fischi87/ioBroker.nebenkosten-monitor#changelog)",
-                    "sm": 12
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 }
             }
         }
