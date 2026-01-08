@@ -1,8 +1,13 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.2.5",
+        "version": "1.2.6",
         "news": {
+            "1.2.6": {
+                "en": "Fix: Allow empty basic charge fields in configuration (default to 0)",
+                "de": "Fix: Grundgebühr-Felder dürfen in der Konfiguration leer sein (Standard 0)"
+            },
+
             "1.2.5": {
                 "en": "Stability update: Fixed critical consumption delta calculation bug",
                 "de": "Stabilitäts-Update: Kritischen Fehler in der Verbrauchs-Delta-Berechnung behoben"

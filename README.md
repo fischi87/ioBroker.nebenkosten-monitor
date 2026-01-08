@@ -217,6 +217,10 @@ Der Adapter setzt Zähler automatisch zurück:
 
 ## 📜 Changelog
 
+### 1.2.6 (2026-01-08)
+
+- **FIX:** Erlaube leere Felder für Grundgebühr/Jahresgebühr/Abschlag in der Konfiguration (verhindert Speicher-Block im Admin-UI)
+
 ### 1.2.5 (2026-01-08)
 
 - **NEW:** Transparente Anzeige des Vertragsbeginns bei jedem Adapter-Start im Log
