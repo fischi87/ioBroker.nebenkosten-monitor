@@ -2,6 +2,7 @@
 
 # ioBroker.nebenkosten-monitor
 
+[![NPM version](https://img.shields.io/npm/v/iobroker.nebenkosten-monitor.svg)](https://www.npmjs.com/package/iobroker.nebenkosten-monitor)
 [![GitHub release](https://img.shields.io/github/v/release/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/releases)
 [![GitHub license](https://img.shields.io/github/license/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/blob/main/LICENSE)
 [![Test and Release](https://github.com/fischi87/ioBroker.nebenkosten-monitor/workflows/Test%20and%20Release/badge.svg)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/actions)
