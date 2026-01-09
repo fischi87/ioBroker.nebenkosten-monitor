@@ -42,6 +42,7 @@ class NebenkostenMonitor extends utils.Adapter {
         await this.initializeUtility('gas', this.config.gasAktiv);
         await this.initializeUtility('water', this.config.wasserAktiv);
         await this.initializeUtility('electricity', this.config.stromAktiv);
+        await this.initializeUtility('pv', this.config.pvAktiv);
 
         // Subscribe to billing period closure triggers
         this.subscribeStates('*.billing.closePeriod');
@@ -169,7 +170,7 @@ class NebenkostenMonitor extends utils.Adapter {
         }
 
         // Determine which utility this sensor belongs to
-        const types = ['gas', 'water', 'electricity'];
+        const types = ['gas', 'water', 'electricity', 'pv'];
         for (const type of types) {
             const configType = this.consumptionManager.getConfigType(type);
             if (this.config[`${configType}Aktiv`] && this.config[`${configType}SensorDP`] === id) {

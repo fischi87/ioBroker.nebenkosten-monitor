@@ -172,6 +172,30 @@
                     "lg": 4,
                     "xl": 3
                 },
+                "gasGrundgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.gasAktiv",
+                    "label": "Grundgebühr (€/Monat)",
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "gasJahresgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.gasAktiv",
+                    "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
                 "_gasHtNtDivider": {
                     "type": "divider",
                     "hidden": "!data.gasAktiv"
@@ -272,31 +296,6 @@
                     "lg": 4,
                     "xl": 3
                 },
-                "gasGrundgebuehr": {
-                    "type": "number",
-                    "hidden": "!data.gasAktiv",
-                    "label": "Grundgebühr (€/Monat)",
-                    "step": 0.01,
-                    "default": 0,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 3
-                },
-                "gasJahresgebuehr": {
-                    "type": "number",
-                    "hidden": "!data.gasAktiv",
-                    "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "step": 0.01,
-                    "default": 0,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 3
-                },
-
                 "_gasAbschlagHeader": {
                     "type": "header",
                     "text": "💳 Abschlag (Monatliche Vorauszahlung)",
@@ -646,6 +645,30 @@
                     "lg": 4,
                     "xl": 3
                 },
+                "stromGrundgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.stromAktiv",
+                    "label": "Grundgebühr (€/Monat)",
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "stromJahresgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.stromAktiv",
+                    "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
                 "_stromHtNtDivider": {
                     "type": "divider",
                     "hidden": "!data.stromAktiv"
@@ -741,31 +764,6 @@
                     "lg": 4,
                     "xl": 3
                 },
-                "stromGrundgebuehr": {
-                    "type": "number",
-                    "hidden": "!data.stromAktiv",
-                    "label": "Grundgebühr (€/Monat)",
-                    "step": 0.01,
-                    "default": 0,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 3
-                },
-                "stromJahresgebuehr": {
-                    "type": "number",
-                    "hidden": "!data.stromAktiv",
-                    "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "step": 0.01,
-                    "default": 0,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 3
-                },
-
                 "_stromAbschlagHeader": {
                     "type": "header",
                     "text": "💳 Abschlag (Monatliche Vorauszahlung)",
@@ -797,6 +795,158 @@
                     "step": 0.01,
                     "default": 0,
                     "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                }
+            }
+        },
+        "tabPv": {
+            "type": "panel",
+            "label": "PV / Einspeisung",
+            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik00IDIyaDJ0LTJoMmgydi0yaDJ2LTJoMlY4bC01LTVoLTl2MTdoM3ptOC02aC0ydjJoMnptMC00aC0ydjJoMnptMC00aC0ydjJoMnptLTQtNGgydjRoLTJ6bTQtNGgydjRoLTJ6Ii8+PC9zdmc+",
+            "items": {
+                "_pvActivationHeader": {
+                    "type": "header",
+                    "text": "Grundeinstellungen",
+                    "size": 4
+                },
+                "pvAktiv": {
+                    "type": "checkbox",
+                    "label": "PV-Einspeisung überwachen (Lieferung)",
+                    "sm": 12,
+                    "md": 6,
+                    "newLine": true,
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "_pvSensorHeader": {
+                    "type": "header",
+                    "text": "Sensor-Konfiguration",
+                    "size": 5,
+                    "hidden": "!data.pvAktiv"
+                },
+                "pvSensorDP": {
+                    "type": "objectId",
+                    "label": "🔍 Sensor für Einspeisung auswählen (kWh)",
+                    "hidden": "!data.pvAktiv",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 8,
+                    "lg": 6,
+                    "xl": 4
+                },
+                "_pvMeterHeader": {
+                    "type": "header",
+                    "text": "Offset (Optional)",
+                    "size": 5,
+                    "hidden": "!data.pvAktiv"
+                },
+                "_pvOffsetHelp": {
+                    "type": "staticText",
+                    "text": "Nur nötig wenn Sensor nicht mit physischem Zähler übereinstimmt. Offset = Physischer Wert - Sensor Wert",
+                    "hidden": "!data.pvAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "pvOffset": {
+                    "type": "number",
+                    "label": "Offset (kWh)",
+                    "placeholder": "z.B. 0 (optional)",
+                    "hidden": "!data.pvAktiv",
+                    "sm": 12,
+                    "md": 6,
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "pvInitialReading": {
+                    "type": "number",
+                    "label": "Einspeise-Zählerstand bei Start (kWh)",
+                    "placeholder": "z.B. 0 (Zählerstand am Stichtag)",
+                    "help": "Wird für Jahres-Einspeisung verwendet: Aktuell - Beginn = Jahreseinspeisung. 💡 Jahresabschluss: Nutze pv.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
+                    "hidden": "!data.pvAktiv",
+                    "sm": 12,
+                    "md": 6,
+                    "step": 0.001,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "pvContractStart": {
+                    "type": "text",
+                    "label": "📅 Stichtag / Vertragsbeginn",
+                    "placeholder": "z.B. 01.01.2025",
+                    "hidden": "!data.pvAktiv",
+                    "sm": 12,
+                    "md": 6,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "_pvPreisHeader": {
+                    "type": "header",
+                    "text": "💰 Vergütungsinformationen",
+                    "size": 4,
+                    "hidden": "!data.pvAktiv"
+                },
+                "_pvPriceHelp": {
+                    "type": "staticText",
+                    "text": "Trage hier deine Einspeisevergütung ein.",
+                    "hidden": "!data.pvAktiv",
+                    "sm": 12,
+                    "style": {
+                        "fontSize": "0.9em",
+                        "color": "#666",
+                        "marginBottom": "10px"
+                    },
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "pvPreis": {
+                    "type": "number",
+                    "hidden": "!data.pvAktiv",
+                    "label": "Einspeisevergütung (€/kWh)",
+                    "min": 0,
+                    "step": 0.0001,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "pvGrundgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.pvAktiv",
+                    "label": "Grundgebühr (Messstellenbetrieb) (€/Monat)",
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 3
+                },
+                "pvJahresgebuehr": {
+                    "type": "number",
+                    "hidden": "!data.pvAktiv",
+                    "label": "Jahresgebühr (€/Jahr)",
+                    "step": 0.01,
+                    "default": 0,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 }
@@ -950,8 +1100,18 @@
                 },
                 "notificationStromEnabled": {
                     "type": "checkbox",
-                    "label": "⚡ Strom-Erinnerung",
+                    "label": "Strom-Erinnerung",
                     "hidden": "!data.notificationEnabled || !data.stromAktiv",
+                    "sm": 12,
+                    "md": 4,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "notificationPVEnabled": {
+                    "type": "checkbox",
+                    "label": "PV-Erinnerung",
+                    "hidden": "!data.notificationEnabled || !data.pvAktiv",
                     "sm": 12,
                     "md": 4,
                     "xs": 12,

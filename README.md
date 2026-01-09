@@ -228,6 +228,15 @@ Der Adapter setzt Zähler automatisch zurück:
 
 ## Changelog
 
+### 1.3.2 (2026-01-09)
+
+- **NEW:** **PV / Einspeise-Unterstützung** ☀️ - Neuer Tab für Photovoltaik:
+    - Überwache deine Netzeinspeisung (kWh).
+    - Berechne deine Vergütung (Earnings) automatisch.
+    - Volle Unterstützung für Zählerstände, Abrechnungszeiträume und Historie.
+- **NEW:** **PV-Benachrichtigungen** - Erhalte Erinnerungen auch für deine PV-Anlage (Abrechnung/Vertrag).
+- **IMPROVED:** Konfigurations-Reihenfolge optimiert (Gebühren logisch gruppiert).
+
 ### 1.3.1 (2026-01-09)
 
 - **FIX:** Kritischer Fehler behoben: HT/NT-Datenpunkte wurden aufgrund eines internen Namensfehlers (electricity vs. strom) nicht angelegt.
