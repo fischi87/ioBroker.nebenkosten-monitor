@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.3.0",
+        "version": "1.3.1",
         "news": {
+            "1.3.1": {
+                "en": "Fix: Critical bug where HT/NT objects were not created for non-gas utilities (missing config mapping)",
+                "de": "Fix: Kritischer Fehler, bei dem HT/NT-Objekte für Strom/Wasser nicht erstellt wurden (fehlendes Config-Mapping)"
+            },
             "1.3.0": {
                 "en": "Interactive notification feedback with popups, modular code refactoring, responsive Admin UI improvements, and bugfixes for non-gas utilities",
                 "de": "Interaktives Benachrichtigungs-Feedback mit Popups, modularer Code-Refactoring, responsive Admin-UI Optimierungen und Fixes für Strom/Wasser"

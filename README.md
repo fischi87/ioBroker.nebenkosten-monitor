@@ -227,6 +227,11 @@ Der Adapter setzt Zähler automatisch zurück:
 
 ## Changelog
 
+### 1.3.1 (2026-01-09)
+
+- **FIX:** Kritischer Fehler behoben: HT/NT-Datenpunkte wurden aufgrund eines internen Namensfehlers (electricity vs. strom) nicht angelegt.
+- **FIX:** Warnungen im Log "State ... has no existing object" beseitigt.
+
 ### 1.3.0 (2026-01-09)
 
 - **NEW:** **Differenzierte Benachrichtigungen** - Zwei getrennte Erinnerungstypen:
