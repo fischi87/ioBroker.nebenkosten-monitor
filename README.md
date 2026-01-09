@@ -14,12 +14,14 @@
 
 ### ✨ Hauptfunktionen
 
-- 📊 **Verbrauchsüberwachung** für Gas, Wasser und Strom
+- 📊 **Verbrauchsüberwachung** für Gas, Wasser, Strom und **PV/Einspeisung**
 - 💰 **Automatische Kostenberechnung** mit Arbeitspreis und Grundgebühr
+- ☀️ **PV & Einspeisung** - Überwache deine Einspeisung und Vergütung
 - 💳 **Abschlagsüberwachung** - Sehe sofort ob Nachzahlung oder Guthaben droht
 - 🔄 **Flexible Sensoren** - Nutzt vorhandene Sensoren (Shelly, Tasmota, Homematic, etc.)
 - ⚡ **HT/NT-Tarife** - Volle Unterstützung für Hoch- und Nebentarife (Tag/Nacht)
-- 🔄 **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
+- � **CSV-Import** - Importiere historische Daten (z.B. aus der EhB+ App)
+- �🔄 **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
 - 🕛 **Automatische Resets** - Täglich, monatlich und jährlich (Vertragsjubiläum)
 - 🔔 **Intelligente Benachrichtigungen** - Getrennte Erinnerungen für Abrechnungsende (Zählerstand) und Vertragswechsel (Tarif-Check) mit einstellbaren Vorlaufzeiten.
 
@@ -61,7 +63,7 @@ Gefällt dir dieser Adapter? Du kannst mich gerne mit einem Kaffee unterstützen
 
 ## 📊 Datenpunkte erklärt
 
-Für jede aktivierte Verbrauchsart (Gas/Wasser/Strom) werden folgende Ordner angelegt:
+Für jede aktivierte Verbrauchsart (Gas/Wasser/Strom/PV) werden folgende Ordner angelegt:
 
 ### 🗂️ **consumption** (Verbrauch)
 
@@ -214,6 +216,25 @@ Gasverbrauch wird in **m³ gemessen**, aber in **kWh abgerechnet**.
 
 ---
 
+### 📥 CSV Import & Historische Daten
+
+Du kannst historische Daten importieren, um deine Jahresstatistik zu vervollständigen.
+
+1.  Gehe in den Tab **Import**.
+2.  Wähle das **Ziel-Medium** (Strom, Gas, Wasser, PV) oder **Benutzerdefiniert**.
+3.  Wähle das **Format** (derzeit "EhB+ App (CSV)").
+4.  Füge den **CSV-Inhalt** ein.
+    - Format: `Datum;Zählerstand;Kommentar` (z.B. `01.01.2023 00:00;12345,6;Start`)
+5.  Klicke auf **Importieren**.
+
+**Funktionen:**
+
+- Berechnet automatisch den Jahresverbrauch für vergangene Jahre.
+- Erstellt die Historie unter `history.JJJJ`.
+- Benutzerdefinierte Zähler ("Einliegerwohnung") werden automatisch angelegt.
+
+---
+
 ### 🔄 Automatische Resets
 
 Der Adapter setzt Zähler automatisch zurück:
@@ -227,6 +248,12 @@ Der Adapter setzt Zähler automatisch zurück:
 ---
 
 ## Changelog
+
+### 1.3.3 (2026-01-09)
+
+- **NEW:** **CSV-Import** - Importiere historische Daten (z.B. aus der EhB+ App) für Strom, Gas, Wasser und PV.
+- **NEW:** **Benutzerdefinierte Zähler** - Unterstützung für Zwischenzähler (z.B. Gartenhaus, Einliegerwohnung).
+- **IMPROVED:** Import-UI optimiert (Icons, Button-Layout).
 
 ### 1.3.2 (2026-01-09)
 

@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.3.2",
+        "version": "1.3.3",
         "news": {
+            "1.3.3": {
+                "en": "New: CSV Import feature for historical data (e.g. EhB+ App). New: Support for Custom Meters (intermediate meters).",
+                "de": "Neu: CSV-Import-Funktion für historische Daten (z.B. EhB+ App). Neu: Unterstützung für benutzerdefinierte Zähler (Zwischenzähler)."
+            },
             "1.3.2": {
                 "en": "New: PV/Feed-in integration! Monitor your solar feed-in and earnings. New: Notifications for PV. Improved: Reorganized config UI.",
                 "de": "Neu: PV/Einspeise-Integration! Überwache deine Solareinspeisung und Vergütung. Neu: Benachrichtigungen für PV. Verbessert: Aufgeräumte Konfigurations-Oberfläche."
@@ -18,14 +22,6 @@
             "1.2.7": {
                 "en": "New: Universal notification system for reminders. New: PayPal donation support. Fix: Improved precision for daily consumption.",
                 "de": "Neu: Universelles Benachrichtigungssystem für Erinnerungen. Neu: PayPal-Spendenunterstützung. Fix: Verbesserte Präzision für den Tagesverbrauch."
-            },
-            "1.2.6": {
-                "en": "Fix: Allow empty basic charge fields in configuration (default to 0)",
-                "de": "Fix: Grundgebühr-Felder dürfen in der Konfiguration leer sein (Standard 0)"
-            },
-            "1.2.5": {
-                "en": "Stability update: Fixed critical consumption delta calculation bug",
-                "de": "Stabilitäts-Update: Kritischen Fehler in der Verbrauchs-Delta-Berechnung behoben"
             }
         },
         "titleLang": {
@@ -112,6 +108,14 @@
         "stromPreis": 0,
         "stromGrundgebuehr": 0,
         "stromAbschlag": 0,
+        "pvAktiv": false,
+        "pvSensorDP": "",
+        "pvOffset": 0,
+        "pvInitialReading": 0,
+        "pvContractStart": "",
+        "pvPreis": 0,
+        "pvGrundgebuehr": 0,
+        "pvJahresgebuehr": 0,
         "notificationEnabled": false,
         "notificationInstance": "",
         "notificationDaysBefore": 30,

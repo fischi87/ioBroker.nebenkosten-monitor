@@ -803,7 +803,7 @@
         "tabPv": {
             "type": "panel",
             "label": "PV / Einspeisung",
-            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik00IDIyaDJ0LTJoMmgydi0yaDJ2LTJoMlY4bC01LTVoLTl2MTdoM3ptOC02aC0ydjJoMnptMC00aC0ydjJoMnptMC00aC0ydjJoMnptLTQtNGgydjRoLTJ6bTQtNGgydjRoLTJ6Ii8+PC9zdmc+",
+            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSJjdXJyZW50Q29sb3IiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJMNi43NiA0Ljg0bC0xLjgtMS43OS0xLjQxIDEuNDEgMS43OSAxLjc5IDEuNDItMS40MXpNNCAxMC41SDF2M2gzdi0zem05LTkuOTVoLTJWMy41aDJWLjU1em03LjQ1IDMuOTFsLTEuNDEtMS40MS0xLjc5IDEuNzkgMS40MSAxLjQxIDEuNzktMS43OXptLTMuMjEgMTMuN2wxLjc5IDEuOCAxLjQxLTEuNDEtMS44LTEuNzktMS40IDEuNHoyMCAxMC41djNoM3diLTNoLTN6bS04LTVjLTMuMzEgMC02IDIuNjktNiA2czIuNjkgNiA2IDYgNi0yLjY5IDYtNi0yLjY5LTYtNi02em0tMSAxNi45NWgyVjE5LjVoLTJ2Mi45NXptLTcuNDUtMy45MWwxLjQxIDEuNDEgMS43OS0xLjgtMS40MS0xLjQxLTEuNzkgMS44eiIvPjwvc3ZnPg==",
             "items": {
                 "_pvActivationHeader": {
                     "type": "header",
@@ -1117,6 +1117,107 @@
                     "xs": 12,
                     "lg": 4,
                     "xl": 4
+                }
+            }
+        },
+        "tabImport": {
+            "type": "panel",
+            "label": "Import",
+            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjRweCIgZmlsbD0iY3VycmVudENvbG9yIj48cGF0aCBkPSJNMCAwaDI0djI0SDBWMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMTkgOWgtNFYzSDl2Nkg1bDcgNyA3LTd6TTUgMTh2MmgxNHdiLTJINXoiLz48L3N2Zz4=",
+            "items": {
+                "_importHeader": {
+                    "type": "header",
+                    "text": "Historische Daten importieren",
+                    "size": 2
+                },
+                "_importDesc": {
+                    "type": "staticText",
+                    "text": "Hier kannst du alte Zählerstände aus CSV-Dateien (z.B. EhB+ App) importieren. Die Daten werden in die Historie (Jahresverbrauch) geschrieben. Bitte kopiere den Inhalt der CSV-Datei in das Textfeld.",
+                    "xs": 12
+                },
+                "importTarget": {
+                    "type": "select",
+                    "label": "Ziel-Medium",
+                    "options": [
+                        { "label": "Bitte wählen...", "value": "" },
+                        { "label": "Strom", "value": "electricity" },
+                        { "label": "Gas", "value": "gas" },
+                        { "label": "Wasser", "value": "water" },
+                        { "label": "PV / Einspeisung", "value": "pv" },
+                        { "label": "Benutzerdefiniert / Zwischenzähler", "value": "custom" }
+                    ],
+                    "default": "",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "importCustomName": {
+                    "type": "text",
+                    "label": "Name des Zählers",
+                    "placeholder": "z.B. Einliegerwohnung",
+                    "hidden": "data.importTarget !== 'custom'",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "importUnit": {
+                    "type": "select",
+                    "label": "Einheit",
+                    "options": [
+                        { "label": "kWh", "value": "kWh" },
+                        { "label": "m³", "value": "m3" }
+                    ],
+                    "default": "kWh",
+                    "hidden": "data.importTarget !== 'custom'",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "importFormat": {
+                    "type": "select",
+                    "label": "Quell-Format",
+                    "options": [{ "label": "EhB+ App (CSV)", "value": "ehb" }],
+                    "default": "ehb",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "importContent": {
+                    "type": "text",
+                    "label": "CSV Inhalt (hier einfügen)",
+                    "rows": 10,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "noCreate": true
+                },
+                "btnImport": {
+                    "type": "sendTo",
+                    "label": "Daten importieren",
+                    "command": "importData",
+                    "jsonData": "{\"utility\": \"${data.importTarget}\", \"type\": \"${data.importFormat}\", \"content\": \"${data.importContent}\", \"customName\": \"${data.importCustomName}\", \"unit\": \"${data.importUnit}\"}",
+                    "disabled": "!data.importTarget || !data.importContent",
+                    "variant": "outlined",
+                    "style": {
+                        "marginTop": "10px",
+                        "width": "100%"
+                    },
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "xl": 4,
+                    "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjRweCIgZmlsbD0iY3VycmVudENvbG9yIj48cGF0aCBkPSJNMCAwaDI0djI0SDBWMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMTkgOWgtNFYzSDl2Nkg1bDcgNyA3LTd6TTUgMTh2MmgxNHdiLTJINXoiLz48L3N2Zz4="
                 }
             }
         },
