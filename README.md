@@ -5,6 +5,7 @@
 [![GitHub release](https://img.shields.io/github/v/release/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/releases)
 [![GitHub license](https://img.shields.io/github/license/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/blob/main/LICENSE)
 [![Test and Release](https://github.com/fischi87/ioBroker.nebenkosten-monitor/workflows/Test%20and%20Release/badge.svg)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/actions)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bigplay87)
 
 ## Nebenkosten-Monitor Adapter für ioBroker
 
@@ -19,6 +20,15 @@
 - ⚡ **HT/NT-Tarife** - Volle Unterstützung für Hoch- und Nebentarife (Tag/Nacht)
 - 🔄 **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
 - 🕛 **Automatische Resets** - Täglich, monatlich und jährlich (Vertragsjubiläum)
+- 🔔 **Intelligente Benachrichtigungen** - Getrennte Erinnerungen für Abrechnungsende (Zählerstand) und Vertragswechsel (Tarif-Check) mit einstellbaren Vorlaufzeiten.
+
+---
+
+## 💝 Support
+
+Gefällt dir dieser Adapter? Du kannst mich gerne mit einem Kaffee unterstützen! ☕
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bigplay87)
 
 ---
 
@@ -215,7 +225,26 @@ Der Adapter setzt Zähler automatisch zurück:
 
 ---
 
-## 📜 Changelog
+## Changelog
+
+### 1.3.0 (2026-01-09)
+
+- **NEW:** **Differenzierte Benachrichtigungen** - Zwei getrennte Erinnerungstypen:
+    - **Abrechnungsende**: Erinnerung zum Zählerstand ablesen (z.B. 7 Tage vorher).
+    - **Vertragswechsel**: Erinnerung zum Tarif-Check / Kündigen (z.B. 60 Tage vorher).
+- **NEW:** **Interaktives Benachrichtigungs-Feedback** - Der Test-Button zeigt nun direkt Erfolgs- oder Fehlermeldungen via Popup an (inkl. SMTP-Fehler vom Email-Adapter).
+- **NEW:** **Live-Test ohne Speichern** - Benachrichtigungen können jetzt sofort getestet werden, ohne die Konfiguration vorher speichern zu müssen.
+- **NEW:** **Modularer Code-Aufbau** - Umstellung auf eine moderne Architektur mit spezialisierten Managern für bessere Performance und Wartbarkeit.
+- **IMPROVED:** **Responsives Admin-UI** - Kompakteres Button-Design und optimierte Darstellung auf mobilen Geräten.
+- **FIX:** Redundante Volumen-Datenpunkte (`dailyVolume` etc.) für Strom und Wasser entfernt, um Log-Warnungen zu vermeiden.
+- **FIX:** Mandatory bot requirements (Changelog header, News cleanup).
+
+### 1.2.7 (2026-01-08)
+
+- **NEW:** Universelles Benachrichtigungssystem für Abrechnungszeitraum-Erinnerungen (Telegram, Pushover, Email, etc.)
+- **NEW:** Optionale PayPal-Unterstützung (Links in README und Config)
+- **FIX:** Dezimalstellen für Tagesverbrauch auf 3 erhöht (bessere Unterstützung für Sensoren mit kleinen Deltas wie Shelly)
+- **FIX:** Erlauben von leeren Preisen/Gebühren in der Konfiguration (verhindert Speicher-Fehler)
 
 ### 1.2.6 (2026-01-08)
 
@@ -247,7 +276,7 @@ Der Adapter setzt Zähler automatisch zurück:
 - **FIX:** Gas m³ → kWh Umrechnung für Anpassungswerte
 - **DOCS:** Internationalisierung von Titel und Beschreibung
 
-### 0.0.1 (2026-01-02)
+---
 
 - Initial release
 

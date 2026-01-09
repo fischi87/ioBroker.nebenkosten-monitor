@@ -4,7 +4,7 @@
     "items": {
         "tabGas": {
             "type": "panel",
-            "label": "🔥 Gas",
+            "label": "Gas",
             "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xNiA2bC0yLjI5IDIuMjlhNC4yNSA0LjI1IDAgMCAxLS4yMiA1LjY4TDE2IDE2bC00LjcxLTQuNzFhMS43NSAxLjc1IDAgMCAwIDAtMi40OEwxMyA3Wm0tMy4xMSA4LjI5TDExIDEzLjQxVjIwaDJ2LTUuNzFNNSAxMmE1LjUzIDUuNTMgMCAwIDAgLjMzIDJoMS44M0E3LjQ4IDcuNDggMCAwIDEgNyAxMmMwLTQuNDIgMy41OC04IDgtOGwxLjE3IDEuNzVMMjAgMmwtMy44My0yTDE4LjA5IDJIMTJhMTAgMTAgMCAwIDAtMTAgMTBjLTQuNCAwLTggMy44My04IDguMkMyLjgyIDE4LjE1IDEuNzcgMTYgNSAxMloiLz48L3N2Zz4=",
             "items": {
                 "_gasActivationHeader": {
@@ -122,7 +122,7 @@
                     "max": 14,
                     "step": 0.1,
                     "xs": 12,
-                    "lg": 4,
+                    "lg": 3,
                     "xl": 3
                 },
                 "gasZahl": {
@@ -136,7 +136,7 @@
                     "max": 1,
                     "step": 0.01,
                     "xs": 12,
-                    "lg": 4,
+                    "lg": 3,
                     "xl": 3
                 },
                 "_gasPreisHeader": {
@@ -167,6 +167,8 @@
                     "min": 0,
                     "step": 0.0001,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -186,6 +188,7 @@
                     "hidden": "!data.gasAktiv",
                     "newLine": true,
                     "xs": 12,
+                    "sm": 12,
                     "md": 12,
                     "lg": 12,
                     "xl": 12
@@ -196,6 +199,8 @@
                     "label": "HT/NT-Tarif verwenden",
                     "help": "Aktiviere zeitbasierte Tarife. Best Practice: Aktiviere dies VOR dem Vertragsbeginn oder nutze billing.closePeriod zum Neubeginn.",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 6,
                     "xl": 6
                 },
@@ -206,6 +211,8 @@
                     "min": 0,
                     "step": 0.0001,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -215,6 +222,8 @@
                     "label": "HT Start (z.B. 06:00)",
                     "placeholder": "06:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -224,6 +233,8 @@
                     "label": "HT Ende (z.B. 22:00)",
                     "placeholder": "22:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -234,6 +245,8 @@
                     "min": 0,
                     "step": 0.0001,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -243,6 +256,8 @@
                     "label": "NT Start (z.B. 22:00)",
                     "placeholder": "22:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -252,6 +267,8 @@
                     "label": "NT Ende (z.B. 06:00)",
                     "placeholder": "06:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -259,11 +276,11 @@
                     "type": "number",
                     "hidden": "!data.gasAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -271,11 +288,11 @@
                     "type": "number",
                     "hidden": "!data.gasAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -308,10 +325,8 @@
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
@@ -320,7 +335,7 @@
         },
         "tabWasser": {
             "type": "panel",
-            "label": "💧 Wasser",
+            "label": "Wasser",
             "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMiAyLjY5bDUtNS42OUM0LjM4IDAgMiA1LjA5IDIgOS42MkMyIDEzLjA5IDQuOTEgMTYgOC41IDE2YzEuNjEgMCAzLjA5LS41OSA0LjI0LTEuNTdDMTQuNTcgMTYuMTcgMTYuODQgMTggMjAgMThjMS42IDAgMyAxLjM0IDMgM3MtMS40IDMtMyAzYTMgMyAwIDAgMS0zLTNjMC0xLjY2IDEuMzQtMyAzLTNjLjM0IDAgLjY3LjA2Ljk3LjE5QzIwLjUgMTcuMzEgMjAgMTYuMTkgMjAgMTVjMC00LjQyLTMuNTgtOC04LThjLTIuNzcgMC01LjIgMS4xMi02Ljk4IDIuOTNsLS4wMi0uMDRMMTIgMi42OW0tMyA5LjY3Yy42MyAwIDEuMjUuMTMgMS44NC4zOEw4IDE2LjI1bC0yLjg0LTMuNTFjLjU5LS4yNSAxLjIxLS4zOCAxLjg0LS4zOFoiLz48L3N2Zz4=",
             "items": {
                 "_wasserActivationHeader": {
@@ -439,6 +454,8 @@
                     "min": 0,
                     "step": 0.0001,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -446,11 +463,11 @@
                     "type": "number",
                     "hidden": "!data.wasserAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -458,11 +475,11 @@
                     "type": "number",
                     "hidden": "!data.wasserAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -495,10 +512,8 @@
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
@@ -507,7 +522,7 @@
         },
         "tabStrom": {
             "type": "panel",
-            "label": "⚡ Strom",
+            "label": "Strom",
             "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMSAyMUg5TDcgOWgzVjNsNiAxMGgtM3oiLz48L3N2Zz4=",
             "items": {
                 "_stromActivationHeader": {
@@ -626,6 +641,8 @@
                     "min": 0,
                     "step": 0.0001,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -665,6 +682,8 @@
                     "min": 0,
                     "step": 0.0001,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -683,6 +702,8 @@
                     "label": "HT Ende (z.B. 22:00)",
                     "placeholder": "22:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -693,6 +714,8 @@
                     "min": 0,
                     "step": 0.0001,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -702,6 +725,8 @@
                     "label": "NT Start (z.B. 22:00)",
                     "placeholder": "22:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -711,6 +736,8 @@
                     "label": "NT Ende (z.B. 06:00)",
                     "placeholder": "06:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -718,11 +745,11 @@
                     "type": "number",
                     "hidden": "!data.stromAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -730,11 +757,11 @@
                     "type": "number",
                     "hidden": "!data.stromAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -767,13 +794,169 @@
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
                     "step": 0.01,
                     "default": 0,
-                    "allowEmpty": true,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
+                }
+            }
+        },
+        "tabNotifications": {
+            "type": "panel",
+            "label": "Benachrichtigungen",
+            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMmgtNGMwIDEuMS44OSAyIDIgMnptNi02di01YzAtMy4wNy0xLjY0LTUuNjQtNC41LTYuMzJWNGMwLS44My0uNjctMS41LTEuNS0xLjVzLTEuNS42Ny0xLjUgMS41di42OEM3LjYzIDUuMzYgNiA3LjkyIDYgMTF2NWwtMiAydjFoMTZ2LTFsLTItMnoiLz48L3N2Zz4=",
+            "items": {
+                "_notificationHeader": {
+                    "type": "header",
+                    "text": "Erinnerungen vor Abrechnungsende",
+                    "size": 4
+                },
+                "_notificationInfo": {
+                    "type": "staticText",
+                    "text": "Erhalte automatische Benachrichtigungen wenn der Abrechnungszeitraum bald endet. Nutze dazu einen bereits installierten Messaging-Adapter (Telegram, Pushover, Email, etc.)",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "notificationEnabled": {
+                    "type": "checkbox",
+                    "label": "Benachrichtigungen aktivieren",
+                    "sm": 12,
+                    "md": 6,
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "notificationInstance": {
+                    "type": "instance",
+                    "label": "Benachrichtigungs-Dienst",
+                    "adapter": "",
+                    "adapters": [
+                        "telegram",
+                        "pushover",
+                        "email",
+                        "whatsapp",
+                        "whatsapp-cmb",
+                        "signal",
+                        "signal-cmb",
+                        "discord",
+                        "notification-manager"
+                    ],
+                    "help": "Wähle einen installierten Messaging-Adapter",
+                    "hidden": "!data.notificationEnabled",
+                    "sm": 12,
+                    "md": 6,
+                    "xs": 12,
+                    "lg": 6,
+                    "xl": 6
+                },
+                "testNotification": {
+                    "type": "sendTo",
+                    "showProcess": true,
+                    "label": "Test-Benachrichtigung senden",
+                    "command": "testNotification",
+                    "jsonData": "{\"instance\": \"${data.notificationInstance}\"}",
+                    "variant": "outlined",
+                    "icon": "send",
+                    "hidden": "!data.notificationEnabled || !data.notificationInstance",
+                    "sm": 8,
+                    "xs": 12,
+                    "md": 4,
+                    "lg": 3,
+                    "xl": 3
+                },
+                "headerNotificationTypes": {
+                    "type": "header",
+                    "text": "Erinnerungs-Konfiguration",
+                    "hidden": "!data.notificationEnabled",
+                    "size": 5
+                },
+                "notificationBillingEnabled": {
+                    "type": "checkbox",
+                    "label": "Erinnerung Abrechnungsende (Zählerstand ablesen)",
+                    "hidden": "!data.notificationEnabled",
+                    "sm": 12,
+                    "md": 8
+                },
+                "notificationBillingDays": {
+                    "type": "number",
+                    "label": "Tage vorher",
+                    "min": 1,
+                    "max": 365,
+                    "hidden": "!data.notificationEnabled || !data.notificationBillingEnabled",
+                    "sm": 12,
+                    "md": 4,
+                    "help": "Standard: 7 Tage"
+                },
+                "notificationChangeEnabled": {
+                    "type": "checkbox",
+                    "label": "Erinnerung Vertragswechsel (Tarif-Check / Kündigung)",
+                    "hidden": "!data.notificationEnabled",
+                    "sm": 12,
+                    "md": 8
+                },
+                "notificationChangeDays": {
+                    "type": "number",
+                    "label": "Tage vorher",
+                    "min": 1,
+                    "max": 365,
+                    "hidden": "!data.notificationEnabled || !data.notificationChangeEnabled",
+                    "sm": 12,
+                    "md": 4,
+                    "help": "Standard: 60 Tage"
+                },
+                "_dividerTypes": {
+                    "type": "divider",
+                    "hidden": "!data.notificationEnabled"
+                },
+                "_typesHeader": {
+                    "type": "header",
+                    "text": "Benachrichtigungen pro Typ",
+                    "size": 5,
+                    "hidden": "!data.notificationEnabled"
+                },
+                "_typesHelp": {
+                    "type": "staticText",
+                    "text": "Wähle für welche Verbrauchsarten du Erinnerungen erhalten möchtest:",
+                    "hidden": "!data.notificationEnabled",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "notificationGasEnabled": {
+                    "type": "checkbox",
+                    "label": "Gas-Erinnerung",
+                    "hidden": "!data.notificationEnabled || !data.gasAktiv",
+                    "sm": 12,
+                    "md": 4,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "notificationWasserEnabled": {
+                    "type": "checkbox",
+                    "label": "Wasser-Erinnerung",
+                    "hidden": "!data.notificationEnabled || !data.wasserAktiv",
+                    "sm": 12,
+                    "md": 4,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 4
+                },
+                "notificationStromEnabled": {
+                    "type": "checkbox",
+                    "label": "⚡ Strom-Erinnerung",
+                    "hidden": "!data.notificationEnabled || !data.stromAktiv",
+                    "sm": 12,
+                    "md": 4,
+                    "xs": 12,
+                    "lg": 4,
+                    "xl": 4
                 }
             }
         },
@@ -788,12 +971,17 @@
                 },
                 "_infoVersion": {
                     "type": "staticText",
-                    "text": "**Version:** 1.2.5\n\n**Autor:** fischi87",
+                    "text": "**Version:** 1.2.8\n\n**Autor:** fischi87",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
                     "lg": 12,
                     "xl": 12
+                },
+                "donation": {
+                    "type": "staticText",
+                    "text": "<div style=\"display: flex; gap: 10px; margin-bottom: 20px;\"><a href=\"https://paypal.me/bigplay87\" target=\"_blank\"><img src=\"https://img.shields.io/badge/paypal-donate%20%7C%20spenden-blue.svg?logo=paypal&style=flat-square\" alt=\"PayPal\" /></a><a href=\"https://github.com/fischi87/ioBroker.nebenkosten-monitor\" target=\"_blank\"><img src=\"https://img.shields.io/badge/github-nebenkosten--monitor-black?logo=github&style=flat-square\" alt=\"GitHub\" /></a></div>",
+                    "sm": 12
                 },
                 "_divider1": {
                     "type": "divider"
@@ -805,7 +993,7 @@
                 },
                 "_features": {
                     "type": "staticText",
-                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Automatische Kostenberechnung** - Mit Jahresgebühren\n\n✅ **Abschlag-Tracking** - Bezahlt vs. Verbraucht\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Abrechnungszeitraum-Management** - Jahresabschluss & Archivierung\n\n✅ **Jahres-Historie** - Automatische Datenarchivierung\n\n✅ **Statistiken** - Täglich, monatlich, jährlich",
+                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Interaktive Benachrichtigungen** - Popups & Live-Test\n\n✅ **Differenzielle Erinnerungen** - Abrechnungsende & Vertragswechsel\n\n✅ **Automatische Kostenberechnung** - Mit Jahresgebühren\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Abschlag-Tracking** - Bezahlt vs. Verbraucht\n\n✅ **Jahres-Historie** - Automatische Archivierung",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
@@ -817,12 +1005,12 @@
                 },
                 "_usageHeader": {
                     "type": "header",
-                    "text": "Schnellstart",
+                    "text": "Benachrichtigungen (Neu)",
                     "size": 4
                 },
                 "_usage": {
                     "type": "staticText",
-                    "text": "**1. Sensor konfigurieren** 🔍\n• Wähle deinen Sensor-Datenpunkt aus (m³ für Gas/Wasser, kWh für Strom)\n• Trage **Zählerstand bei Vertragsbeginn** ein (wichtig für korrekte Jahresrechnung!)\n\n**2. Preise eintragen** 💶\n• **Arbeitspreis**: z.B. 0,1835 €/kWh (Gas), 2,08 €/m³ (Wasser)\n• **Grundgebühr**: z.B. 15,03 €/Monat\n\n**3. Abschlag eintragen** 💳\n• Deine monatliche Vorauszahlung (z.B. 150 €)\n• Der Adapter berechnet dann **balance** (Nachzahlung oder Guthaben)\n\n✅ **Fertig!** Der Adapter läuft jetzt automatisch!",
+                    "text": "**1. Abrechnungsende** �\n• Erinnert dich (z.B. 7 Tage vorher) daran, den Zählerstand abzulesen und den Zeitraum abzuschließen.\n\n**2. Vertragswechsel** �\n• Erinnert dich frühzeitig (z.B. 60 Tage vorher) daran, Tarife zu vergleichen oder die Kündigungsfrist zu prüfen.\n\n**💡 Tipp:** Nutze den **Test-Button** zum Prüfen deiner Einstellungen. Du bekommst sofort ein Popup mit dem Ergebnis!",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
@@ -834,12 +1022,12 @@
                 },
                 "_statesHeader": {
                     "type": "header",
-                    "text": "Datenpunkte",
+                    "text": "Wichtige Datenpunkte",
                     "size": 4
                 },
                 "_statesInfo": {
                     "type": "staticText",
-                    "text": "**� consumption/** (Verbrauch)\n• **daily** - Heute verbraucht\n• **monthly** - Diesen Monat\n• **yearly** - Dieses Jahr\n\n**💰 costs/** (Kosten)\n• **yearly** - Verbrauchskosten\n• **totalYearly** - Gesamtkosten (inkl. Fixkosten)\n• **basicCharge** - Grundgebühr akkumuliert\n• **annualFee** - Jahresgebühr akkumuliert\n• **balance** - 🎯 Nachzahlung (+) oder Guthaben (-)\n\n**📅 billing/** (Abrechnungszeitraum)\n• **endReading** - Endzählerstand eintragen\n• **closePeriod** - Zeitraum abschließen (Button)\n• **daysRemaining** - Tage bis Jahresende\n\n**📊 history/** (Jahres-Historie)\n• **history.2024.yearly** - Jahresverbrauch\n• **history.2024.totalYearly** - Gesamtkosten\n• **history.2024.balance** - Bilanz",
+                    "text": "**📅 billing/** (Abrechnung)\n• **daysRemaining** - Tage bis zum Ende\n• **notificationSent** - Status: Zählerstand-Erinnerung\n• **notificationChangeSent** - Status: Wechsel-Erinnerung\n• **closePeriod** - Button zum Abschluss\n\n**� costs/** (Kosten)\n• **balance** - 🎯 Aktuelle Bilanz (Guthaben/Nachzahlung)\n• **totalYearly** - Prognose Gesamtkosten inkl. Gebühren\n\n**📊 history/** (Archiv)\n• Automatische Sicherung der Vorjahreswerte nach Abschluss.",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
@@ -849,31 +1037,9 @@
                 "_divider4": {
                     "type": "divider"
                 },
-                "_billingHeader": {
-                    "type": "header",
-                    "text": "📅 Jahresabschluss",
-                    "size": 4
-                },
-                "_billingWorkflow": {
-                    "type": "staticText",
-                    "text": "**Am Ende des Abrechnungszeitraums:**\n\n1️⃣ Physischen Zähler ablesen (z.B. Gas: 10316.82 m³)\n\n2️⃣ Wert in State eintragen: `gas.billing.endReading`\n\n3️⃣ Zeitraum abschließen: `gas.billing.closePeriod` → true\n\n4️⃣ ✅ Adapter archiviert automatisch in `gas.history.{JAHR}.*`\n\n5️⃣ ⚠️ **Wichtig:** Config mit neuem `initialReading` aktualisieren\n    (siehe `gas.billing.newInitialReading` für den Wert)\n\n💡 **Tipp:** Nutze ioBroker Objects-Tab oder VIS zum Setzen der States!",
-                    "sm": 12,
-                    "xs": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12
-                },
-                "_divider5": {
-                    "type": "divider"
-                },
-                "_supportHeader": {
-                    "type": "header",
-                    "text": "Support & Links",
-                    "size": 4
-                },
                 "_links": {
                     "type": "staticText",
-                    "text": "📖 [GitHub Repository](https://github.com/fischi87/ioBroker.nebenkosten-monitor)\n\n🐛 [Issues melden](https://github.com/fischi87/ioBroker.nebenkosten-monitor/issues)\n\n📝 [Changelog](https://github.com/fischi87/ioBroker.nebenkosten-monitor#changelog)",
+                    "text": "📖 [GitHub Repository](https://github.com/fischi87/ioBroker.nebenkosten-monitor)\n\n🐛 [Issues melden](https://github.com/fischi87/ioBroker.nebenkosten-monitor/issues)\n\n☕ [Paypal Me](https://paypal.me/bigplay87)",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,

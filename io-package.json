@@ -1,52 +1,23 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.2.6",
+        "version": "1.3.0",
         "news": {
+            "1.3.0": {
+                "en": "Interactive notification feedback with popups, modular code refactoring, responsive Admin UI improvements, and bugfixes for non-gas utilities",
+                "de": "Interaktives Benachrichtigungs-Feedback mit Popups, modularer Code-Refactoring, responsive Admin-UI Optimierungen und Fixes für Strom/Wasser"
+            },
+            "1.2.7": {
+                "en": "New: Universal notification system for reminders. New: PayPal donation support. Fix: Improved precision for daily consumption.",
+                "de": "Neu: Universelles Benachrichtigungssystem für Erinnerungen. Neu: PayPal-Spendenunterstützung. Fix: Verbesserte Präzision für den Tagesverbrauch."
+            },
             "1.2.6": {
                 "en": "Fix: Allow empty basic charge fields in configuration (default to 0)",
                 "de": "Fix: Grundgebühr-Felder dürfen in der Konfiguration leer sein (Standard 0)"
             },
-
             "1.2.5": {
                 "en": "Stability update: Fixed critical consumption delta calculation bug",
                 "de": "Stabilitäts-Update: Kritischen Fehler in der Verbrauchs-Delta-Berechnung behoben"
-            },
-            "1.2.4": {
-                "en": "Fixed bug in consumption delta calculation",
-                "de": "Fehler in der Verbrauchs-Delta-Berechnung behoben"
-            },
-            "1.2.3": {
-                "en": "Bugfixes for date handling and HT/NT tarife, added HT/NT for electricity",
-                "de": "Fehlerbehebung für Datumsverarbeitung und HT/NT-Tarife, HT/NT für Strom hinzugefügt"
-            },
-            "1.2.2": {
-                "en": "Manual adjustment, billing period management, internationalization",
-                "de": "Manuelle Anpassung, Abrechnungszeitraum-Verwaltung, Internationalisierung"
-            },
-            "1.2.1": {
-                "en": "Fix: Resolved linting errors (ESLint curly rule) that caused CI failure",
-                "de": "Fix: Linting-Fehler (ESLint curly rule) behoben, die zum CI-Fehler führten"
-            },
-            "1.2.0": {
-                "en": "CRITICAL FIX: Gas offset now applied to m³ BEFORE kWh conversion",
-                "de": "KRITISCHER FIX: Gas-Offset wird jetzt auf m³ VOR kWh-Konvertierung angewendet"
-            },
-            "1.1.9": {
-                "en": "CRITICAL FIX: Added config mapping to initialization",
-                "de": "KRITISCHER FIX: Config-Mapping zur Initialisierung hinzugefügt"
-            },
-            "1.1.8": {
-                "en": "CRITICAL FIX: Yearly consumption now always calculated from current sensor",
-                "de": "KRITISCHER FIX: Jahresverbrauch wird jetzt immer aus aktuellem Sensor berechnet"
-            },
-            "1.1.7": {
-                "en": "Fix: Abschlag calculation now uses contract start date instead of year start",
-                "de": "Fix: Abschlag-Berechnung nutzt jetzt Vertragsbeginn statt Jahresanfang"
-            },
-            "1.1.6": {
-                "en": "CRITICAL FIX: Config field mapping - prices were not loaded!",
-                "de": "KRITISCHER FIX: Config-Feld-Mapping - Preise wurden nicht geladen!"
             }
         },
         "titleLang": {
@@ -75,6 +46,7 @@
             "uk": "Моніторинг споживання газу, води та електроенергії з розрахунком витрат",
             "zh-cn": "监控燃气、水和电力消耗并计算成本"
         },
+        "donate": "https://paypal.me/bigplay87",
         "authors": ["fischi87 <axel.fischer@hotmail.com>"],
         "keywords": ["Nebenkosten", "Strom", "Gas", "Abschlag"],
         "licenseInformation": {
@@ -85,12 +57,13 @@
         "icon": "nebenkosten-monitor.png",
         "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/fischi87/ioBroker.nebenkosten-monitor/main/admin/nebenkosten-monitor.png",
-        "readme": "https://github.com/fischi87/ioBroker.nebenkosten-monitor/blob/main/README.md",
+        "readme": "https://github.com/fischi87/ioBroker.nebenkosten-monitor",
         "loglevel": "info",
         "tier": 3,
         "mode": "daemon",
         "type": "metering",
         "compact": true,
+        "messagebox": true,
         "connectionType": "local",
         "dataSource": "push",
         "adminUI": {
@@ -130,7 +103,17 @@
         "stromInitialReading": 0,
         "stromPreis": 0,
         "stromGrundgebuehr": 0,
-        "stromAbschlag": 0
+        "stromAbschlag": 0,
+        "notificationEnabled": false,
+        "notificationInstance": "",
+        "notificationDaysBefore": 30,
+        "notificationGasEnabled": false,
+        "notificationWasserEnabled": false,
+        "notificationStromEnabled": false,
+        "notificationBillingEnabled": true,
+        "notificationBillingDays": 7,
+        "notificationChangeEnabled": false,
+        "notificationChangeDays": 60
     },
     "objects": [],
     "instanceObjects": []
