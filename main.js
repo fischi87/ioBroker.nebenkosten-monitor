@@ -10,6 +10,7 @@ const ConsumptionManager = require('./lib/consumptionManager');
 const BillingManager = require('./lib/billingManager');
 const MessagingHandler = require('./lib/messagingHandler');
 const ImportManager = require('./lib/importManager');
+const ExportManager = require('./lib/exportManager');
 
 class NebenkostenMonitor extends utils.Adapter {
     /**
@@ -30,6 +31,7 @@ class NebenkostenMonitor extends utils.Adapter {
         this.billingManager = new BillingManager(this);
         this.messagingHandler = new MessagingHandler(this);
         this.importManager = new ImportManager(this);
+        this.exportManager = new ExportManager(this);
 
         this.periodicTimers = {};
     }
@@ -44,7 +46,27 @@ class NebenkostenMonitor extends utils.Adapter {
         await this.initializeUtility('gas', this.config.gasAktiv);
         await this.initializeUtility('water', this.config.wasserAktiv);
         await this.initializeUtility('electricity', this.config.stromAktiv);
+
         await this.initializeUtility('pv', this.config.pvAktiv);
+
+        // Initialize General Info States
+        await this.setObjectNotExistsAsync('info', {
+            type: 'channel',
+            common: { name: 'General Information' },
+            native: {},
+        });
+        await this.setObjectNotExistsAsync('info.lastMonthlyReport', {
+            type: 'state',
+            common: {
+                name: 'Last Monthly Report Sent Date',
+                type: 'string', // Storing ISO date string 'YYYY-MM-DD'
+                role: 'date',
+                read: true,
+                write: true,
+                def: '',
+            },
+            native: {},
+        });
 
         // Subscribe to billing period closure triggers
         this.subscribeStates('*.billing.closePeriod');
@@ -192,6 +214,11 @@ class NebenkostenMonitor extends utils.Adapter {
     async onMessage(obj) {
         if (obj.command === 'importData') {
             const result = await this.importManager.handleImportMessage(obj);
+            if (obj.callback) {
+                this.sendTo(obj.from, obj.command, result, obj.callback);
+            }
+        } else if (obj.command === 'exportData') {
+            const result = await this.exportManager.handleExportMessage(obj);
             if (obj.callback) {
                 this.sendTo(obj.from, obj.command, result, obj.callback);
             }

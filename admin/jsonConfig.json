@@ -176,7 +176,8 @@
                     "type": "number",
                     "hidden": "!data.gasAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -188,7 +189,8 @@
                     "type": "number",
                     "hidden": "!data.gasAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -324,7 +326,8 @@
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "lg": 4,
@@ -462,7 +465,8 @@
                     "type": "number",
                     "hidden": "!data.wasserAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -474,7 +478,8 @@
                     "type": "number",
                     "hidden": "!data.wasserAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -511,7 +516,8 @@
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "lg": 4,
@@ -649,7 +655,8 @@
                     "type": "number",
                     "hidden": "!data.stromAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -661,7 +668,8 @@
                     "type": "number",
                     "hidden": "!data.stromAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -792,7 +800,8 @@
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "lg": 4,
@@ -930,7 +939,8 @@
                     "type": "number",
                     "hidden": "!data.pvAktiv",
                     "label": "Grundgebühr (Messstellenbetrieb) (€/Monat)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -942,7 +952,8 @@
                     "type": "number",
                     "hidden": "!data.pvAktiv",
                     "label": "Jahresgebühr (€/Jahr)",
-                    "step": 0.01,
+                    "min": 0,
+                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -1058,6 +1069,30 @@
                     "md": 4,
                     "help": "Standard: 60 Tage"
                 },
+                "notificationMonthlyEnabled": {
+                    "type": "checkbox",
+                    "label": "Monatlichen Status-Bericht senden",
+                    "hidden": "!data.notificationEnabled",
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 8,
+                    "lg": 8,
+                    "xl": 8
+                },
+                "notificationMonthlyDay": {
+                    "type": "number",
+                    "label": "Tag des Monats (1-28)",
+                    "hidden": "!data.notificationEnabled || !data.notificationMonthlyEnabled",
+                    "min": 1,
+                    "max": 28,
+                    "default": 1,
+                    "sm": 12,
+                    "xs": 12,
+                    "md": 4,
+                    "lg": 4,
+                    "xl": 4,
+                    "help": "An welchem Tag soll der Bericht gesendet werden?"
+                },
                 "_dividerTypes": {
                     "type": "divider",
                     "hidden": "!data.notificationEnabled"
@@ -1120,107 +1155,7 @@
                 }
             }
         },
-        "tabImport": {
-            "type": "panel",
-            "label": "Import",
-            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjRweCIgZmlsbD0iY3VycmVudENvbG9yIj48cGF0aCBkPSJNMCAwaDI0djI0SDBWMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMTkgOWgtNFYzSDl2Nkg1bDcgNyA3LTd6TTUgMTh2MmgxNHdiLTJINXoiLz48L3N2Zz4=",
-            "items": {
-                "_importHeader": {
-                    "type": "header",
-                    "text": "Historische Daten importieren",
-                    "size": 2
-                },
-                "_importDesc": {
-                    "type": "staticText",
-                    "text": "Hier kannst du alte Zählerstände aus CSV-Dateien (z.B. EhB+ App) importieren. Die Daten werden in die Historie (Jahresverbrauch) geschrieben. Bitte kopiere den Inhalt der CSV-Datei in das Textfeld.",
-                    "xs": 12
-                },
-                "importTarget": {
-                    "type": "select",
-                    "label": "Ziel-Medium",
-                    "options": [
-                        { "label": "Bitte wählen...", "value": "" },
-                        { "label": "Strom", "value": "electricity" },
-                        { "label": "Gas", "value": "gas" },
-                        { "label": "Wasser", "value": "water" },
-                        { "label": "PV / Einspeisung", "value": "pv" },
-                        { "label": "Benutzerdefiniert / Zwischenzähler", "value": "custom" }
-                    ],
-                    "default": "",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "importCustomName": {
-                    "type": "text",
-                    "label": "Name des Zählers",
-                    "placeholder": "z.B. Einliegerwohnung",
-                    "hidden": "data.importTarget !== 'custom'",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "importUnit": {
-                    "type": "select",
-                    "label": "Einheit",
-                    "options": [
-                        { "label": "kWh", "value": "kWh" },
-                        { "label": "m³", "value": "m3" }
-                    ],
-                    "default": "kWh",
-                    "hidden": "data.importTarget !== 'custom'",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "importFormat": {
-                    "type": "select",
-                    "label": "Quell-Format",
-                    "options": [{ "label": "EhB+ App (CSV)", "value": "ehb" }],
-                    "default": "ehb",
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 6,
-                    "lg": 4,
-                    "xl": 4
-                },
-                "importContent": {
-                    "type": "text",
-                    "label": "CSV Inhalt (hier einfügen)",
-                    "rows": 10,
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12,
-                    "noCreate": true
-                },
-                "btnImport": {
-                    "type": "sendTo",
-                    "label": "Daten importieren",
-                    "command": "importData",
-                    "jsonData": "{\"utility\": \"${data.importTarget}\", \"type\": \"${data.importFormat}\", \"content\": \"${data.importContent}\", \"customName\": \"${data.importCustomName}\", \"unit\": \"${data.importUnit}\"}",
-                    "disabled": "!data.importTarget || !data.importContent",
-                    "variant": "outlined",
-                    "style": {
-                        "marginTop": "10px",
-                        "width": "100%"
-                    },
-                    "xs": 12,
-                    "sm": 12,
-                    "md": 4,
-                    "lg": 4,
-                    "xl": 4,
-                    "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDI0IDI0IiB3aWR0aD0iMjRweCIgZmlsbD0iY3VycmVudENvbG9yIj48cGF0aCBkPSJNMCAwaDI0djI0SDBWMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNMTkgOWgtNFYzSDl2Nkg1bDcgNyA3LTd6TTUgMTh2MmgxNHdiLTJINXoiLz48L3N2Zz4="
-                }
-            }
-        },
+
         "tabInfo": {
             "type": "panel",
             "label": "ℹ️ Info & Hilfe",
