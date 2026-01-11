@@ -6,7 +6,6 @@
 [![GitHub release](https://img.shields.io/github/v/release/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/releases)
 [![GitHub license](https://img.shields.io/github/license/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/blob/main/LICENSE)
 [![Test and Release](https://github.com/fischi87/ioBroker.nebenkosten-monitor/workflows/Test%20and%20Release/badge.svg)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/actions)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bigplay87)
 
 ## Nebenkosten-Monitor Adapter für ioBroker
 
@@ -20,8 +19,7 @@
 - 💳 **Abschlagsüberwachung** - Sehe sofort ob Nachzahlung oder Guthaben droht
 - 🔄 **Flexible Sensoren** - Nutzt vorhandene Sensoren (Shelly, Tasmota, Homematic, etc.)
 - ⚡ **HT/NT-Tarife** - Volle Unterstützung für Hoch- und Nebentarife (Tag/Nacht)
-- � **CSV-Import** - Importiere historische Daten (z.B. aus der EhB+ App)
-- �🔄 **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
+- 🔄 **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
 - 🕛 **Automatische Resets** - Täglich, monatlich und jährlich (Vertragsjubiläum)
 - 🔔 **Intelligente Benachrichtigungen** - Getrennte Erinnerungen für Abrechnungsende (Zählerstand) und Vertragswechsel (Tarif-Check) mit einstellbaren Vorlaufzeiten.
 
@@ -214,8 +212,6 @@ Gasverbrauch wird in **m³ gemessen**, aber in **kWh abgerechnet**.
 
 💡 **Tipp:** Brennwert und Z-Zahl findest du auf deiner Gasrechnung!
 
----
-
 ### 🔄 Automatische Resets
 
 Der Adapter setzt Zähler automatisch zurück:
@@ -230,15 +226,25 @@ Der Adapter setzt Zähler automatisch zurück:
 
 ## Changelog
 
+### 1.3.5 (2026-01-11)
+
+- **NEW:** **Monatlicher Status-Bericht** - Optionaler monatlicher Bericht per Benachrichtigung.
+- **NEW:** Datenpunkte `statistics.lastDay` (Verbrauch gestern) für alle Typen und `lastDayVolume` (Gas) hinzugefügt.
+- **FIX:** **PV-Reset Bug** behoben (Tages- und Monatswerte wurden nicht zurückgesetzt).
+- **FIX:** Schema-Validierung für Preisfelder korrigiert (Fix für Kommastellen).
+- **FIX:** HT/NT-Anzeige korrigiert.
+- **IMPROVED:** **Admin-UI Info-Tab** komplett optimiert (Sauberes Markdown & Layout).
+- **IMPROVED:** Einheitliche Rundung berechneter Werte auf **2 Nachkommastellen** (daily, monthly, yearly).
+- **ROBUSTNESS:** ioBroker Bot Compliance Check (Grid-Attribute in Admin-UI vereinheitlicht).
+
 ### 1.3.4 (2026-01-10)
 
 - **FIX:** Kritischer Fix: Kommastellen für Gebühren-Felder (Grundgebühr, Arbeitspreis) werden nun korrekt gespeichert (Erlaubt 4 Nachkommastellen).
 
 ### 1.3.3 (2026-01-09)
 
-- **NEW:** **CSV-Import** - Importiere historische Daten (z.B. aus der EhB+ App) für Strom, Gas, Wasser und PV.
-- **NEW:** **Benutzerdefinierte Zähler** - Unterstützung für Zwischenzähler (z.B. Gartenhaus, Einliegerwohnung).
-- **IMPROVED:** Import-UI optimiert (Icons, Button-Layout).
+- **IMPROVED:** Konfigurations-Reihenfolge optimiert (Gebühren logisch gruppiert).
+- **NEW:** **PV-Benachrichtigungen** - Erhalte Erinnerungen auch für deine PV-Anlage (Abrechnung/Vertrag).
 
 ### 1.3.2 (2026-01-09)
 
@@ -246,8 +252,6 @@ Der Adapter setzt Zähler automatisch zurück:
     - Überwache deine Netzeinspeisung (kWh).
     - Berechne deine Vergütung (Earnings) automatisch.
     - Volle Unterstützung für Zählerstände, Abrechnungszeiträume und Historie.
-- **NEW:** **PV-Benachrichtigungen** - Erhalte Erinnerungen auch für deine PV-Anlage (Abrechnung/Vertrag).
-- **IMPROVED:** Konfigurations-Reihenfolge optimiert (Gebühren logisch gruppiert).
 
 ### 1.3.1 (2026-01-09)
 

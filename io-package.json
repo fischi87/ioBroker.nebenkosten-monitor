@@ -1,8 +1,12 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.3.4",
+        "version": "1.3.5",
         "news": {
+            "1.3.5": {
+                "en": "New: Monthly Status Report. New: Added lastDay statistics. Fix: PV period reset bug. Fix: Schema validation for prices. Improved: Admin UI Info-Tab optimized. Improved: Consistent rounding (2 decimals). Improved: Bot compliance grid attributes.",
+                "de": "Neu: Monatlicher Status-Bericht. Neu: lastDay-Statistiken hinzugefügt. Fix: PV Perioden-Reset Fehler behoben. Fix: Schema-Validierung für Preisfelder. Verbessert: Admin-UI Info-Tab optimiert. Verbessert: Einheitliche Rundung (2 Stellen). Verbessert: Bot-Compliance Grid-Attribute."
+            },
             "1.3.4": {
                 "en": "Fix: Critical fix for decimal places in fee fields (Price/Basic Charge)",
                 "de": "Fix: Wichtiger Fix für Kommastellen bei Gebühren-Feldern (Preis/Grundgebühr)"
@@ -12,16 +16,12 @@
                 "de": "Neu: PV/Einspeise-Integration! Überwache deine Solareinspeisung und Vergütung. Neu: Benachrichtigungen für PV. Verbessert: Aufgeräumte Konfigurations-Oberfläche."
             },
             "1.3.2": {
-                "en": "New: CSV Import feature. New: Custom Meters.",
-                "de": "Neu: CSV-Import-Funktion. Neu: Benutzerdefinierte Zähler."
+                "en": "New: Initial support for PV integration.",
+                "de": "Neu: Erste Unterstützung für PV-Integration."
             },
             "1.3.1": {
                 "en": "Fix: Critical bug where HT/NT objects were not created for non-gas utilities (missing config mapping)",
                 "de": "Fix: Kritischer Fehler, bei dem HT/NT-Objekte für Strom/Wasser nicht erstellt wurden (fehlendes Config-Mapping)"
-            },
-            "1.3.0": {
-                "en": "Interactive notification feedback with popups, modular code refactoring, responsive Admin UI improvements, and bugfixes for non-gas utilities",
-                "de": "Interaktives Benachrichtigungs-Feedback mit Popups, modularer Code-Refactoring, responsive Admin-UI Optimierungen und Fixes für Strom/Wasser"
             }
         },
         "titleLang": {
@@ -124,42 +124,8 @@
         "notificationStromEnabled": false,
         "notificationBillingEnabled": true,
         "notificationBillingDays": 7,
-        "notificationChangeEnabled": false,
-        "notificationChangeDays": 60,
-        "exportFormatCSV": true,
-        "exportFormatJSON": false,
-        "exportScope": "history",
-        "exportCatElectricity": true,
-        "exportCatGas": true,
-        "exportCatWater": true,
-        "exportCatPV": true
+        "notificationChangeDays": 60
     },
     "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info.lastExport",
-            "type": "state",
-            "common": {
-                "name": "Last Export (Timestamp/Status)",
-                "type": "string",
-                "role": "text",
-                "read": true,
-                "write": false,
-                "def": ""
-            },
-            "native": {}
-        },
-
-        {
-            "_id": "export",
-            "type": "meta",
-            "common": {
-                "name": "Export Data",
-                "type": "meta.user",
-                "read": true,
-                "write": true
-            },
-            "native": {}
-        }
-    ]
+    "instanceObjects": []
 }

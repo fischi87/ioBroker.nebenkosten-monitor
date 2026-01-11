@@ -4,8 +4,7 @@
     "items": {
         "tabGas": {
             "type": "panel",
-            "label": "Gas",
-            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xNiA2bC0yLjI5IDIuMjlhNC4yNSA0LjI1IDAgMCAxLS4yMiA1LjY4TDE2IDE2bC00LjcxLTQuNzFhMS43NSAxLjc1IDAgMCAwIDAtMi40OEwxMyA3Wm0tMy4xMSA4LjI5TDExIDEzLjQxVjIwaDJ2LTUuNzFNNSAxMmE1LjUzIDUuNTMgMCAwIDAgLjMzIDJoMS44M0E3LjQ4IDcuNDggMCAwIDEgNyAxMmMwLTQuNDIgMy41OC04IDgtOGwxLjE3IDEuNzVMMjAgMmwtMy44My0yTDE4LjA5IDJIMTJhMTAgMTAgMCAwIDAtMTAgMTBjLTQuNCAwLTggMy44My04IDguMkMyLjgyIDE4LjE1IDEuNzcgMTYgNSAxMloiLz48L3N2Zz4=",
+            "label": "🔥 Gas",
             "items": {
                 "_gasActivationHeader": {
                     "type": "header",
@@ -337,8 +336,7 @@
         },
         "tabWasser": {
             "type": "panel",
-            "label": "Wasser",
-            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMiAyLjY5bDUtNS42OUM0LjM4IDAgMiA1LjA5IDIgOS42MkMyIDEzLjA5IDQuOTEgMTYgOC41IDE2YzEuNjEgMCAzLjA5LS41OSA0LjI0LTEuNTdDMTQuNTcgMTYuMTcgMTYuODQgMTggMjAgMThjMS42IDAgMyAxLjM0IDMgM3MtMS40IDMtMyAzYTMgMyAwIDAgMS0zLTNjMC0xLjY2IDEuMzQtMyAzLTNjLjM0IDAgLjY3LjA2Ljk3LjE5QzIwLjUgMTcuMzEgMjAgMTYuMTkgMjAgMTVjMC00LjQyLTMuNTgtOC04LThjLTIuNzcgMC01LjIgMS4xMi02Ljk4IDIuOTNsLS4wMi0uMDRMMTIgMi42OW0tMyA5LjY3Yy42MyAwIDEuMjUuMTMgMS44NC4zOEw4IDE2LjI1bC0yLjg0LTMuNTFjLjU5LS4yNSAxLjIxLS4zOCAxLjg0LS4zOFoiLz48L3N2Zz4=",
+            "label": "💦 Wasser",
             "items": {
                 "_wasserActivationHeader": {
                     "type": "header",
@@ -527,8 +525,7 @@
         },
         "tabStrom": {
             "type": "panel",
-            "label": "Strom",
-            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMSAyMUg5TDcgOWgzVjNsNiAxMGgtM3oiLz48L3N2Zz4=",
+            "label": "⚡️ Strom",
             "items": {
                 "_stromActivationHeader": {
                     "type": "header",
@@ -703,6 +700,8 @@
                     "label": "HT/NT-Tarif verwenden",
                     "help": "Aktiviere zeitbasierte Tarife. Best Practice: Aktiviere dies VOR dem Vertragsbeginn oder nutze billing.closePeriod zum Neubeginn.",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 6,
                     "xl": 6
                 },
@@ -724,6 +723,8 @@
                     "label": "HT Start (z.B. 06:00)",
                     "placeholder": "06:00",
                     "xs": 12,
+                    "sm": 12,
+                    "md": 6,
                     "lg": 4,
                     "xl": 3
                 },
@@ -811,8 +812,7 @@
         },
         "tabPv": {
             "type": "panel",
-            "label": "PV / Einspeisung",
-            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBmaWxsPSJjdXJyZW50Q29sb3IiPjxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJMNi43NiA0Ljg0bC0xLjgtMS43OS0xLjQxIDEuNDEgMS43OSAxLjc5IDEuNDItMS40MXpNNCAxMC41SDF2M2gzdi0zem05LTkuOTVoLTJWMy41aDJWLjU1em03LjQ1IDMuOTFsLTEuNDEtMS40MS0xLjc5IDEuNzkgMS40MSAxLjQxIDEuNzktMS43OXptLTMuMjEgMTMuN2wxLjc5IDEuOCAxLjQxLTEuNDEtMS44LTEuNzktMS40IDEuNHoyMCAxMC41djNoM3diLTNoLTN6bS04LTVjLTMuMzEgMC02IDIuNjktNiA2czIuNjkgNiA2IDYgNi0yLjY5IDYtNi0yLjY5LTYtNi02em0tMSAxNi45NWgyVjE5LjVoLTJ2Mi45NXptLTcuNDUtMy45MWwxLjQxIDEuNDEgMS43OS0xLjgtMS40MS0xLjQxLTEuNzkgMS44eiIvPjwvc3ZnPg==",
+            "label": "🔋 PV / Einspeisung",
             "items": {
                 "_pvActivationHeader": {
                     "type": "header",
@@ -965,8 +965,7 @@
         },
         "tabNotifications": {
             "type": "panel",
-            "label": "Benachrichtigungen",
-            "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSJjdXJyZW50Q29sb3IiIGQ9Ik0xMiAyMmMxLjEgMCAyLS45IDItMmgtNGMwIDEuMS44OSAyIDIgMnptNi02di01YzAtMy4wNy0xLjY0LTUuNjQtNC41LTYuMzJWNGMwLS44My0uNjctMS41LTEuNS0xLjVzLTEuNS42Ny0xLjUgMS41di42OEM3LjYzIDUuMzYgNiA3LjkyIDYgMTF2NWwtMiAydjFoMTZ2LTFsLTItMnoiLz48L3N2Zz4=",
+            "label": "🛎️ Benachrichtigungen",
             "items": {
                 "_notificationHeader": {
                     "type": "header",
@@ -1039,8 +1038,11 @@
                     "type": "checkbox",
                     "label": "Erinnerung Abrechnungsende (Zählerstand ablesen)",
                     "hidden": "!data.notificationEnabled",
+                    "xs": 12,
                     "sm": 12,
-                    "md": 8
+                    "md": 8,
+                    "lg": 8,
+                    "xl": 8
                 },
                 "notificationBillingDays": {
                     "type": "number",
@@ -1048,16 +1050,22 @@
                     "min": 1,
                     "max": 365,
                     "hidden": "!data.notificationEnabled || !data.notificationBillingEnabled",
+                    "xs": 12,
                     "sm": 12,
                     "md": 4,
+                    "lg": 4,
+                    "xl": 4,
                     "help": "Standard: 7 Tage"
                 },
                 "notificationChangeEnabled": {
                     "type": "checkbox",
                     "label": "Erinnerung Vertragswechsel (Tarif-Check / Kündigung)",
                     "hidden": "!data.notificationEnabled",
+                    "xs": 12,
                     "sm": 12,
-                    "md": 8
+                    "md": 8,
+                    "lg": 8,
+                    "xl": 8
                 },
                 "notificationChangeDays": {
                     "type": "number",
@@ -1065,8 +1073,11 @@
                     "min": 1,
                     "max": 365,
                     "hidden": "!data.notificationEnabled || !data.notificationChangeEnabled",
+                    "xs": 12,
                     "sm": 12,
                     "md": 4,
+                    "lg": 4,
+                    "xl": 4,
                     "help": "Standard: 60 Tage"
                 },
                 "notificationMonthlyEnabled": {
@@ -1155,7 +1166,6 @@
                 }
             }
         },
-
         "tabInfo": {
             "type": "panel",
             "label": "ℹ️ Info & Hilfe",
@@ -1167,7 +1177,7 @@
                 },
                 "_infoVersion": {
                     "type": "staticText",
-                    "text": "**Version:** 1.2.8\n\n**Autor:** fischi87",
+                    "text": "**Version:** 1.3.5\n\n**Autor:** fischi87",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
@@ -1176,8 +1186,12 @@
                 },
                 "donation": {
                     "type": "staticText",
-                    "text": "<div style=\"display: flex; gap: 10px; margin-bottom: 20px;\"><a href=\"https://paypal.me/bigplay87\" target=\"_blank\"><img src=\"https://img.shields.io/badge/paypal-donate%20%7C%20spenden-blue.svg?logo=paypal&style=flat-square\" alt=\"PayPal\" /></a><a href=\"https://github.com/fischi87/ioBroker.nebenkosten-monitor\" target=\"_blank\"><img src=\"https://img.shields.io/badge/github-nebenkosten--monitor-black?logo=github&style=flat-square\" alt=\"GitHub\" /></a></div>",
-                    "sm": 12
+                    "text": "☕ [PayPal Spenden](https://paypal.me/bigplay87) | 📁 [GitHub Repository](https://github.com/fischi87/ioBroker.nebenkosten-monitor)",
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
                 },
                 "_divider1": {
                     "type": "divider"
@@ -1189,7 +1203,7 @@
                 },
                 "_features": {
                     "type": "staticText",
-                    "text": "✅ **Verbrauchsüberwachung** - Gas, Wasser & Strom\n\n✅ **Interaktive Benachrichtigungen** - Popups & Live-Test\n\n✅ **Differenzielle Erinnerungen** - Abrechnungsende & Vertragswechsel\n\n✅ **Automatische Kostenberechnung** - Mit Jahresgebühren\n\n✅ **Gas m³ → kWh Umrechnung** - Mit Brennwert & Z-Zahl\n\n✅ **Abschlag-Tracking** - Bezahlt vs. Verbraucht\n\n✅ **Jahres-Historie** - Automatische Archivierung",
+                    "text": "📊 **Verbrauchsüberwachung** - Gas, Wasser, Strom & PV/Einspeisung\n\n💰 **Automatische Kostenberechnung** - Mit Arbeitspreis & Grundgebühren\n\n☀️ **PV-Integration** - Überwachung von Einspeisung & Vergütung\n\n💳 **Abschlagsüberwachung** - Direkter Vergleich: Bezahlt vs. Verbraucht\n\n🔄 **Gas-Spezial** - Automatische m³ zu kWh Umrechnung\n\n⚡ **HT/NT-Unterstützung** - Volle Unterstützung für Doppeltarife\n\n📅 **Jahres-Historie** - Automatische Archivierung zum Vertragsbeginn",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
@@ -1206,7 +1220,7 @@
                 },
                 "_usage": {
                     "type": "staticText",
-                    "text": "**1. Abrechnungsende** �\n• Erinnert dich (z.B. 7 Tage vorher) daran, den Zählerstand abzulesen und den Zeitraum abzuschließen.\n\n**2. Vertragswechsel** �\n• Erinnert dich frühzeitig (z.B. 60 Tage vorher) daran, Tarife zu vergleichen oder die Kündigungsfrist zu prüfen.\n\n**💡 Tipp:** Nutze den **Test-Button** zum Prüfen deiner Einstellungen. Du bekommst sofort ein Popup mit dem Ergebnis!",
+                    "text": "**1. Abrechnungsende** 📅\n• Erinnert dich (z.B. 7 Tage vorher) daran, den Zählerstand abzulesen und den Zeitraum abzuschließen.\n\n**2. Vertragswechsel** 📋\n• Erinnert dich frühzeitig (z.B. 60 Tage vorher) daran, Tarife zu vergleichen oder die Kündigungsfrist zu prüfen.\n\n**3. Monatlicher Bericht** 📈\n• Optionaler Status-Bericht am 1. jedes Monats via Benachrichtigung.\n\n**💡 Tipp:** Nutze den **Test-Button** zum Prüfen deiner Einstellungen. Du bekommst sofort ein Popup mit dem Ergebnis!",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
@@ -1223,7 +1237,7 @@
                 },
                 "_statesInfo": {
                     "type": "staticText",
-                    "text": "**📅 billing/** (Abrechnung)\n• **daysRemaining** - Tage bis zum Ende\n• **notificationSent** - Status: Zählerstand-Erinnerung\n• **notificationChangeSent** - Status: Wechsel-Erinnerung\n• **closePeriod** - Button zum Abschluss\n\n**� costs/** (Kosten)\n• **balance** - 🎯 Aktuelle Bilanz (Guthaben/Nachzahlung)\n• **totalYearly** - Prognose Gesamtkosten inkl. Gebühren\n\n**📊 history/** (Archiv)\n• Automatische Sicherung der Vorjahreswerte nach Abschluss.",
+                    "text": "**📅 billing/** (Abrechnung)\n• **daysRemaining** - Tage bis zum Ende\n• **closePeriod** - Button zum Abschluss\n\n**💰 costs/** (Kosten)\n• **balance** - 🎯 Aktuelle Bilanz (Guthaben/Nachzahlung)\n• **totalYearly** - Prognose Gesamtkosten inkl. Gebühren\n\n**📈 statistics/** (Statistiken)\n• **lastDay** - Verbrauch gestern (kWh)\n• **lastDayVolume** - Verbrauch gestern in m³ (Gas)\n\n**☀️ PV / Einspeisung**\n• **earnings.totalYearly** - Akkumulierte Vergütung\n• **consumption.yearly** - Gesamte Einspeisung",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,
@@ -1232,15 +1246,6 @@
                 },
                 "_divider4": {
                     "type": "divider"
-                },
-                "_links": {
-                    "type": "staticText",
-                    "text": "📖 [GitHub Repository](https://github.com/fischi87/ioBroker.nebenkosten-monitor)\n\n🐛 [Issues melden](https://github.com/fischi87/ioBroker.nebenkosten-monitor/issues)\n\n☕ [Paypal Me](https://paypal.me/bigplay87)",
-                    "sm": 12,
-                    "xs": 12,
-                    "md": 12,
-                    "lg": 12,
-                    "xl": 12
                 }
             }
         }

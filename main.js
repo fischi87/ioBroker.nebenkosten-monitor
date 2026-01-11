@@ -9,8 +9,6 @@ const utils = require('@iobroker/adapter-core');
 const ConsumptionManager = require('./lib/consumptionManager');
 const BillingManager = require('./lib/billingManager');
 const MessagingHandler = require('./lib/messagingHandler');
-const ImportManager = require('./lib/importManager');
-const ExportManager = require('./lib/exportManager');
 
 class NebenkostenMonitor extends utils.Adapter {
     /**
@@ -30,8 +28,6 @@ class NebenkostenMonitor extends utils.Adapter {
         this.consumptionManager = new ConsumptionManager(this);
         this.billingManager = new BillingManager(this);
         this.messagingHandler = new MessagingHandler(this);
-        this.importManager = new ImportManager(this);
-        this.exportManager = new ExportManager(this);
 
         this.periodicTimers = {};
     }
@@ -212,19 +208,7 @@ class NebenkostenMonitor extends utils.Adapter {
      * @param {Record<string, any>} obj - Message object from config
      */
     async onMessage(obj) {
-        if (obj.command === 'importData') {
-            const result = await this.importManager.handleImportMessage(obj);
-            if (obj.callback) {
-                this.sendTo(obj.from, obj.command, result, obj.callback);
-            }
-        } else if (obj.command === 'exportData') {
-            const result = await this.exportManager.handleExportMessage(obj);
-            if (obj.callback) {
-                this.sendTo(obj.from, obj.command, result, obj.callback);
-            }
-        } else {
-            await this.messagingHandler.handleMessage(obj);
-        }
+        await this.messagingHandler.handleMessage(obj);
     }
 }
 
