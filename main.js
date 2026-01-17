@@ -9,6 +9,7 @@ const utils = require('@iobroker/adapter-core');
 const ConsumptionManager = require('./lib/consumptionManager');
 const BillingManager = require('./lib/billingManager');
 const MessagingHandler = require('./lib/messagingHandler');
+const MultiMeterManager = require('./lib/multiMeterManager');
 
 class NebenkostenMonitor extends utils.Adapter {
     /**
@@ -28,6 +29,7 @@ class NebenkostenMonitor extends utils.Adapter {
         this.consumptionManager = new ConsumptionManager(this);
         this.billingManager = new BillingManager(this);
         this.messagingHandler = new MessagingHandler(this);
+        this.multiMeterManager = null; // Initialized in onReady after other managers
 
         this.periodicTimers = {};
     }
@@ -38,12 +40,29 @@ class NebenkostenMonitor extends utils.Adapter {
     async onReady() {
         this.log.info('Nebenkosten-Monitor starting...');
 
+        // Initialize MultiMeterManager
+        this.multiMeterManager = new MultiMeterManager(this, this.consumptionManager, this.billingManager);
+
         // Initialize each utility type based on configuration
         await this.initializeUtility('gas', this.config.gasAktiv);
         await this.initializeUtility('water', this.config.wasserAktiv);
         await this.initializeUtility('electricity', this.config.stromAktiv);
 
         await this.initializeUtility('pv', this.config.pvAktiv);
+
+        // Initialize Multi-Meter structures for each active type
+        if (this.config.gasAktiv) {
+            await this.multiMeterManager.initializeType('gas');
+        }
+        if (this.config.wasserAktiv) {
+            await this.multiMeterManager.initializeType('water');
+        }
+        if (this.config.stromAktiv) {
+            await this.multiMeterManager.initializeType('electricity');
+        }
+        if (this.config.pvAktiv) {
+            await this.multiMeterManager.initializeType('pv');
+        }
 
         // Initialize General Info States
         await this.setObjectNotExistsAsync('info', {
@@ -173,6 +192,13 @@ class NebenkostenMonitor extends utils.Adapter {
         // Check if this is a closePeriod button press
         if (id.includes('.billing.closePeriod') && state.val === true && !state.ack) {
             const parts = id.split('.');
+            // Check if it's a secondary meter: gas.secondary.billing.closePeriod
+            if (parts.includes('secondary')) {
+                const type = parts[parts.length - 4]; // gas.secondary.billing.closePeriod -> gas
+                this.log.info(`User triggered billing period closure for ${type} secondary meter`);
+                // TODO: Implement closeBillingPeriod for secondary meters
+                return;
+            }
             const type = parts[parts.length - 3];
             this.log.info(`User triggered billing period closure for ${type}`);
             await this.closeBillingPeriod(type);
@@ -182,6 +208,16 @@ class NebenkostenMonitor extends utils.Adapter {
         // Check if this is an adjustment value change
         if (id.includes('.adjustment.value') && !state.ack) {
             const parts = id.split('.');
+            // Check if it's a secondary meter
+            if (parts.includes('secondary')) {
+                const type = parts[parts.length - 4];
+                this.log.info(`Adjustment value changed for ${type} secondary meter: ${state.val}`);
+                await this.setStateAsync(`${type}.secondary.adjustment.applied`, Date.now(), true);
+                if (this.secondaryMeterManager) {
+                    await this.secondaryMeterManager.updateCosts(type);
+                }
+                return;
+            }
             const type = parts[parts.length - 3];
             this.log.info(`Adjustment value changed for ${type}: ${state.val}`);
             await this.setStateAsync(`${type}.adjustment.applied`, Date.now(), true);
@@ -190,14 +226,25 @@ class NebenkostenMonitor extends utils.Adapter {
         }
 
         // Determine which utility this sensor belongs to
+        // First check if it's a multi-meter sensor (additional meters)
+        if (this.multiMeterManager) {
+            const meterInfo = this.multiMeterManager.findMeterBySensor(id);
+            if (meterInfo && typeof state.val === 'number') {
+                await this.multiMeterManager.handleSensorUpdate(meterInfo.type, meterInfo.meterName, id, state.val);
+                return;
+            }
+        }
+
+        // Check main meter sensors
         const types = ['gas', 'water', 'electricity', 'pv'];
         for (const type of types) {
             const configType = this.consumptionManager.getConfigType(type);
+
             if (this.config[`${configType}Aktiv`] && this.config[`${configType}SensorDP`] === id) {
                 if (typeof state.val === 'number') {
                     await this.handleSensorUpdate(type, id, state.val);
                 }
-                break;
+                return;
             }
         }
     }

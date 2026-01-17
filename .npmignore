@@ -1,0 +1,12 @@
+# Exclude old/backup files from npm package
+admin/jsonConfig.old.json
+admin/jsonConfig.json.backup
+
+# Exclude test files
+test-multi-meter.js
+
+# Exclude development files
+deploy.sh
+upload.sh
+install-tgz.sh
+.DS_Store
