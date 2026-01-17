@@ -52,6 +52,10 @@
         },
         "authors": ["fischi87 <axel.fischer@hotmail.com>"],
         "keywords": ["Nebenkosten", "Strom", "Gas", "Abschlag"],
+        "licenseInformation": {
+            "license": "MIT",
+            "type": "free"
+        },
         "platform": "Javascript/Node.js",
         "icon": "nebenkosten-monitor.png",
         "enabled": true,
