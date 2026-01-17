@@ -14,6 +14,7 @@
 ### ✨ Hauptfunktionen
 
 - 📊 **Verbrauchsüberwachung** für Gas, Wasser, Strom und **PV/Einspeisung**
+- 🎯 **Multi-Meter Support** - Mehrere Zähler pro Typ (z.B. Hauptzähler + Werkstatt)
 - 💰 **Automatische Kostenberechnung** mit Arbeitspreis und Grundgebühr
 - ☀️ **PV & Einspeisung** - Überwache deine Einspeisung und Vergütung
 - 💳 **Abschlagsüberwachung** - Sehe sofort ob Nachzahlung oder Guthaben droht
@@ -21,7 +22,8 @@
 - ⚡ **HT/NT-Tarife** - Volle Unterstützung für Hoch- und Nebentarife (Tag/Nacht)
 - 🔄 **Gas-Spezial** - Automatische Umrechnung von m³ in kWh
 - 🕛 **Automatische Resets** - Täglich, monatlich und jährlich (Vertragsjubiläum)
-- 🔔 **Intelligente Benachrichtigungen** - Getrennte Erinnerungen für Abrechnungsende (Zählerstand) und Vertragswechsel (Tarif-Check) mit einstellbaren Vorlaufzeiten.
+- 🔔 **Intelligente Benachrichtigungen** - Getrennte Erinnerungen für Abrechnungsende (Zählerstand) und Vertragswechsel (Tarif-Check) mit einstellbaren Vorlaufzeiten
+- ⌨️ **Komma-Support** - Admin UI akzeptiert `12,50` oder `12.50` für Dezimalzahlen
 
 ---
 
@@ -225,6 +227,20 @@ Der Adapter setzt Zähler automatisch zurück:
 ---
 
 ## Changelog
+
+### 1.4.0 (2026-01-17)
+
+- **NEW:** 🎉 **Multi-Meter Support** - Verwende mehrere Zähler pro Typ (z.B. Gas Hauptzähler + Werkstatt-Zähler)
+    - Beliebig viele zusätzliche Zähler mit eigenen Namen konfigurierbar
+    - Separate Kostenberechnung und Statistiken pro Zähler
+    - Automatische Totals-Berechnung über alle Zähler
+- **NEW:** ✨ **Komma-Dezimaltrenner Support** - Admin UI akzeptiert jetzt sowohl Komma als auch Punkt (z.B. `12,50` oder `12.50`)
+- **NEW:** 📊 **Pro-Meter Billing** - Jeder Zähler hat eigene `billing.daysRemaining` und `billing.periodEnd` Werte
+- **NEW:** 🔧 **Config-Parser** - Automatische Konvertierung von String→Number mit Komma-Support
+- **FIX:** 💰 **Balance-Berechnung korrigiert** - Nutzt jetzt begonnene Monate statt volle Monate (17 Tage = 1 Monat gezahlt)
+- **FIX:** 🐛 **String-Type Fehler** behoben - Config-Werte werden korrekt als Numbers verarbeitet
+- **IMPROVED:** 🔍 **Debug-Logging** - Hilfreiche Debug-Logs für Troubleshooting (nur in Debug-Modus sichtbar)
+- **CLEANUP:** 🧹 Repository aufgeräumt - Alte Backup-Dateien und temporäre Scripts entfernt
 
 ### 1.3.5 (2026-01-11)
 

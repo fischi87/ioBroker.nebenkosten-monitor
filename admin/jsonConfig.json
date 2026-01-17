@@ -59,26 +59,24 @@
                     "xl": 12
                 },
                 "gasOffset": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Offset (m³)",
                     "placeholder": "z.B. 1234.5 (optional)",
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
                 },
                 "gasInitialReading": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Zählerstand bei Vertragsbeginn (m³)",
                     "placeholder": "z.B. 10000 (Zählerstand am frühesten Preisdatum)",
                     "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch. 💡 Jahresabschluss: Nutze gas.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
                     "hidden": "!data.gasAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
@@ -111,29 +109,23 @@
                     "xl": 12
                 },
                 "gasBrennwert": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Brennwert (kWh/m³)",
                     "placeholder": "Typisch: 10-12",
                     "hidden": "!data.gasAktiv",
                     "sm": 6,
                     "md": 3,
-                    "min": 8,
-                    "max": 14,
-                    "step": 0.1,
                     "xs": 12,
                     "lg": 3,
                     "xl": 3
                 },
                 "gasZahl": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Z-Zahl (Zustandszahl)",
                     "placeholder": "Typisch: 0.90-1.00",
                     "hidden": "!data.gasAktiv",
                     "sm": 6,
                     "md": 3,
-                    "min": 0.8,
-                    "max": 1,
-                    "step": 0.01,
                     "xs": 12,
                     "lg": 3,
                     "xl": 3
@@ -160,11 +152,10 @@
                     "xl": 12
                 },
                 "gasPreis": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.gasAktiv || data.gasHtNtEnabled",
                     "label": "Arbeitspreis (€/kWh)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 0.12",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -172,11 +163,10 @@
                     "xl": 3
                 },
                 "gasGrundgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.gasAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 15.30",
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -185,11 +175,10 @@
                     "xl": 3
                 },
                 "gasJahresgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.gasAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 20.00",
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -230,11 +219,10 @@
                     "xl": 6
                 },
                 "gasHtPrice": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
                     "label": "Haupttarif (HT) Preis (€/kWh)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 0.12",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -264,11 +252,10 @@
                     "xl": 3
                 },
                 "gasNtPrice": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.gasAktiv || !data.gasHtNtEnabled",
                     "label": "Nebentarif (NT) Preis (€/kWh)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 0.08",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -319,18 +306,129 @@
                     "xl": 12
                 },
                 "gasAbschlag": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Monatlicher Abschlag (€)",
                     "placeholder": "z.B. 85.00",
                     "hidden": "!data.gasAktiv",
+                    "default": 0,
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
-                    "step": 0.0001,
-                    "default": 0,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
+                },
+                "_gasAdditionalMetersDivider": {
+                    "type": "divider",
+                    "hidden": "!data.gasAktiv"
+                },
+                "_gasAdditionalMetersHeader": {
+                    "type": "header",
+                    "text": "➕ Zusätzliche Gaszähler",
+                    "size": 4,
+                    "hidden": "!data.gasAktiv"
+                },
+                "_gasAdditionalMetersInfo": {
+                    "type": "staticText",
+                    "text": "Hier können Sie weitere Gaszähler hinzufügen (z.B. für verschiedene Wohnungen, Etagen oder Gebäude). Jeder Zähler wird separat erfasst und die Gesamtsumme automatisch berechnet.",
+                    "hidden": "!data.gasAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "gasAdditionalMeters": {
+                    "type": "table",
+                    "hidden": "!data.gasAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "type": "text",
+                            "title": "Zählername",
+                            "attr": "name",
+                            "filter": false,
+                            "sort": true,
+                            "width": "15%",
+                            "placeholder": "z.B. Erdgeschoss"
+                        },
+                        {
+                            "type": "objectId",
+                            "title": "Sensor (m³)",
+                            "attr": "sensorDP",
+                            "filter": false,
+                            "sort": false,
+                            "width": "20%"
+                        },
+                        {
+                            "type": "text",
+                            "title": "Preis (€/kWh)",
+                            "attr": "preis",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Offset",
+                            "attr": "offset",
+                            "filter": false,
+                            "sort": false,
+                            "width": "8%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Anfangsstand (m³)",
+                            "attr": "initialReading",
+                            "filter": false,
+                            "sort": false,
+                            "width": "12%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Vertragsbeginn",
+                            "attr": "contractStart",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "placeholder": "TT.MM.JJJJ"
+                        },
+                        {
+                            "type": "text",
+                            "title": "Grundgebühr (€/Mon.)",
+                            "attr": "grundgebuehr",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Jahresgebühr (€/Jahr)",
+                            "attr": "jahresgebuehr",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Abschlag (€/Mon.)",
+                            "attr": "abschlag",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        }
+                    ]
                 }
             }
         },
@@ -391,26 +489,24 @@
                     "xl": 12
                 },
                 "wasserOffset": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Offset (m³)",
                     "placeholder": "z.B. 543.2 (optional)",
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
                 },
                 "wasserInitialReading": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Zählerstand bei Vertragsbeginn (m³)",
                     "placeholder": "z.B. 5000 (Zählerstand am frühesten Preisdatum)",
                     "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch. 💡 Jahresabschluss: Nutze wasser.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
                     "hidden": "!data.wasserAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
@@ -448,11 +544,10 @@
                     "xl": 12
                 },
                 "wasserPreis": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.wasserAktiv",
                     "label": "Arbeitspreis (€/m³)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 2.50",
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -460,11 +555,10 @@
                     "xl": 3
                 },
                 "wasserGrundgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.wasserAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 5.00",
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -473,11 +567,10 @@
                     "xl": 3
                 },
                 "wasserJahresgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.wasserAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "min": 0,
-                    "step": 0.0001,
+                    "placeholder": "z.B. 20.00",
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -485,7 +578,6 @@
                     "lg": 4,
                     "xl": 3
                 },
-
                 "_wasserAbschlagHeader": {
                     "type": "header",
                     "text": "💳 Abschlag (Monatliche Vorauszahlung)",
@@ -508,18 +600,129 @@
                     "xl": 12
                 },
                 "wasserAbschlag": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Monatlicher Abschlag (€)",
                     "placeholder": "z.B. 25.00",
                     "hidden": "!data.wasserAktiv",
+                    "default": 0,
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
-                    "step": 0.0001,
-                    "default": 0,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
+                },
+                "_wasserAdditionalMetersDivider": {
+                    "type": "divider",
+                    "hidden": "!data.wasserAktiv"
+                },
+                "_wasserAdditionalMetersHeader": {
+                    "type": "header",
+                    "text": "➕ Zusätzliche Wasserzähler",
+                    "size": 4,
+                    "hidden": "!data.wasserAktiv"
+                },
+                "_wasserAdditionalMetersInfo": {
+                    "type": "staticText",
+                    "text": "Hier können Sie weitere Wasserzähler hinzufügen (z.B. für verschiedene Wohnungen, Etagen oder Gebäude). Jeder Zähler wird separat erfasst und die Gesamtsumme automatisch berechnet.",
+                    "hidden": "!data.wasserAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "wasserAdditionalMeters": {
+                    "type": "table",
+                    "hidden": "!data.wasserAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "type": "text",
+                            "title": "Zählername",
+                            "attr": "name",
+                            "filter": false,
+                            "sort": true,
+                            "width": "15%",
+                            "placeholder": "z.B. Erdgeschoss"
+                        },
+                        {
+                            "type": "objectId",
+                            "title": "Sensor (m³)",
+                            "attr": "sensorDP",
+                            "filter": false,
+                            "sort": false,
+                            "width": "20%"
+                        },
+                        {
+                            "type": "text",
+                            "title": "Preis (€/m³)",
+                            "attr": "preis",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Offset",
+                            "attr": "offset",
+                            "filter": false,
+                            "sort": false,
+                            "width": "8%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Anfangsstand (m³)",
+                            "attr": "initialReading",
+                            "filter": false,
+                            "sort": false,
+                            "width": "12%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Vertragsbeginn",
+                            "attr": "contractStart",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "placeholder": "TT.MM.JJJJ"
+                        },
+                        {
+                            "type": "text",
+                            "title": "Grundgebühr (€/Mon.)",
+                            "attr": "grundgebuehr",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Jahresgebühr (€/Jahr)",
+                            "attr": "jahresgebuehr",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Abschlag (€/Mon.)",
+                            "attr": "abschlag",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        }
+                    ]
                 }
             }
         },
@@ -580,26 +783,24 @@
                     "xl": 12
                 },
                 "stromOffset": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Offset (kWh)",
                     "placeholder": "z.B. 45555 (optional)",
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
                 },
                 "stromInitialReading": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Zählerstand bei Vertragsbeginn (kWh)",
                     "placeholder": "z.B. 40000 (Zählerstand am frühesten Preisdatum)",
                     "help": "Wird für Jahresverbrauch-Berechnung verwendet: Aktuell - Beginn = Jahresverbrauch. 💡 Jahresabschluss: Nutze strom.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
@@ -637,11 +838,9 @@
                     "xl": 12
                 },
                 "stromPreis": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.stromAktiv || data.stromHtNtEnabled",
                     "label": "Arbeitspreis (€/kWh)",
-                    "min": 0,
-                    "step": 0.0001,
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -649,11 +848,9 @@
                     "xl": 3
                 },
                 "stromGrundgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.stromAktiv",
                     "label": "Grundgebühr (€/Monat)",
-                    "min": 0,
-                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -662,11 +859,9 @@
                     "xl": 3
                 },
                 "stromJahresgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.stromAktiv",
                     "label": "Jahresgebühr (z.B. Zählermiete) (€/Jahr)",
-                    "min": 0,
-                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -690,6 +885,7 @@
                     "hidden": "!data.stromAktiv",
                     "newLine": true,
                     "xs": 12,
+                    "sm": 12,
                     "md": 12,
                     "lg": 12,
                     "xl": 12
@@ -706,11 +902,9 @@
                     "xl": 6
                 },
                 "stromHtPrice": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
                     "label": "Haupttarif (HT) Preis (€/kWh)",
-                    "min": 0,
-                    "step": 0.0001,
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -740,11 +934,9 @@
                     "xl": 3
                 },
                 "stromNtPrice": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.stromAktiv || !data.stromHtNtEnabled",
                     "label": "Nebentarif (NT) Preis (€/kWh)",
-                    "min": 0,
-                    "step": 0.0001,
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -795,18 +987,129 @@
                     "xl": 12
                 },
                 "stromAbschlag": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Monatlicher Abschlag (€)",
                     "placeholder": "z.B. 65.00",
                     "hidden": "!data.stromAktiv",
                     "sm": 12,
                     "md": 6,
-                    "min": 0,
-                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
+                },
+                "_stromAdditionalMetersDivider": {
+                    "type": "divider",
+                    "hidden": "!data.stromAktiv"
+                },
+                "_stromAdditionalMetersHeader": {
+                    "type": "header",
+                    "text": "➕ Zusätzliche Stromzähler",
+                    "size": 4,
+                    "hidden": "!data.stromAktiv"
+                },
+                "_stromAdditionalMetersInfo": {
+                    "type": "staticText",
+                    "text": "Hier können Sie weitere Stromzähler hinzufügen (z.B. für verschiedene Wohnungen, Etagen oder Gebäude). Jeder Zähler wird separat erfasst und die Gesamtsumme automatisch berechnet.",
+                    "hidden": "!data.stromAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12
+                },
+                "stromAdditionalMeters": {
+                    "type": "table",
+                    "hidden": "!data.stromAktiv",
+                    "newLine": true,
+                    "xs": 12,
+                    "sm": 12,
+                    "md": 12,
+                    "lg": 12,
+                    "xl": 12,
+                    "items": [
+                        {
+                            "type": "text",
+                            "title": "Zählername",
+                            "attr": "name",
+                            "filter": false,
+                            "sort": true,
+                            "width": "15%",
+                            "placeholder": "z.B. Erdgeschoss"
+                        },
+                        {
+                            "type": "objectId",
+                            "title": "Sensor (kWh)",
+                            "attr": "sensorDP",
+                            "filter": false,
+                            "sort": false,
+                            "width": "20%"
+                        },
+                        {
+                            "type": "text",
+                            "title": "Preis (€/kWh)",
+                            "attr": "preis",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Offset",
+                            "attr": "offset",
+                            "filter": false,
+                            "sort": false,
+                            "width": "8%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Anfangsstand (kWh)",
+                            "attr": "initialReading",
+                            "filter": false,
+                            "sort": false,
+                            "width": "12%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Vertragsbeginn",
+                            "attr": "contractStart",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "placeholder": "TT.MM.JJJJ"
+                        },
+                        {
+                            "type": "text",
+                            "title": "Grundgebühr (€/Mon.)",
+                            "attr": "grundgebuehr",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Jahresgebühr (€/Jahr)",
+                            "attr": "jahresgebuehr",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        },
+                        {
+                            "type": "text",
+                            "title": "Abschlag (€/Mon.)",
+                            "attr": "abschlag",
+                            "filter": false,
+                            "sort": false,
+                            "width": "10%",
+                            "default": 0
+                        }
+                    ]
                 }
             }
         },
@@ -867,26 +1170,24 @@
                     "xl": 12
                 },
                 "pvOffset": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Offset (kWh)",
                     "placeholder": "z.B. 0 (optional)",
                     "hidden": "!data.pvAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
                 },
                 "pvInitialReading": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Einspeise-Zählerstand bei Start (kWh)",
                     "placeholder": "z.B. 0 (Zählerstand am Stichtag)",
                     "help": "Wird für Jahres-Einspeisung verwendet: Aktuell - Beginn = Jahreseinspeisung. 💡 Jahresabschluss: Nutze pv.billing.closePeriod zum automatischen Archivieren & Zurücksetzen",
                     "hidden": "!data.pvAktiv",
                     "sm": 12,
                     "md": 6,
-                    "step": 0.001,
                     "xs": 12,
                     "lg": 4,
                     "xl": 3
@@ -924,11 +1225,9 @@
                     "xl": 12
                 },
                 "pvPreis": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.pvAktiv",
                     "label": "Einspeisevergütung (€/kWh)",
-                    "min": 0,
-                    "step": 0.0001,
                     "xs": 12,
                     "sm": 12,
                     "md": 6,
@@ -936,11 +1235,9 @@
                     "xl": 3
                 },
                 "pvGrundgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.pvAktiv",
                     "label": "Grundgebühr (Messstellenbetrieb) (€/Monat)",
-                    "min": 0,
-                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -949,11 +1246,9 @@
                     "xl": 3
                 },
                 "pvJahresgebuehr": {
-                    "type": "number",
+                    "type": "text",
                     "hidden": "!data.pvAktiv",
                     "label": "Jahresgebühr (€/Jahr)",
-                    "min": 0,
-                    "step": 0.0001,
                     "default": 0,
                     "xs": 12,
                     "sm": 12,
@@ -1045,10 +1340,8 @@
                     "xl": 8
                 },
                 "notificationBillingDays": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Tage vorher",
-                    "min": 1,
-                    "max": 365,
                     "hidden": "!data.notificationEnabled || !data.notificationBillingEnabled",
                     "xs": 12,
                     "sm": 12,
@@ -1068,10 +1361,8 @@
                     "xl": 8
                 },
                 "notificationChangeDays": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Tage vorher",
-                    "min": 1,
-                    "max": 365,
                     "hidden": "!data.notificationEnabled || !data.notificationChangeEnabled",
                     "xs": 12,
                     "sm": 12,
@@ -1091,11 +1382,9 @@
                     "xl": 8
                 },
                 "notificationMonthlyDay": {
-                    "type": "number",
+                    "type": "text",
                     "label": "Tag des Monats (1-28)",
                     "hidden": "!data.notificationEnabled || !data.notificationMonthlyEnabled",
-                    "min": 1,
-                    "max": 28,
                     "default": 1,
                     "sm": 12,
                     "xs": 12,
@@ -1177,7 +1466,7 @@
                 },
                 "_infoVersion": {
                     "type": "staticText",
-                    "text": "**Version:** 1.3.5\n\n**Autor:** fischi87",
+                    "text": "**Version:** 1.4.0\n\n**Autor:** fischi87",
                     "sm": 12,
                     "xs": 12,
                     "md": 12,

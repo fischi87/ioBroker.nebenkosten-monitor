@@ -26,3 +26,13 @@ TODO.md
 # i18n intermediate files
 admin/i18n/flat.txt
 admin/i18n/*/flat.txt
+# Local development and deployment scripts
+install-tgz.sh
+deploy.sh
+upload.sh
+
+# Test files (use /test directory for real tests)
+test-multi-meter.js
+
+# Old backup files
+*.old.json
