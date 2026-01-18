@@ -2,6 +2,16 @@
 
 # ioBroker.nebenkosten-monitor
 
+> **⚠️ DEPRECATED - This adapter has been renamed!**
+>
+> This package has been renamed to **[ioBroker.utility-monitor](https://github.com/fischi87/ioBroker.utility-monitor)** to better serve the international ioBroker community.
+>
+> **Please use the new package for future updates:**
+> - npm: [`iobroker.utility-monitor`](https://www.npmjs.com/package/iobroker.utility-monitor)
+> - GitHub: [fischi87/ioBroker.utility-monitor](https://github.com/fischi87/ioBroker.utility-monitor)
+
+---
+
 [![NPM version](https://img.shields.io/npm/v/iobroker.nebenkosten-monitor.svg)](https://www.npmjs.com/package/iobroker.nebenkosten-monitor)
 [![GitHub release](https://img.shields.io/github/v/release/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/releases)
 [![GitHub license](https://img.shields.io/github/license/fischi87/ioBroker.nebenkosten-monitor)](https://github.com/fischi87/ioBroker.nebenkosten-monitor/blob/main/LICENSE)
@@ -227,6 +237,8 @@ Der Adapter setzt Zähler automatisch zurück:
 ---
 
 ## Changelog
+
+### **WORK IN PROGRESS**
 
 ### 1.4.2 (2026-01-18)
 
