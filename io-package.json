@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.4.1",
+        "version": "1.4.2",
         "news": {
+            "1.4.2": {
+                "en": "Fix: Critical multi-meter balance bug (hardcoded 12 months). Fix: TypeScript errors resolved. New: Enhanced input validation. New: Extended constants. New: Error handling wrapper.",
+                "de": "Fix: Kritischer Multi-Meter Balance-Bug (hardcodierte 12 Monate). Fix: TypeScript-Fehler behoben. Neu: Erweiterte Eingabevalidierung. Neu: Erweiterte Konstanten. Neu: Fehlerbehandlungs-Wrapper.",
+                "ru": "Исправление: Критическая ошибка баланса multi-meter (жестко заданные 12 месяцев). Исправление: Устранены ошибки TypeScript. Новое: Расширенная проверка входных данных. Новое: Расширенные константы. Новое: Обработка ошибок.",
+                "pt": "Correção: Bug crítico de saldo multi-medidor (12 meses fixos). Correção: Erros TypeScript resolvidos. Novo: Validação de entrada aprimorada. Novo: Constantes estendidas. Novo: Wrapper de tratamento de erros.",
+                "nl": "Fix: Kritieke multi-meter balans bug (hardcoded 12 maanden). Fix: TypeScript-fouten opgelost. Nieuw: Verbeterde invoervalidatie. Nieuw: Uitgebreide constanten. Nieuw: Foutafhandeling wrapper.",
+                "fr": "Correction: Bug critique de solde multi-compteurs (12 mois codés en dur). Correction: Erreurs TypeScript résolues. Nouveau: Validation d'entrée améliorée. Nouveau: Constantes étendues. Nouveau: Wrapper de gestion des erreurs.",
+                "it": "Correzione: Bug critico bilancio multi-contatore (12 mesi hardcoded). Correzione: Errori TypeScript risolti. Nuovo: Validazione input migliorata. Nuovo: Costanti estese. Nuovo: Wrapper gestione errori.",
+                "es": "Corrección: Bug crítico de saldo multi-medidor (12 meses fijos). Corrección: Errores TypeScript resueltos. Nuevo: Validación de entrada mejorada. Nuevo: Constantes extendidas. Nuevo: Wrapper manejo errores.",
+                "pl": "Naprawa: Krytyczny błąd salda multi-meter (zakodowane 12 miesięcy). Naprawa: Naprawione błędy TypeScript. Nowe: Ulepszona walidacja danych. Nowe: Rozszerzone stałe. Nowe: Wrapper obsługi błędów.",
+                "uk": "Виправлення: Критична помилка балансу multi-meter (жорстко задані 12 місяців). Виправлення: Усунено помилки TypeScript. Нове: Покращена перевірка даних. Нове: Розширені константи. Нове: Обробник помилок.",
+                "zh-cn": "修复：关键多表余额错误（硬编码12个月）。修复：解决TypeScript错误。新增：增强输入验证。新增：扩展常量。新增：错误处理包装器。"
+            },
             "1.4.1": {
                 "en": "Fix: Multi-meter bugs (cost calculation, billing period closure, monthly reports, yearly resets). Fix: Per-meter billing closure support. Fix: State type corrections (lastDayStart). Fix: ioBroker Bot compliance.",
                 "de": "Fix: Multi-Meter-Fehler (Kostenberechnung, Periodenabschluss, Monatsberichte, Jahres-Resets). Fix: Zähler-individuelle Periodenabschlüsse. Fix: State-Typ-Korrekturen (lastDayStart). Fix: ioBroker Bot-Compliance.",

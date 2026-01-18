@@ -25,8 +25,11 @@ describe('Calculator Module', () => {
         });
 
         it('should throw TypeError for non-number inputs', () => {
+            // @ts-ignore - Intentionally testing with wrong types
             expect(() => calculator.convertGasM3ToKWh('100')).to.throw(TypeError);
+            // @ts-ignore - Intentionally testing with wrong types
             expect(() => calculator.convertGasM3ToKWh(100, '11.5')).to.throw(TypeError);
+            // @ts-ignore - Intentionally testing with wrong types
             expect(() => calculator.convertGasM3ToKWh(100, 11.5, '0.95')).to.throw(TypeError);
         });
 
@@ -71,6 +74,7 @@ describe('Calculator Module', () => {
         });
 
         it('should handle null/undefined price', () => {
+            // @ts-ignore - Intentionally testing with null
             const result = calculator.getCurrentPrice(null, 15);
             expect(result).to.deep.equal({
                 price: 0,
@@ -97,6 +101,7 @@ describe('Calculator Module', () => {
         });
 
         it('should handle null/undefined price', () => {
+            // @ts-ignore - Intentionally testing with null
             const result = calculator.calculateCost(100, null);
             expect(result).to.equal(0);
         });
@@ -106,6 +111,7 @@ describe('Calculator Module', () => {
         });
 
         it('should throw TypeError for non-number consumption', () => {
+            // @ts-ignore - Intentionally testing with wrong type
             expect(() => calculator.calculateCost('100', 0.15)).to.throw(TypeError);
         });
 

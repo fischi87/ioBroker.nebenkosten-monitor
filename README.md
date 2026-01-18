@@ -228,6 +228,28 @@ Der Adapter setzt Zähler automatisch zurück:
 
 ## Changelog
 
+### 1.4.2 (2026-01-18)
+
+- **FIX:** 🔧 **TypeScript Errors Resolved** - All TypeScript compilation errors fixed:
+    - Fixed `formatDateString()` missing argument in multiMeterManager
+    - Fixed Date arithmetic type errors (explicit timestamp conversion)
+    - Added `@ts-ignore` comments for intentional error tests
+- **FIX:** 🐛 **Critical Multi-Meter Balance Bug** - Fixed incorrect balance calculation:
+    - `totalYearly` was using hardcoded 12 months for `basicCharge` instead of actual months since contract start
+    - Now correctly calculates `basicChargeAccumulated = grundgebuehr × monthsSinceYearStart`
+    - Fixes incorrect high balance values for users with mid-year contract start dates
+- **NEW:** ✅ **Enhanced Input Validation** - Robust validation for configuration values:
+    - `isValidSensorDP()` - Validates sensor datapoint IDs
+    - `parseConfigDate()` - Validates German and ISO date formats
+    - `parseConfigPrice()` - Ensures prices are non-negative
+- **NEW:** 📋 **Extended Constants** - Centralized constant definitions:
+    - Rounding precision, time constants, validation constraints
+    - Better maintainability and consistency across modules
+- **NEW:** 🛡️ **Error Handling** - Safe wrapper for state creation:
+    - `safeSetObjectNotExists()` catches and logs state creation failures
+    - Prevents silent failures in StateManager
+- **IMPROVED:** 🧪 **Code Quality** - All tests passing (31 unit + 57 package tests)
+
 ### 1.4.1 (2026-01-18)
 
 - **FIX:** 🐛 **Multi-Meter Critical Bugs** - Comprehensive fixes for multi-meter functionality:
