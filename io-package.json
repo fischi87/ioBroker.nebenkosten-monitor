@@ -1,27 +1,72 @@
 {
     "common": {
         "name": "nebenkosten-monitor",
-        "version": "1.4.0",
+        "version": "1.4.1",
         "news": {
+            "1.4.1": {
+                "en": "Fix: Multi-meter bugs (cost calculation, billing period closure, monthly reports, yearly resets). Fix: Per-meter billing closure support. Fix: State type corrections (lastDayStart). Fix: ioBroker Bot compliance.",
+                "de": "Fix: Multi-Meter-Fehler (Kostenberechnung, Periodenabschluss, Monatsberichte, Jahres-Resets). Fix: Zähler-individuelle Periodenabschlüsse. Fix: State-Typ-Korrekturen (lastDayStart). Fix: ioBroker Bot-Compliance.",
+                "ru": "Исправление: Ошибки нескольких счетчиков (расчет затрат, закрытие периода, ежемесячные отчеты, годовые сбросы). Исправление: Поддержка закрытия периода для каждого счетчика. Исправление: Исправления типов состояний. Исправление: Соответствие ioBroker Bot.",
+                "pt": "Correção: Bugs multi-medidor (cálculo custos, fechamento período, relatórios mensais, resets anuais). Correção: Suporte fechamento período por medidor. Correção: Correções tipo estado. Correção: Conformidade Bot ioBroker.",
+                "nl": "Fix: Multi-meter bugs (kostenberekening, periode afsluiting, maandraporten, jaarlijkse resets). Fix: Per-meter periode afsluiting. Fix: State type correcties. Fix: ioBroker Bot compliance.",
+                "fr": "Correction: Bugs multi-compteurs (calcul coûts, clôture période, rapports mensuels, réinitialisations annuelles). Correction: Support clôture période par compteur. Correction: Corrections type d'état. Correction: Conformité Bot ioBroker.",
+                "it": "Correzione: Bug multi-contatore (calcolo costi, chiusura periodo, report mensili, reset annuali). Correzione: Supporto chiusura periodo per contatore. Correzione: Correzioni tipo stato. Correzione: Conformità Bot ioBroker.",
+                "es": "Corrección: Bugs multi-medidor (cálculo costos, cierre período, informes mensuales, reinicios anuales). Corrección: Soporte cierre período por medidor. Corrección: Correcciones tipo estado. Corrección: Cumplimiento Bot ioBroker.",
+                "pl": "Naprawa: Błędy wielu liczników (obliczanie kosztów, zamknięcie okresu, raporty miesięczne, resety roczne). Naprawa: Wsparcie zamknięcia okresu dla licznika. Naprawa: Poprawki typu stanu. Naprawa: Zgodność z Bot ioBroker.",
+                "uk": "Виправлення: Помилки кількох лічильників (розрахунок витрат, закриття періоду, місячні звіти, річні скидання). Виправлення: Підтримка закриття періоду для лічильника. Виправлення: Виправлення типу стану. Виправлення: Відповідність ioBroker Bot.",
+                "zh-cn": "修复：多表错误（成本计算、期间关闭、月度报告、年度重置）。修复：每表期间关闭支持。修复：状态类型更正。修复：ioBroker Bot合规性。"
+            },
             "1.4.0": {
                 "en": "New: Multi-Meter Support! Add unlimited custom-named meters per utility type (gas, water, electricity). Automatic totals calculation. Fully backward compatible.",
-                "de": "Neu: Multi-Meter-Unterstützung! Unbegrenzt viele Zähler pro Medium (Gas, Wasser, Strom) mit benutzerdefinierten Namen. Automatische Gesamt-Summen. Vollständig rückwärtskompatibel."
+                "de": "Neu: Multi-Meter-Unterstützung! Unbegrenzt viele Zähler pro Medium (Gas, Wasser, Strom) mit benutzerdefinierten Namen. Automatische Gesamt-Summen. Vollständig rückwärtskompatibel.",
+                "ru": "Новое: Поддержка нескольких счетчиков! Добавьте неограниченное количество пользовательских счетчиков для каждого типа коммунальных услуг (газ, вода, электричество). Автоматический расчет итогов. Полная обратная совместимость.",
+                "pt": "Novo: Suporte Multi-Medidor! Adicione medidores personalizados ilimitados por tipo de utilidade (gás, água, eletricidade). Cálculo automático de totais. Totalmente compatível com versões anteriores.",
+                "nl": "Nieuw: Multi-Meter Ondersteuning! Voeg onbeperkt aangepaste meters toe per type (gas, water, elektriciteit). Automatische totaalberekening. Volledig achterwaarts compatibel.",
+                "fr": "Nouveau: Support Multi-Compteur! Ajoutez des compteurs personnalisés illimités par type de service (gaz, eau, électricité). Calcul automatique des totaux. Entièrement rétrocompatible.",
+                "it": "Nuovo: Supporto Multi-Contatore! Aggiungi contatori personalizzati illimitati per tipo di servizio (gas, acqua, elettricità). Calcolo automatico dei totali. Completamente retrocompatibile.",
+                "es": "Nuevo: Soporte Multi-Medidor! Agregue medidores personalizados ilimitados por tipo de servicio (gas, agua, electricidad). Cálculo automático de totales. Totalmente compatible con versiones anteriores.",
+                "pl": "Nowe: Obsługa Wielu Liczników! Dodaj nieograniczoną liczbę niestandardowych liczników dla każdego typu mediów (gaz, woda, prąd). Automatyczne obliczanie sum. Pełna kompatybilność wsteczna.",
+                "uk": "Нове: Підтримка кількох лічильників! Додайте необмежену кількість власних лічильників для кожного типу комунальних послуг (газ, вода, електрика). Автоматичний розрахунок підсумків. Повна зворотна сумісність.",
+                "zh-cn": "新增：多表支持！为每种公用事业类型（燃气、水、电）添加无限的自定义计量表。自动总计计算。完全向后兼容。"
             },
             "1.3.5": {
                 "en": "New: Monthly Status Report. New: Added lastDay statistics. Fix: PV period reset bug. Fix: Schema validation for prices. Improved: Admin UI Info-Tab optimized. Improved: Consistent rounding (2 decimals). Improved: Bot compliance grid attributes.",
-                "de": "Neu: Monatlicher Status-Bericht. Neu: lastDay-Statistiken hinzugefügt. Fix: PV Perioden-Reset Fehler behoben. Fix: Schema-Validierung für Preisfelder. Verbessert: Admin-UI Info-Tab optimiert. Verbessert: Einheitliche Rundung (2 Stellen). Verbessert: Bot-Compliance Grid-Attribute."
-            },
-            "1.3.4": {
-                "en": "Fix: Critical fix for decimal places in fee fields (Price/Basic Charge)",
-                "de": "Fix: Wichtiger Fix für Kommastellen bei Gebühren-Feldern (Preis/Grundgebühr)"
+                "de": "Neu: Monatlicher Status-Bericht. Neu: lastDay-Statistiken hinzugefügt. Fix: PV Perioden-Reset Fehler behoben. Fix: Schema-Validierung für Preisfelder. Verbessert: Admin-UI Info-Tab optimiert. Verbessert: Einheitliche Rundung (2 Stellen). Verbessert: Bot-Compliance Grid-Attribute.",
+                "ru": "Новое: Ежемесячный отчет о состоянии. Новое: Добавлена статистика lastDay. Исправление: Ошибка сброса периода PV. Исправление: Проверка схемы для цен. Улучшено: Оптимизирована вкладка информации Admin UI. Улучшено: Последовательное округление (2 знака). Улучшено: Атрибуты сетки соответствия ботов.",
+                "pt": "Novo: Relatório de Status Mensal. Novo: Adicionadas estatísticas lastDay. Correção: Bug de redefinição de período PV. Correção: Validação de esquema para preços. Melhorado: Guia de informações da Admin UI otimizada. Melhorado: Arredondamento consistente (2 decimais). Melhorado: Atributos de grade de conformidade do bot.",
+                "nl": "Nieuw: Maandelijks statusrapport. Nieuw: lastDay statistieken toegevoegd. Fix: PV periode reset bug. Fix: Schema validatie voor prijzen. Verbeterd: Admin UI Info-Tab geoptimaliseerd. Verbeterd: Consistente afronding (2 decimalen). Verbeterd: Bot compliance grid attributen.",
+                "fr": "Nouveau: Rapport d'état mensuel. Nouveau: Ajout de statistiques lastDay. Correction: Bug de réinitialisation de période PV. Correction: Validation de schéma pour les prix. Amélioré: Onglet d'informations Admin UI optimisé. Amélioré: Arrondi cohérent (2 décimales). Amélioré: Attributs de grille de conformité des bots.",
+                "it": "Nuovo: Rapporto di stato mensile. Nuovo: Aggiunte statistiche lastDay. Correzione: Bug di reset periodo PV. Correzione: Convalida dello schema per i prezzi. Migliorato: Scheda informazioni Admin UI ottimizzata. Migliorato: Arrotondamento coerente (2 decimali). Migliorato: Attributi griglia conformità bot.",
+                "es": "Nuevo: Informe de Estado Mensual. Nuevo: Agregadas estadísticas lastDay. Corrección: Error de reinicio de período PV. Corrección: Validación de esquema para precios. Mejorado: Pestaña de información de Admin UI optimizada. Mejorado: Redondeo consistente (2 decimales). Mejorado: Atributos de cuadrícula de cumplimiento de bots.",
+                "pl": "Nowe: Miesięczny raport statusu. Nowe: Dodano statystyki lastDay. Naprawa: Błąd resetowania okresu PV. Naprawa: Walidacja schematu dla cen. Ulepszone: Zoptymalizowana zakładka informacji Admin UI. Ulepszone: Spójne zaokrąglanie (2 miejsca dziesiętne). Ulepszone: Atrybuty siatki zgodności botów.",
+                "uk": "Нове: Щомісячний звіт про стан. Нове: Додано статистику lastDay. Виправлення: Помилка скидання періоду PV. Виправлення: Перевірка схеми для цін. Покращено: Оптимізовано вкладку інформації Admin UI. Покращено: Послідовне округлення (2 знаки). Покращено: Атрибути сітки відповідності ботів.",
+                "zh-cn": "新增：每月状态报告。新增：添加了lastDay统计信息。修复：PV周期重置错误。修复：价格架构验证。改进：优化了Admin UI信息选项卡。改进：一致的四舍五入（2位小数）。改进：机器人合规网格属性。"
             },
             "1.3.3": {
                 "en": "New: PV/Feed-in integration! Monitor your solar feed-in and earnings. New: Notifications for PV. Improved: Reorganized config UI.",
-                "de": "Neu: PV/Einspeise-Integration! Überwache deine Solareinspeisung und Vergütung. Neu: Benachrichtigungen für PV. Verbessert: Aufgeräumte Konfigurations-Oberfläche."
+                "de": "Neu: PV/Einspeise-Integration! Überwache deine Solareinspeisung und Vergütung. Neu: Benachrichtigungen für PV. Verbessert: Aufgeräumte Konfigurations-Oberfläche.",
+                "ru": "Новое: Интеграция PV/Feed-in! Отслеживайте свою солнечную подачу и доходы. Новое: Уведомления для PV. Улучшено: Реорганизован интерфейс конфигурации.",
+                "pt": "Novo: Integração PV/Feed-in! Monitore sua alimentação solar e ganhos. Novo: Notificações para PV. Melhorado: IU de configuração reorganizada.",
+                "nl": "Nieuw: PV/Feed-in integratie! Monitor je zonne-invoeding en inkomsten. Nieuw: Meldingen voor PV. Verbeterd: Gereorganiseerde configuratie-UI.",
+                "fr": "Nouveau: Intégration PV/Feed-in! Surveillez votre injection solaire et vos revenus. Nouveau: Notifications pour PV. Amélioré: Interface de configuration réorganisée.",
+                "it": "Nuovo: Integrazione PV/Feed-in! Monitora il tuo immissione solare e i guadagni. Nuovo: Notifiche per PV. Migliorato: IU di configurazione riorganizzata.",
+                "es": "Nuevo: Integración PV/Feed-in! Monitorea tu alimentación solar y ganancias. Nuevo: Notificaciones para PV. Mejorado: IU de configuración reorganizada.",
+                "pl": "Nowe: Integracja PV/Feed-in! Monitoruj swoje zasilanie słoneczne i zarobki. Nowe: Powiadomienia dla PV. Ulepszone: Zreorganizowany interfejs konfiguracji.",
+                "uk": "Нове: Інтеграція PV/Feed-in! Відстежуйте своє сонячне живлення та доходи. Нове: Сповіщення для PV. Покращено: Реорганізований інтерфейс конфігурації.",
+                "zh-cn": "新增：PV/Feed-in集成！监控您的太阳能馈入和收益。新增：PV通知。改进：重新组织的配置界面。"
             },
             "1.3.2": {
                 "en": "New: Initial support for PV integration.",
-                "de": "Neu: Erste Unterstützung für PV-Integration."
+                "de": "Neu: Erste Unterstützung für PV-Integration.",
+                "ru": "Новое: Начальная поддержка интеграции PV.",
+                "pt": "Novo: Suporte inicial para integração PV.",
+                "nl": "Nieuw: Initiële ondersteuning voor PV-integratie.",
+                "fr": "Nouveau: Support initial pour l'intégration PV.",
+                "it": "Nuovo: Supporto iniziale per l'integrazione PV.",
+                "es": "Nuevo: Soporte inicial para integración PV.",
+                "pl": "Nowe: Wstępne wsparcie dla integracji PV.",
+                "uk": "Нове: Початкова підтримка інтеграції PV.",
+                "zh-cn": "新增：PV集成的初始支持。"
             }
         },
         "titleLang": {

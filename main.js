@@ -111,6 +111,22 @@ class NebenkostenMonitor extends utils.Adapter {
     }
 
     async updateCosts(type) {
+        // For Multi-Meter setups, delegate to multiMeterManager
+        if (this.multiMeterManager) {
+            const meters = this.multiMeterManager.getMetersForType(type);
+            if (meters.length > 0) {
+                // Update costs for each meter
+                for (const meter of meters) {
+                    await this.multiMeterManager.updateCosts(type, meter.name, meter.config);
+                }
+                // Update totals if multiple meters exist
+                if (meters.length > 1) {
+                    await this.multiMeterManager.updateTotalCosts(type);
+                }
+                return;
+            }
+        }
+        // Fallback to legacy billingManager for single-meter setups (backward compatibility)
         return this.billingManager.updateCosts(type);
     }
 
@@ -192,35 +208,45 @@ class NebenkostenMonitor extends utils.Adapter {
         // Check if this is a closePeriod button press
         if (id.includes('.billing.closePeriod') && state.val === true && !state.ack) {
             const parts = id.split('.');
-            // Check if it's a secondary meter: gas.secondary.billing.closePeriod
-            if (parts.includes('secondary')) {
-                const type = parts[parts.length - 4]; // gas.secondary.billing.closePeriod -> gas
-                this.log.info(`User triggered billing period closure for ${type} secondary meter`);
-                // TODO: Implement closeBillingPeriod for secondary meters
-                return;
+
+            // Parse state ID: nebenkosten-monitor.0.gas.erdgeschoss.billing.closePeriod
+            // Remove adapter prefix: gas.erdgeschoss.billing.closePeriod
+            const statePathParts = parts.slice(2); // Remove "nebenkosten-monitor" and "0"
+
+            // Determine if this is main meter or additional meter
+            if (statePathParts.length === 3) {
+                // Main meter: gas.billing.closePeriod
+                const type = statePathParts[0];
+                this.log.info(`User triggered billing period closure for ${type} (main meter)`);
+                await this.closeBillingPeriod(type);
+            } else if (statePathParts.length === 4) {
+                // Additional meter: gas.erdgeschoss.billing.closePeriod
+                const type = statePathParts[0];
+                const meterName = statePathParts[1];
+                this.log.info(`User triggered billing period closure for ${type}.${meterName}`);
+
+                // Find the meter object from multiMeterManager
+                const meters = this.multiMeterManager?.getMetersForType(type) || [];
+                const meter = meters.find(m => m.name === meterName);
+
+                if (meter) {
+                    await this.billingManager.closeBillingPeriodForMeter(type, meter);
+                } else {
+                    this.log.error(`Meter "${meterName}" not found for type ${type}!`);
+                    await this.setStateAsync(`${type}.${meterName}.billing.closePeriod`, false, true);
+                }
             }
-            const type = parts[parts.length - 3];
-            this.log.info(`User triggered billing period closure for ${type}`);
-            await this.closeBillingPeriod(type);
             return;
         }
 
         // Check if this is an adjustment value change
         if (id.includes('.adjustment.value') && !state.ack) {
             const parts = id.split('.');
-            // Check if it's a secondary meter
-            if (parts.includes('secondary')) {
-                const type = parts[parts.length - 4];
-                this.log.info(`Adjustment value changed for ${type} secondary meter: ${state.val}`);
-                await this.setStateAsync(`${type}.secondary.adjustment.applied`, Date.now(), true);
-                if (this.secondaryMeterManager) {
-                    await this.secondaryMeterManager.updateCosts(type);
-                }
-                return;
-            }
             const type = parts[parts.length - 3];
             this.log.info(`Adjustment value changed for ${type}: ${state.val}`);
             await this.setStateAsync(`${type}.adjustment.applied`, Date.now(), true);
+
+            // Update costs for all meters of this type
             await this.updateCosts(type);
             return;
         }

@@ -228,6 +228,30 @@ Der Adapter setzt Zähler automatisch zurück:
 
 ## Changelog
 
+### 1.4.1 (2026-01-18)
+
+- **FIX:** 🐛 **Multi-Meter Critical Bugs** - Comprehensive fixes for multi-meter functionality:
+    - Fixed `updateCosts()` to correctly delegate to multiMeterManager for all meters
+    - Fixed `closeBillingPeriod()` to archive totals instead of only main meter values
+    - Fixed `checkMonthlyReport()` to display totals in reports for multi-meter setups
+    - Fixed state type mismatch: `lastDayStart`, `lastMonthStart`, `lastYearStart` now use number (timestamp) instead of string
+- **NEW:** 🎯 **Per-Meter Billing Closure** - Each meter can now be closed individually with its own `billing.closePeriod` button
+    - Main meter: `gas.billing.closePeriod`
+    - Additional meters: `gas.erdgeschoss.billing.closePeriod`, `gas.keller.billing.closePeriod`, etc.
+    - Each meter uses its own contract date for yearly resets
+- **NEW:** 📅 **Individual Contract Anniversary Resets** - Each meter resets on its own contract date
+    - Primary: Manual `closePeriod` triggers yearly reset immediately
+    - Fallback: Automatic reset on contract anniversary if user forgets to close period
+    - Contract date is preserved when closing period early (no drift)
+- **IMPROVED:** 💰 **Billing Period Closure** - No longer resets `basicCharge` and `annualFee` to zero
+    - These values now persist from config (user must update config if tariff changes)
+    - Helpful reminder message added after closing period
+- **FIX:** 🤖 **ioBroker Bot Compliance** - All bot checker issues resolved:
+    - Removed non-existent version 1.3.4 from news
+    - Added complete translations for all news entries (9 languages)
+    - Removed `.npmignore` file (using `files` field in package.json)
+    - DevDependencies already use `~` syntax (compliant)
+
 ### 1.4.0 (2026-01-17)
 
 - **NEW:** 🎉 **Multi-Meter Support** - Verwende mehrere Zähler pro Typ (z.B. Gas Hauptzähler + Werkstatt-Zähler)
